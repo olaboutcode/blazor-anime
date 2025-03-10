@@ -1,0 +1,204 @@
+@using BlazorAnime;
+
+@implements IAsyncDisposable;
+@inject IAnime Anime;
+
+<h3>StaggerAxis</h3>
+
+<div class="demo">
+    <div class="demo-content staggering-axis-grid-demo">
+        <div class="grid">
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+            <div class="small square el"></div>
+        </div>
+        <div class="grid shadow">
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+            <div class="small square"></div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private Animation? _animation;
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _animation ??= await Anime.Animation(new Props
+            {
+                Prop.Targets(".staggering-axis-grid-demo .el"),
+                Prop.AutoPlay(true),
+                Prop.Loop(3),
+                Prop.Create("translateX", Stagger.Create(10, new StaggerProps
+                {
+                    StaggerProp.Grid(14, 5),
+                    StaggerProp.From.Center,
+                    StaggerProp.Axis.X
+                })),
+                Prop.Create("translateY", Stagger.Create(10, new StaggerProps
+                {
+                    StaggerProp.Grid(14, 5),
+                    StaggerProp.From.Center,
+                    StaggerProp.Axis.Y
+                })),
+                Prop.Create("rotateZ", Stagger.Create(0, 90, new StaggerProps
+                {
+                    StaggerProp.Grid(14, 5),
+                    StaggerProp.From.Center,
+                    StaggerProp.Axis.X
+                })),
+                Prop.Delay(Stagger.Create(200, new StaggerProps
+                {
+                    StaggerProp.Grid(14, 5),
+                    StaggerProp.From.Center
+                })),
+                Prop.Easing.EaseInOutQuad
+            });
+        }
+    } 
+    
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (_animation is not null)
+        {
+            await _animation.DisposeAsync();
+        }
+    }
+}

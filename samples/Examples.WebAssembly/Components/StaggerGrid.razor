@@ -1,0 +1,197 @@
+@using BlazorAnime;
+
+@implements IAsyncDisposable;
+@inject IAnime Anime;
+
+<h3>StaggerGrid</h3>
+
+<div class="demo-content staggering-grid-demo">
+    <div class="grid">
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+        <div class="small square el" style="transform: scale(1);"></div>
+    </div>
+    <div class="grid shadow">
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+        <div class="small square"></div>
+    </div>
+</div>
+
+@code {
+    private Animation? _animation;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _animation ??= await Anime.Animation(new Props
+            {
+                Prop.Targets(".staggering-grid-demo .el"),
+                Prop.AutoPlay(true),
+                Prop.Loop(3),
+                Prop.Create("scale", [
+                    new Props
+                    {
+                        Prop.Value(.1),
+                        Prop.Easing.EaseOutSine,
+                        Prop.Duration(500)
+                    },
+                    new Props
+                    {
+                        Prop.Value(1),
+                        Prop.Easing.EaseInOutQuad,
+                        Prop.Duration(1200)
+                    }
+                ]),
+                Prop.Delay(Stagger.Create(200, new StaggerProps
+                {
+                    StaggerProp.Grid(14, 5),
+                    StaggerProp.From.Center
+                }))
+            });
+        }
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (_animation is not null)
+        {
+            await _animation.DisposeAsync();
+        }
+    }
+}
