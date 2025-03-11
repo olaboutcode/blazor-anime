@@ -10,40 +10,45 @@ public class Stagger
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static Stagger Create(double value) => new(value, new());
+    public static Stagger Create(double value) => new(value, []);
+    
     /// <summary>
     /// Creates a basic stagger
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static Stagger Create(double[] value) => new(value, new());
+    public static Stagger Create(double[] value) => new(value, []);
+    
     /// <summary>
     /// Creates a basic stagger
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static Stagger Create(string value) => new(value, new());
+    public static Stagger Create(string value) => new(value, []);
+    
     /// <summary>
     /// Creates a basic stagger
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static Stagger Create(string[] value) => new(value, new());
+    public static Stagger Create(string[] value) => new(value, []);
+    
     /// <summary>
     /// Creates a stagger with options
     /// </summary>
     /// <param name="value"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static Stagger Create(double value, StaggerProps options) =>
+    public static Stagger Create(double value, IEnumerable<StgOptionProp> options) => 
         new(value, options);
+    
     /// <summary>
     /// Creates a stagger with options
     /// </summary>
     /// <param name="value"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static Stagger Create(string value, StaggerProps options) =>
+    public static Stagger Create(string value, IEnumerable<StgOptionProp> options) => 
         new(value, options);
 
     /// <summary>
@@ -53,7 +58,7 @@ public class Stagger
     /// <param name="endValue"></param>
     /// <returns></returns>
     public static Stagger Create(double startValue, double endValue) =>
-        new(new double[] { startValue, endValue }, new());
+        new(new[] { startValue, endValue }, []);
 
     /// <summary>
     /// Distributes evenly values between two numbers with options.
@@ -62,16 +67,18 @@ public class Stagger
     /// <param name="endValue"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static Stagger Create(double startValue, double endValue, StaggerProps options) =>
-        new(new double[] { startValue, endValue }, options);
+    public static Stagger Create(double startValue, double endValue, IEnumerable<StgOptionProp> options) =>
+        new(new[] { startValue, endValue }, options);
 
     public object GetValue() => Value;
-    public StaggerProps GetOptions() => Options;
+    
+    public IEnumerable<StgOptionProp> GetOptions() => Options;
 
-    protected object Value { get; }
-    protected StaggerProps Options { get; }
+    private object Value { get; }
+    
+    private IEnumerable<StgOptionProp> Options { get; }
 
-    private Stagger(object value, StaggerProps options)
+    private Stagger(object value, IEnumerable<StgOptionProp> options)
     {
         Value = value;
         Options = options;
@@ -81,7 +88,7 @@ public class Stagger
 /// <summary>
 /// Defines Stagger options
 /// </summary>
-public class StaggerProp
+public abstract class StaggerProp
 {
     /// <summary>
     /// Starts the staggering effect from a specific value.
@@ -114,12 +121,13 @@ public class StaggerProp
     /// <summary>
     /// Forces the direction of a grid staggering effect.
     /// </summary>
-    public class Axis
+    public abstract class Axis
     {
         /// <summary>
         /// Follows the x-axis
         /// </summary>
         public static StgOptionProp X { get; } = new("Axis", "x");
+        
         /// <summary>
         /// Follows the y-axis
         /// </summary>
@@ -129,12 +137,13 @@ public class StaggerProp
     /// <summary>
     /// Changes the order in which the stagger operates.
     /// </summary>
-    public class Direction
+    public abstract class Direction
     {
         /// <summary>
         /// (Default) Normal staggering, from the first element to the last.
         /// </summary>
         public static StgOptionProp Normal { get; } = new("Direction", "normal");
+        
         /// <summary>
         /// Reversed staggering, from the last element to the first.
         /// </summary>
@@ -144,59 +153,28 @@ public class StaggerProp
     /// <summary>
     /// Starts the stagger effect from a specific position.
     /// </summary>
-    public class From
+    public abstract class From
     {
         /// <summary>
         /// (Default) Start the effect from the first element.
         /// </summary>
         public static StgOptionProp First { get; } = new("From", "first");
+        
         /// <summary>
         /// Start the effect from the last element.
         /// </summary>
         public static StgOptionProp Last { get; } = new("From", "last");
+        
         /// <summary>
         /// Start the effect from the center.
         /// </summary>
         public static StgOptionProp Center { get; } = new("From", "center");
+        
         /// <summary>
         /// Start the effect from the specified index.
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
         public static StgOptionProp Index(int index) => new("From", index);
-    }
-}
-
-/// <summary>
-/// Collection of Stagger Props
-/// </summary>
-public class StaggerProps : System.Collections.IEnumerable
-{
-    public void Add(StgOptionProp item)
-    {
-        _properties[item.GetName()] = item;
-    }
-
-    public List<StgOptionProp> Items => _properties
-        .Values
-        .ToList();
-
-    public System.Collections.IEnumerator GetEnumerator()
-    {
-        return _properties
-            .Values
-            .GetEnumerator();
-    }
-
-    private readonly Dictionary<string, StgOptionProp> _properties = new();
-
-    public object ToObject()
-    {
-        dynamic props = new System.Dynamic.ExpandoObject();
-        foreach (var property in _properties.Values)
-        {
-            ((IDictionary<string, object>)props).Add(property.GetName(), property.GetValue());
-        }
-        return props;
     }
 }

@@ -4,13 +4,13 @@ namespace BlazorAnime;
 
 public class Timeline(IJSObjectReference timelineJsRef)
 {
-    public async void Add(Props props) =>
+    public async void Add(IEnumerable<AProp> props) =>
         await TimelineJsRef.InvokeVoidAsync("add", props.ToObject());
 
-    public async void Add(Props props, double offSet) =>
+    public async void Add(IEnumerable<AProp> props, double offSet) =>
         await TimelineJsRef.InvokeVoidAsync("add", props.ToObject(), offSet);
 
-    public async void Add(Props props, OffSet offSet) =>
+    public async void Add(IEnumerable<AProp> props, OffSet offSet) =>
         await TimelineJsRef.InvokeVoidAsync("add", props.ToObject(), offSet.GetValue());
 
     public async void Play() =>

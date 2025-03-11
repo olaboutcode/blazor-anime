@@ -13,6 +13,7 @@ public abstract class Prop
     /// <param name="el"></param>
     /// <returns>Animation Property</returns>
     public static AProp Targets(string el) => Create("targets", el);
+    
     /// <summary>
     /// Can be any CSS selectors
     /// <para>
@@ -22,6 +23,7 @@ public abstract class Prop
     /// <param name="els"></param>
     /// <returns>Animation Property</returns>
     public static AProp Targets(string[] els) => Create("targets", els);
+    
     /// <summary>
     /// Can be any custom objects, DOM Nodes, or NodeList
     /// <para>
@@ -38,6 +40,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Duration(double value) => Create("duration", value);
+    
     /// <summary>
     /// Defines the duration in milliseconds of the animation.
     /// </summary>
@@ -45,12 +48,13 @@ public abstract class Prop
     /// <param name="to"></param>
     /// <returns>Animation Property</returns>
     public static AProp Duration(double from, double to) => Create("duration", from, to);
+    
     /// <summary>
     /// Defines the duration in milliseconds of the animation.
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Duration(Props props) => Create("duration", props);
+    public static AProp Duration(IEnumerable<AProp> props) => Create("duration", props);
 
     /// <summary>
     /// Defines the delay in milliseconds of the animation.
@@ -58,6 +62,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Delay(double value) => Create("delay", value);
+    
     /// <summary>
     /// Defines the delay in milliseconds of the animation with a custom callback
     /// </summary>
@@ -67,6 +72,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Delay(object caller, string callbackName, Func<double> callback) =>
         Create("delay", caller, callbackName, callback);
+    
     /// <summary>
     /// Defines the delay in milliseconds of the animation with a custom callback
     /// </summary>
@@ -76,6 +82,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Delay(object caller, string callbackName, Func<int, double> callback) =>
         Create("delay", caller, callbackName, callback);
+    
     /// <summary>
     /// Defines the delay in milliseconds of the animation with a custom callback
     /// </summary>
@@ -85,6 +92,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Delay(object caller, string callbackName, Func<int, int, double> callback) =>
         Create("delay", caller, callbackName, callback);
+    
     /// <summary>
     /// Defines the staggered delay in milliseconds of the animation
     /// </summary>
@@ -99,6 +107,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp EndDelay(double value) => Create("endDelay", value);
+    
     /// <summary>
     /// Adds some extra time in milliseconds at the end of the animation with a custom callback
     /// </summary>
@@ -108,6 +117,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp EndDelay(object caller, string callbackName, Func<double> callback) =>
         Create("delay", caller, callbackName, callback);
+    
     /// <summary>
     /// Adds some extra time in milliseconds at the end of the animation with a custom callback
     /// </summary>
@@ -117,6 +127,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp EndDelay(object caller, string callbackName, Func<int, double> callback) =>
         Create("delay", caller, callbackName, callback);
+    
     /// <summary>
     /// Adds some extra time in milliseconds at the end of the animation with a custom callback
     /// </summary>
@@ -126,6 +137,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp EndDelay(object caller, string callbackName, Func<int, int, double> callback) =>
         Create("delay", caller, callbackName, callback);
+    
     /// <summary>
     /// Adds staggered extra time in milliseconds at the end of the animation
     /// </summary>
@@ -150,6 +162,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Loop(bool value) => Create("loop", value);
+    
     /// <summary>
     /// Defines the number of iterations of an animation.
     /// </summary>
@@ -170,12 +183,14 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Value(double value) => Create("value", value);
+    
     /// <summary>
     /// Define an animation prop value
     /// </summary>
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Value(bool value) => Create("value", value);
+    
     /// <summary>
     /// Define an animation prop value
     /// <para>
@@ -185,6 +200,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Value(string value) => Create("value", value);
+    
     /// <summary>
     /// Define an animation prop value
     /// <para>
@@ -194,12 +210,14 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Value(Color value) => Create("value", value);
+    
     /// <summary>
     /// Define an animation prop value
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Value(Props props) => Create("value", props);
+    public static AProp Value(IEnumerable<AProp> props) => Create("value", props);
+    
     /// <summary>
     /// Define an animation prop value
     /// </summary>
@@ -207,6 +225,7 @@ public abstract class Prop
     /// <param name="to"></param>
     /// <returns>Animation Property</returns>
     public static AProp Value(double from, double to) => Create("value", from, to);
+    
     /// <summary>
     /// Define an animation prop value
     /// <para>
@@ -217,6 +236,7 @@ public abstract class Prop
     /// <param name="to"></param>
     /// <returns>Animation Property</returns>
     public static AProp Value(string from, string to) => Create("value", from, to);
+    
     /// <summary>
     /// Define an animation prop value
     /// <para>
@@ -227,6 +247,7 @@ public abstract class Prop
     /// <param name="to"></param>
     /// <returns>Animation Property</returns>
     public static AProp Value(Color from, Color to) => Create("value", from, to);
+    
     /// <summary>
     /// Define an animation prop value
     /// <para>
@@ -235,7 +256,7 @@ public abstract class Prop
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Value(List<Props> props) => Create("value", props);
+    public static AProp Value(List<IEnumerable<AProp>> props) => Create("value", props);
 
     /// <summary>
     /// Animation keyframes are defined using an Array, within the keyframes property.
@@ -247,7 +268,7 @@ public abstract class Prop
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Keyframes(List<Props> props) => Create("keyframes", props);
+    public static AProp Keyframes(List<IEnumerable<AProp>> props) => Create("keyframes", props);
 
     /// <summary>
     /// Callback triggered on every frame as soon as the animation starts playing.
@@ -271,6 +292,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Begin(object caller, string callbackName, Action callback) =>
         Create("begin", caller, callbackName, callback);
+    
     /// <summary>
     /// Callback is triggered once, when the animation is completed.
     /// <para>
@@ -293,6 +315,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp LoopBegin(object caller, string callbackName, Action callback) =>
         Create("loopBegin", caller, callbackName, callback);
+    
     /// <summary>
     /// LoopComplete() callback is triggered once everytime a loop is completed.
     /// </summary>
@@ -312,10 +335,11 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Change(object caller, string callbackName, Action callback) =>
         Create("change", caller, callbackName, callback);
+    
     /// <summary>
     /// changeBegin() callback is triggered everytime the animation starts changing.
     /// <para>
-    /// Animation direction will affect the order in which changeBegin() is triggerd.
+    /// Animation direction will affect the order in which changeBegin() is triggered.
     /// </para>
     /// </summary>
     /// <param name="caller"></param>
@@ -324,10 +348,11 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp ChangeBegin(object caller, string callbackName, Action callback) =>
         Create("changeBegin", caller, callbackName, callback);
+    
     /// <summary>
     /// changeComplete() callback is triggered everytime the animation stops changing.
     /// <para>
-    /// Animation direction will affect the order in which changeComplete() is triggerd.
+    /// Animation direction will affect the order in which changeComplete() is triggered.
     /// </para>
     /// </summary>
     /// <param name="caller"></param>
@@ -349,7 +374,7 @@ public abstract class Prop
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Points(List<Props> props) => Create("points", props);
+    public static AProp Points(List<IEnumerable<AProp>> props) => Create("points", props);
 
     /// <summary>
     /// Animate any CSS property.
@@ -362,6 +387,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, bool value) => new GenProp<bool>(name, value);
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -373,6 +399,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, int value) => new GenProp<int>(name, value);
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -384,6 +411,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, double value) => new GenProp<double>(name, value);
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -395,6 +423,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, string value) => new GenProp<string>(name, value);
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -406,6 +435,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, object value) => new GenProp<object>(name, value);
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -417,6 +447,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, Color value) => new GenProp<string>(name, value.GetValue());
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -428,6 +459,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, string[] value) => new GenProp<string[]>(name, value);
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -439,6 +471,7 @@ public abstract class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, double[] value) => new GenProp<double[]>(name, value);
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -449,7 +482,9 @@ public abstract class Prop
     /// <param name="name"></param>
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Create(string name, object[] value) => new GenProp<object[]>(name, value);
+    public static AProp Create(string name, object[] value) =>
+        new GenProp<object[]>(name, value);
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -460,7 +495,9 @@ public abstract class Prop
     /// <param name="name"></param>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Create(string name, Props props) => new GenProp<object>(name, props.ToObject());
+    public static AProp Create(string name, IEnumerable<AProp> props) =>
+        new GenProp<object>(name, props.ToObject());
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -473,7 +510,8 @@ public abstract class Prop
     /// <param name="to"></param>
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, double from, double to) =>
-        new GenProp<object>(name, new double[] { from, to });
+        new GenProp<object>(name, new[] { from, to });
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -487,6 +525,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, string from, string to) =>
         new GenProp<string[]>(name, [from, to]);
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -500,6 +539,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, Color from, Color to) =>
         new GenProp<object>(name, new[] { from.GetValue(), to.GetValue() });
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -510,8 +550,9 @@ public abstract class Prop
     /// <param name="name"></param>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Create(string name, List<Props> props) =>
+    public static AProp Create(string name, List<IEnumerable<AProp>> props) =>
         new GenProp<object>(name, props.Select(p => p.ToObject()));
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -524,6 +565,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Create(string name, Stagger stagger) =>
         new StgProp(name, stagger.GetValue(), stagger.GetOptions().ToObject());
+    
     /// <summary>
     /// Animate any CSS property with a custom callback
     /// <para>
@@ -538,6 +580,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Create(string propName, object caller, string callbackName, Action _) =>
         new CallbackProp(propName, callbackName, 0, DotNetObjectReference.Create(caller));
+    
     /// <summary>
     /// Animate any CSS property with a custom callback
     /// <para>
@@ -552,6 +595,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Create(string propName, object caller, string callbackName, Func<double> _) =>
         new CallbackProp(propName, callbackName, 2, DotNetObjectReference.Create(caller));
+    
     /// <summary>
     /// Animate any CSS property with a custom callback
     /// <para>
@@ -566,6 +610,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Create(string propName, object caller, string callbackName, Func<int, double> _) =>
         new CallbackProp(propName, callbackName, 2, DotNetObjectReference.Create(caller));
+    
     /// <summary>
     /// Animate any CSS property with a custom callback
     /// <para>
@@ -580,6 +625,7 @@ public abstract class Prop
     /// <returns>Animation Property</returns>
     public static AProp Create(string propName, object caller, string callbackName, Func<int, int, double> _) =>
         new CallbackProp(propName, callbackName, 3, DotNetObjectReference.Create(caller));
+    
     /// <summary>
     /// Animate any CSS property.
     /// <para>
@@ -590,12 +636,12 @@ public abstract class Prop
     /// <param name="name"></param>
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Create(string name, PathParm value) => new SvgProp(name, value.ParamRef);
+    public static AProp Create(string name, PathParm value) =>new SvgProp(name, value.ParamRef);
 
     /// <summary>
-    /// Adds, substracts or multiplies the original value.
+    /// Adds, subtracts or multiplies the original value.
     /// </summary>
-    public class RelativeValue
+    public abstract class RelativeValue
     {
         /// <summary>
         /// Adds to the original value
@@ -603,6 +649,7 @@ public abstract class Prop
         /// <param name="value"></param>
         /// <returns>Animation Property</returns>
         public static AProp Add(double value) => Create("value", $"+={value}");
+        
         /// <summary>
         /// Adds to the original value
         /// </summary>
@@ -616,6 +663,7 @@ public abstract class Prop
         /// <param name="value"></param>
         /// <returns>Animation Property</returns>
         public static AProp Subtract(double value) => Create("value", $"-={value}");
+        
         /// <summary>
         /// Subtracts from the original value
         /// </summary>
@@ -629,6 +677,7 @@ public abstract class Prop
         /// <param name="value"></param>
         /// <returns>Animation Property</returns>
         public static AProp Multiply(double value) => Create("value", $"*={value}");
+        
         /// <summary>
         /// Multiplies the original value
         /// </summary>
@@ -640,7 +689,7 @@ public abstract class Prop
     /// <summary>
     /// Defines the direction of the animation.
     /// </summary>
-    public class Direction
+    public abstract class Direction
     {
         /// <summary>
         /// Defines the direction of the animation.
@@ -679,16 +728,18 @@ public abstract class Prop
         /// <summary>
         /// Defines the timing function of the animation.
         /// <para>
-        /// Does not apply any easing timing to your animation. Usefull for opacity and colors transitions.
+        /// Does not apply any easing timing to your animation. Useful for opacity and colors transitions.
         /// </para>
         /// </summary>
         /// <returns>Animation Property</returns>
         public static AProp Linear { get; } = Create("Easing", "linear");
+        
         /// <summary>
         /// Defines the number of jumps an animation takes to arrive at its end value.
         /// </summary>
         /// <returns>Animation Property</returns>
         public static AProp Steps(int steps) => Create("Easing", $"steps({steps})");
+        
         /// <summary>
         /// Defines the timing function of the animation.
         /// <para>
@@ -698,6 +749,7 @@ public abstract class Prop
         /// <returns>Animation Property</returns>
         public static AProp CubicBezier(double x1, double y1, double x2, double y2) =>
             Create("Easing", $"cubicBezier({x1}, {y1}, {x2}, {y2})");
+        
         /// <summary>
         /// Defines the timing function of the animation.
         /// <para>
@@ -706,6 +758,7 @@ public abstract class Prop
         /// </summary>
         /// <returns>Animation Property</returns>
         public static AProp Spring() => Create("Easing", "spring");
+        
         /// <summary>
         /// Defines the timing function of the animation.
         /// <para>
@@ -715,24 +768,28 @@ public abstract class Prop
         /// <returns>Animation Property</returns>
         public static AProp Spring(double mass, double stiffness, double damping, double velocity)
             => Create("Easing", $"spring({mass}, {stiffness}, {damping}, {velocity})");
+        
         /// <summary>
         /// Defines Elastic easing
         /// </summary>
         /// <returns>Animation Property</returns>
         public static AProp EaseInElastic(double amplitude, double period)
             => Create("Easing", $"easeInElastic({amplitude}, {period})");
+        
         /// <summary>
         /// Defines Elastic easing
         /// </summary>
         /// <returns>Animation Property</returns>
         public static AProp EaseOutElastic(double amplitude, double period)
             => Create("Easing", $"easeOutElastic({amplitude}, {period})");
+        
         /// <summary>
         /// Defines Elastic easing
         /// </summary>
         /// <returns>Animation Property</returns>
         public static AProp EaseInOutElastic(double amplitude, double period)
             => Create("Easing", $"easeInOutElastic({amplitude}, {period})");
+        
         /// <summary>
         /// Defines Elastic easing
         /// </summary>
@@ -779,32 +836,5 @@ public abstract class Prop
         public static AProp EaseOutInCirc { get; } = Create("Easing", "easeOutInCirc");
         public static AProp EaseOutInBack { get; } = Create("Easing", "easeOutInBack");
         public static AProp EaseOutInBounce { get; } = Create("Easing", "easeOutInBounce");
-    }
-}
-
-public class Props : System.Collections.IEnumerable
-{
-    public void Add(AProp item)
-    {
-        _properties[item.GetName()] = item;
-    }
-
-    public System.Collections.IEnumerator GetEnumerator()
-    {
-        return _properties
-            .Values
-            .GetEnumerator();
-    }
-
-    private readonly Dictionary<string, AProp> _properties = new();
-
-    public object ToObject()
-    {
-        dynamic props = new System.Dynamic.ExpandoObject();
-        foreach (var property in _properties.Values)
-        {
-            ((IDictionary<string, object>)props).Add(property.GetName(), property.GetValue());
-        }
-        return props;
     }
 }

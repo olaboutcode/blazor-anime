@@ -9,7 +9,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation</returns>
-    public async Task<Animation> Animation(Props props)
+    public async Task<Animation> Animation(IEnumerable<AProp> props)
     {
         var animationJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateAnimation,
@@ -17,13 +17,13 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
         );
         return new Animation(animationJsRef);
     }
-
+    
     /// <summary>
     /// Create an animation timeline.
     /// </summary>
     /// <param name="defaultProps"></param>
     /// <returns>Timeline</returns>
-    public async Task<Timeline> Timeline(Props defaultProps)
+    public async Task<Timeline> Timeline(IEnumerable<AProp> defaultProps)
     {
         var timelineJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateTimeline,
@@ -51,16 +51,17 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="targets"></param>
     /// <param name="props"></param>
-    public async void Set(string[] targets, Props props)
+    public async void Set(string[] targets, IEnumerable<AProp> props)
     {
         await JsRuntime.InvokeVoidAsync(IdentifierSetElementValue, targets, props.ToObject());
     }
+    
     /// <summary>
     /// Immediately sets values to the specified targets.
     /// </summary>
     /// <param name="targets"></param>
     /// <param name="props"></param>
-    public async void Set(object[] targets, Props props)
+    public async void Set(object[] targets, IEnumerable<AProp> props)
     {
         await JsRuntime.InvokeVoidAsync(IdentifierSetElementValue, targets, props.ToObject());
     }
@@ -156,14 +157,14 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
 public interface IAnime
 {
     Task<Path> Path(string target);
+    
+    Task<Animation> Animation(IEnumerable<AProp> props);
+    
+    Task<Timeline> Timeline(IEnumerable<AProp> props);
 
-    Task<Animation> Animation(Props props);
+    void Set(string[] targets, IEnumerable<AProp> props);
 
-    Task<Timeline> Timeline(Props props);
-
-    void Set(string[] targets, Props props);
-
-    void Set(object[] targets, Props props);
+    void Set(object[] targets, IEnumerable<AProp> props);
 
     Task<string> Get(object target, string propName);
 

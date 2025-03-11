@@ -94,7 +94,7 @@ public class Animation(IJSObjectReference animationJsRef)
     /// </summary>
     /// <param name="targets"></param>
     /// <param name="props"></param>
-    public async void Set(string targets, Props props) =>
+    public async void Set(string targets, IEnumerable<AProp> props) =>
         await AnimationJsRef.InvokeVoidAsync("set", targets, props.ToObject());
 
     /// <summary>

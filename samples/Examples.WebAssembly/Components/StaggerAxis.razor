@@ -161,36 +161,31 @@
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animation(new Props
-            {
+            _animation ??= await Anime.Animation([
                 Prop.Targets(".staggering-axis-grid-demo .el"),
                 Prop.AutoPlay(true),
                 Prop.Loop(3),
-                Prop.Create("translateX", Stagger.Create(10, new StaggerProps
-                {
+                Prop.Create("translateX", Stagger.Create(10, [
                     StaggerProp.Grid(14, 5),
                     StaggerProp.From.Center,
                     StaggerProp.Axis.X
-                })),
-                Prop.Create("translateY", Stagger.Create(10, new StaggerProps
-                {
+                ])),
+                Prop.Create("translateY", Stagger.Create(10, [
                     StaggerProp.Grid(14, 5),
                     StaggerProp.From.Center,
                     StaggerProp.Axis.Y
-                })),
-                Prop.Create("rotateZ", Stagger.Create(0, 90, new StaggerProps
-                {
+                ])),
+                Prop.Create("rotateZ", Stagger.Create(0, 90, [
                     StaggerProp.Grid(14, 5),
                     StaggerProp.From.Center,
                     StaggerProp.Axis.X
-                })),
-                Prop.Delay(Stagger.Create(200, new StaggerProps
-                {
+                ])),
+                Prop.Delay(Stagger.Create(200, [
                     StaggerProp.Grid(14, 5),
                     StaggerProp.From.Center
-                })),
+                ])),
                 Prop.Easing.EaseInOutQuad
-            });
+            ]);
         }
     } 
     

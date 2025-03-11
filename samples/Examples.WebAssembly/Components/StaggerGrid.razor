@@ -159,31 +159,27 @@
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animation(new Props
-            {
+            _animation ??= await Anime.Animation([
                 Prop.Targets(".staggering-grid-demo .el"),
                 Prop.AutoPlay(true),
                 Prop.Loop(3),
                 Prop.Create("scale", [
-                    new Props
-                    {
+                    [
                         Prop.Value(.1),
                         Prop.Easing.EaseOutSine,
                         Prop.Duration(500)
-                    },
-                    new Props
-                    {
+                    ],
+                    [
                         Prop.Value(1),
                         Prop.Easing.EaseInOutQuad,
                         Prop.Duration(1200)
-                    }
+                    ]
                 ]),
-                Prop.Delay(Stagger.Create(200, new StaggerProps
-                {
+                Prop.Delay(Stagger.Create(200, [
                     StaggerProp.Grid(14, 5),
                     StaggerProp.From.Center
-                }))
-            });
+                ]))
+            ]);
         }
     }
 

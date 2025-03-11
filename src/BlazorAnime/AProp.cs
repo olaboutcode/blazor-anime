@@ -21,7 +21,7 @@ public abstract class AProp(string name, object value)
     private static string LowerFirstChar(string input) =>
         string.IsNullOrEmpty(input)
         ? input
-        : (char.ToLower(input[0]) + input[1..]);
+        : char.ToLower(input[0]) + input[1..];
 }
 
 public class GenProp<T>(string name, T value) : AProp(name, value) where T : notnull;
