@@ -17,9 +17,9 @@ public static class Extensions
 
 internal static class InternalExtensions
 {
-    internal static System.Dynamic.ExpandoObject ToObject(this IEnumerable<AProp> props)
+    internal static System.Dynamic.ExpandoObject ToObject(this IEnumerable<Prop> props)
     {
-        Dictionary<string, AProp> properties = new();
+        Dictionary<string, Prop> properties = new();
         foreach (var prop in props)
         {
             properties[prop.GetName()] = prop;

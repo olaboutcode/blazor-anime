@@ -2,11 +2,12 @@ namespace BlazorAnime;
 
 using Microsoft.JSInterop;
 
-public abstract class AProp(string name, object value)
+public abstract partial class Prop(string name, object value)
 {
     protected string Name { get; } = LowerFirstChar(name);
-    protected object Value { get; } = value;
-
+    
+    protected object GetPrimValue() => value;
+    
     public string GetName() => Name;
 
     public virtual object GetValue()
@@ -14,7 +15,7 @@ public abstract class AProp(string name, object value)
         return new
         {
             name = Name,
-            value = new { propType = "setter", value = Value }
+            value = new { propType = "setter", value }
         };
     }
 
@@ -24,13 +25,10 @@ public abstract class AProp(string name, object value)
         : char.ToLower(input[0]) + input[1..];
 }
 
-public class GenProp<T>(string name, T value) : AProp(name, value) where T : notnull;
+public class GenProp<T>(string name, T value) : Prop(name, value) where T : notnull;
 
-public class SvgProp(string name, IJSObjectReference value) : AProp(name, value)
+public class SvgProp(string name, IJSObjectReference value) : Prop(name, value)
 {
-    protected new string Name { get; } = name;
-    protected new IJSObjectReference Value { get; } = value;
-
     public override object GetValue()
     {
         return new
@@ -39,16 +37,14 @@ public class SvgProp(string name, IJSObjectReference value) : AProp(name, value)
             value = new
             {
                 propType = "svgSetter",
-                value = Value
+                value = GetPrimValue()
             }
         };
     }
 }
 
-public class StgProp(string name, object value, object options) : AProp(name, value)
+public class StgProp(string name, object value, object options) : Prop(name, value)
 {
-    protected object Options { get; } = options;
-
     public override object GetValue()
     {
         return new
@@ -57,29 +53,26 @@ public class StgProp(string name, object value, object options) : AProp(name, va
             value = new
             {
                 propType = "stagger",
-                value = new { value = Value, options = Options }
+                value = new { value = GetPrimValue(), options }
             }
         };
     }
 }
 
-public class StgOptionProp(string name, object value) : AProp(name, value)
+public class StgOptionProp(string name, object value) : Prop(name, value)
 {
     public override object GetValue()
     {
         return new
         {
             name = Name,
-            value = new { propType = "setter", value = Value }
+            value = new { propType = "setter", value = GetPrimValue() }
         };
     }
 }
 
-public class CallbackProp(string name, string callbackName, int paramCount, object dotNetRef) : AProp(name, callbackName)
+public class CallbackProp(string name, string callbackName, int paramCount, object dotNetRef) : Prop(name, callbackName)
 {
-    protected object DotNetRef { get; } = dotNetRef;
-    private int ParamCount { get; } = paramCount;
-
     public override object GetValue()
     {
         return new
@@ -88,8 +81,8 @@ public class CallbackProp(string name, string callbackName, int paramCount, obje
             value = new
             {
                 propType = "callback",
-                paramCount = ParamCount,
-                value = new { callback = Value, dotNetRef = DotNetRef }
+                paramCount,
+                value = new { callback = GetPrimValue(), dotNetRef }
             }
         };
     }

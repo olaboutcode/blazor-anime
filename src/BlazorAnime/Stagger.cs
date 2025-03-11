@@ -116,7 +116,7 @@ public abstract class StaggerProp
     /// </summary>
     /// <param name="easing"></param>
     /// <returns></returns>
-    public static StgOptionProp Easing(AProp easing) => new("Easing", easing.GetValue());
+    public static StgOptionProp Easing(Prop easing) => new("Easing", easing.GetValue());
 
     /// <summary>
     /// Forces the direction of a grid staggering effect.
