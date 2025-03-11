@@ -8,7 +8,8 @@ public class Color
     /// <param name="value"></param>
     /// <returns></returns>
     public static Color Hex(string value) =>
-        new(value.StartsWith("#") ? value : $"#{value}");
+        new(value.StartsWith('#') ? value : $"#{value}");
+    
     /// <summary>
     /// Defines the color by RGA values
     /// </summary>
@@ -18,6 +19,7 @@ public class Color
     /// <returns></returns>
     public static Color Rgb(int red, int green, int blue) =>
         new($"rgb({red}, {green}, {blue})");
+    
     /// <summary>
     /// Defines the color by RGBA values
     /// </summary>
@@ -28,6 +30,7 @@ public class Color
     /// <returns></returns>
     public static Color Rgba(int red, int green, int blue, double alpha) =>
         new($"rgb({red}, {green}, {blue}, {alpha})");
+    
     /// <summary>
     /// Defines the color by HSL values
     /// </summary>
@@ -37,6 +40,7 @@ public class Color
     /// <returns></returns>
     public static Color Hsl(int hue, string saturation, string lightness) =>
         new($"hsl({hue}, {saturation}, {lightness})");
+    
     /// <summary>
     /// Defines the color by HSLA values
     /// </summary>
