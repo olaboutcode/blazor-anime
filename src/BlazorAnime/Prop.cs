@@ -482,8 +482,7 @@ public abstract class Prop
     /// <param name="name"></param>
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Create(string name, object[] value) =>
-        new GenProp<object[]>(name, value);
+    public static AProp Create(string name, object[] value) => new GenProp<object[]>(name, value);
     
     /// <summary>
     /// Animate any CSS property.
@@ -495,8 +494,7 @@ public abstract class Prop
     /// <param name="name"></param>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Create(string name, IEnumerable<AProp> props) =>
-        new GenProp<object>(name, props.ToObject());
+    public static AProp Create(string name, IEnumerable<AProp> props) => new GenProp<object>(name, props.ToObject());
     
     /// <summary>
     /// Animate any CSS property.
@@ -509,8 +507,7 @@ public abstract class Prop
     /// <param name="from"></param>
     /// <param name="to"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Create(string name, double from, double to) =>
-        new GenProp<object>(name, new[] { from, to });
+    public static AProp Create(string name, double from, double to) => new GenProp<object>(name, new[] { from, to });
     
     /// <summary>
     /// Animate any CSS property.
@@ -523,8 +520,7 @@ public abstract class Prop
     /// <param name="from"></param>
     /// <param name="to"></param>
     /// <returns>Animation Property</returns>
-    public static AProp Create(string name, string from, string to) =>
-        new GenProp<string[]>(name, [from, to]);
+    public static AProp Create(string name, string from, string to) => new GenProp<string[]>(name, [from, to]);
     
     /// <summary>
     /// Animate any CSS property.
