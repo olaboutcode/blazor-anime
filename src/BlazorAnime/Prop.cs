@@ -632,7 +632,7 @@ public abstract partial class Prop
     /// <param name="name"></param>
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Create(string name, PathParm value) =>new SvgProp(name, value.ParamRef);
+    public static Prop Create(string name, PathParam value) =>new SvgProp(name, value.ParamRef);
 
     /// <summary>
     /// Adds, subtracts or multiplies the original value.
