@@ -4,45 +4,99 @@ namespace BlazorAnime;
 
 public class Timeline(IJSObjectReference timelineJsRef)
 {
-    public async void Add(IEnumerable<Prop> props) =>
+    /// <summary>
+    /// Add Timeline animation props
+    /// </summary>
+    /// <param name="props"></param>
+    public async Task Add(List<Prop> props) =>
         await TimelineJsRef.InvokeVoidAsync("add", props.ToObject());
 
-    public async void Add(IEnumerable<Prop> props, double offSet) =>
+    /// <summary>
+    /// Starts at `offSet` milliseconds, regardless of the animation position in the timeline
+    /// </summary>
+    /// <param name="props"></param>
+    /// <param name="offSet"></param>
+    public async Task Add(List<Prop> props, double offSet) =>
         await TimelineJsRef.InvokeVoidAsync("add", props.ToObject(), offSet);
 
-    public async void Add(IEnumerable<Prop> props, OffSet offSet) =>
+    /// <summary>
+    /// Add Timeline animation props with relative offSet 
+    /// </summary>
+    /// <param name="props"></param>
+    /// <param name="offSet"></param>
+    public async Task Add(List<Prop> props, OffSet offSet) =>
         await TimelineJsRef.InvokeVoidAsync("add", props.ToObject(), offSet.GetValue());
 
-    public async void Play() =>
+    /// <summary>
+    /// Play Timeline animation
+    /// </summary>
+    public async Task Play() =>
         await TimelineJsRef.InvokeVoidAsync("play");
 
-    public async void Pause() =>
+    /// <summary>
+    /// Pause Timeline animation
+    /// </summary>
+    public async Task Pause() =>
         await TimelineJsRef.InvokeVoidAsync("pause");
 
-    public async void Restart() =>
+    /// <summary>
+    /// Restart Timeline animation
+    /// </summary>
+    public async Task Restart() =>
         await TimelineJsRef.InvokeVoidAsync("restart");
 
-    public async void Reverse() =>
+    /// <summary>
+    /// Reverse Timeline animation
+    /// </summary>
+    public async Task Reverse() =>
         await TimelineJsRef.InvokeVoidAsync("reverse");
 
-    public async void Seek(double time) =>
+    /// <summary>
+    /// Jump to specific time on the Timeline
+    /// </summary>
+    /// <param name="time"></param>
+    public async Task Seek(double time) =>
         await TimelineJsRef.InvokeVoidAsync("seek", time);
 
+    /// <summary>
+    /// Get Timeline progress
+    /// </summary>
+    /// <returns>double</returns>
     public async Task<double> GetProgress() =>
         await TimelineJsRef.InvokeAsync<double>("getProgress");
 
+    /// <summary>
+    /// Timeline started animating
+    /// </summary>
+    /// <returns></returns>
     public async Task<bool> Began() =>
         ToBool(await TimelineJsRef.InvokeAsync<int>("hasBegun"));
 
+    /// <summary>
+    /// Timeline completed animating
+    /// </summary>
+    /// <returns></returns>
     public async Task<bool> Completed() =>
         ToBool(await TimelineJsRef.InvokeAsync<int>("hasCompleted"));
 
+    /// <summary>
+    /// Timeline animation change started
+    /// </summary>
+    /// <returns></returns>
     public async Task<bool> ChangeBegan() =>
         ToBool(await TimelineJsRef.InvokeAsync<int>("changeHasBegun"));
 
+    /// <summary>
+    /// Timeline animation change completed
+    /// </summary>
+    /// <returns></returns>
     public async Task<bool> ChangeCompleted() =>
         ToBool(await TimelineJsRef.InvokeAsync<int>("changeHasCompleted"));
 
+    /// <summary>
+    /// Timeline animation loop started
+    /// </summary>
+    /// <returns></returns>
     public async Task<bool> LoopBegan() =>
         ToBool(await TimelineJsRef.InvokeAsync<int>("loopHasBegun"));
 
@@ -58,7 +112,18 @@ public class Timeline(IJSObjectReference timelineJsRef)
 
 public class OffSet
 {
+    /// <summary>
+    /// Start animation before `value` milliseconds before the previous animation ends
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns>OffSet</returns>
     public static OffSet Before(double value) => new(value, "-=");
+    
+    /// <summary>
+    /// Start animation after `value` milliseconds after the previous animation ends
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns>OffSet</returns>
     public static OffSet After(double value) => new(value, "+=");
 
     private OffSet(double value, string offSet)
@@ -68,6 +133,8 @@ public class OffSet
     }
 
     private double Value { get; }
+    
     private string Offset { get; }
+    
     public string GetValue() => $"{Offset}{Value}";
 }

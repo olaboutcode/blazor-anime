@@ -39,7 +39,7 @@ public class Stagger
     /// <param name="value"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static Stagger Create(double value, IEnumerable<StgOptionProp> options) => 
+    public static Stagger Create(double value, List<StgOptionProp> options) => 
         new(value, options);
     
     /// <summary>
@@ -48,7 +48,7 @@ public class Stagger
     /// <param name="value"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static Stagger Create(string value, IEnumerable<StgOptionProp> options) => 
+    public static Stagger Create(string value, List<StgOptionProp> options) => 
         new(value, options);
 
     /// <summary>
@@ -67,18 +67,18 @@ public class Stagger
     /// <param name="endValue"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static Stagger Create(double startValue, double endValue, IEnumerable<StgOptionProp> options) =>
+    public static Stagger Create(double startValue, double endValue, List<StgOptionProp> options) =>
         new(new[] { startValue, endValue }, options);
 
     public object GetValue() => Value;
     
-    public IEnumerable<StgOptionProp> GetOptions() => Options;
+    public List<StgOptionProp> GetOptions() => Options;
 
     private object Value { get; }
     
-    private IEnumerable<StgOptionProp> Options { get; }
+    private List<StgOptionProp> Options { get; }
 
-    private Stagger(object value, IEnumerable<StgOptionProp> options)
+    private Stagger(object value, List<StgOptionProp> options)
     {
         Value = value;
         Options = options;

@@ -54,7 +54,7 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Duration(IEnumerable<Prop> props) => Create("duration", props);
+    public static Prop Duration(List<Prop> props) => Create("duration", props);
 
     /// <summary>
     /// Defines the delay in milliseconds of the animation.
@@ -216,7 +216,7 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Value(IEnumerable<Prop> props) => Create("value", props);
+    public static Prop Value(List<Prop> props) => Create("value", props);
     
     /// <summary>
     /// Define an animation prop value
@@ -256,7 +256,7 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Value(List<IEnumerable<Prop>> props) => Create("value", props);
+    public static Prop Value(List<List<Prop>> props) => Create("value", props);
 
     /// <summary>
     /// Animation keyframes are defined using an Array, within the keyframes property.
@@ -268,7 +268,7 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Keyframes(List<IEnumerable<Prop>> props) => Create("keyframes", props);
+    public static Prop Keyframes(List<List<Prop>> props) => Create("keyframes", props);
 
     /// <summary>
     /// Callback triggered on every frame as soon as the animation starts playing.
@@ -374,7 +374,7 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Points(List<IEnumerable<Prop>> props) => Create("points", props);
+    public static Prop Points(List<List<Prop>> props) => Create("points", props);
 
     /// <summary>
     /// Animate any CSS property.
@@ -546,7 +546,7 @@ public abstract partial class Prop
     /// <param name="name"></param>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Create(string name, List<IEnumerable<Prop>> props) =>
+    public static Prop Create(string name, List<List<Prop>> props) =>
         new GenProp<object>(name, props.Select(p => p.ToObject()));
     
     /// <summary>

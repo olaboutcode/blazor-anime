@@ -9,7 +9,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation</returns>
-    public async Task<Animation> Animation(IEnumerable<Prop> props)
+    public async Task<Animation> Animation(List<Prop> props)
     {
         var animationJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateAnimation,
@@ -23,7 +23,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="defaultProps"></param>
     /// <returns>Timeline</returns>
-    public async Task<Timeline> Timeline(IEnumerable<Prop> defaultProps)
+    public async Task<Timeline> Timeline(List<Prop> defaultProps)
     {
         var timelineJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateTimeline,
@@ -51,7 +51,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="targets"></param>
     /// <param name="props"></param>
-    public async Task Set(string[] targets, IEnumerable<Prop> props)
+    public async Task Set(string[] targets, List<Prop> props)
     {
         await JsRuntime.InvokeVoidAsync(IdentifierSetElementValue, targets, props.ToObject());
     }
@@ -61,7 +61,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="targets"></param>
     /// <param name="props"></param>
-    public async Task Set(object[] targets, IEnumerable<Prop> props)
+    public async Task Set(object[] targets, List<Prop> props)
     {
         await JsRuntime.InvokeVoidAsync(IdentifierSetElementValue, targets, props.ToObject());
     }
@@ -158,13 +158,13 @@ public interface IAnime
 {
     Task<Path> Path(string target);
     
-    Task<Animation> Animation(IEnumerable<Prop> props);
+    Task<Animation> Animation(List<Prop> props);
     
-    Task<Timeline> Timeline(IEnumerable<Prop> props);
+    Task<Timeline> Timeline(List<Prop> props);
 
-    Task Set(string[] targets, IEnumerable<Prop> props);
+    Task Set(string[] targets, List<Prop> props);
 
-    Task Set(object[] targets, IEnumerable<Prop> props);
+    Task Set(object[] targets, List<Prop> props);
 
     Task<string> Get(object target, string propName);
 
