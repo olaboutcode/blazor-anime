@@ -7,66 +7,98 @@ public class Animation(IJSObjectReference animationJsRef)
     /// <summary>
     /// Plays a paused animation, or starts the animation if the autoplay parameters is set to false.
     /// </summary>
-    public async void Play() =>
+    public async Task Play() =>
         await AnimationJsRef.InvokeVoidAsync("play");
 
     /// <summary>
     /// Pauses a running animation.
     /// </summary>
-    public async void Pause() =>
+    public async Task Pause() =>
         await AnimationJsRef.InvokeVoidAsync("pause");
     
     /// <summary>
     /// Progresses a running animation.
     /// </summary>
     /// <param name="progress"></param>
-    public async void Progress(double progress) =>
+    public async Task Progress(double progress) =>
         await AnimationJsRef.InvokeVoidAsync("progress", progress);
 
     /// <summary>
     /// Returns animation current progress.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>double</returns>
     public async Task<double> GetProgress() =>
         await AnimationJsRef.InvokeAsync<double>("getProgress");
 
     public async Task<bool> Began() =>
         ToBool(await AnimationJsRef.InvokeAsync<int>("hasBegun"));
 
+    /// <summary>
+    /// Animation has completed
+    /// </summary>
+    /// <returns>bool</returns>
     public async Task<bool> Completed() =>
         ToBool(await AnimationJsRef.InvokeAsync<int>("hasCompleted"));
 
+    /// <summary>
+    /// Animation started changing
+    /// </summary>
+    /// <returns>bool</returns>
     public async Task<bool> ChangeBegan() =>
         ToBool(await AnimationJsRef.InvokeAsync<int>("changeHasBegun"));
 
+    /// <summary>
+    /// Animation completed changing
+    /// </summary>
+    /// <returns>bool</returns>
     public async Task<bool> ChangeCompleted() =>
         ToBool(await AnimationJsRef.InvokeAsync<int>("changeHasCompleted"));
 
+    /// <summary>
+    /// Animation loop started
+    /// </summary>
+    /// <returns>bool</returns>
     public async Task<bool> LoopBegan() =>
         ToBool(await AnimationJsRef.InvokeAsync<int>("loopHasBegun"));
 
+    /// <summary>
+    /// Animation paused
+    /// </summary>
+    /// <returns>bool</returns>
     public async Task<bool> Paused() =>
         ToBool(await AnimationJsRef.InvokeAsync<int>("isPaused"));
 
+    /// <summary>
+    /// Animation reversed
+    /// </summary>
+    /// <returns>bool</returns>
     public async Task<bool> Reversed() =>
         ToBool(await AnimationJsRef.InvokeAsync<int>("isReversed"));
-
+    
+    /// <summary>
+    /// Animation identification
+    /// </summary>
+    /// <returns>int</returns>
     public async Task<int> Id() =>
         await AnimationJsRef.InvokeAsync<int>("getId");
 
+    /// <summary>
+    /// Animation started changing
+    /// </summary>
+    /// <returns>bool</returns>
     public async Task<int> Loop() =>
         await AnimationJsRef.InvokeAsync<int>("getLoop");
 
     /// <summary>
     /// Restarts an animation from its initial values.
     /// </summary>
-    public async void Restart() =>
+    public async Task Restart() =>
         await AnimationJsRef.InvokeVoidAsync("restart");
 
     /// <summary>
     /// Reverses the direction of an animation.
     /// </summary>
-    public async void Reverse() =>
+    public async Task Reverse() =>
         await AnimationJsRef.InvokeVoidAsync("reverse");
 
     /// <summary>
@@ -77,14 +109,14 @@ public class Animation(IJSObjectReference animationJsRef)
     /// </para>
     /// </summary>
     /// <param name="time"></param>
-    public async void Seek(double time) =>
+    public async Task Seek(double time) =>
         await AnimationJsRef.InvokeVoidAsync("seek", time);
 
     /// <summary>
     /// Removes targets from a running animation or timeline.
     /// </summary>
     /// <param name="targets"></param>
-    public async void Remove(string targets) =>
+    public async Task Remove(string targets) =>
         await AnimationJsRef.InvokeVoidAsync("remove", targets);
 
     /// <summary>
@@ -102,7 +134,7 @@ public class Animation(IJSObjectReference animationJsRef)
     /// </summary>
     /// <param name="targets"></param>
     /// <param name="props"></param>
-    public async void Set(string targets, IEnumerable<Prop> props) =>
+    public async Task Set(string targets, IEnumerable<Prop> props) =>
         await AnimationJsRef.InvokeVoidAsync("set", targets, props.ToObject());
 
     /// <summary>
@@ -110,22 +142,34 @@ public class Animation(IJSObjectReference animationJsRef)
     /// </summary>
     /// <param name="minValue"></param>
     /// <param name="maxValue"></param>
-    public async void Random(double minValue, double maxValue) =>
+    public async Task Random(double minValue, double maxValue) =>
         await AnimationJsRef.InvokeVoidAsync("random", minValue, maxValue);
 
     /// <summary>
     /// Plays an animation using an external requestAnimationFrame loop.
     /// </summary>
     /// <param name="time"></param>
-    public async void Tick(double time) =>
+    public async Task Tick(double time) =>
         await AnimationJsRef.InvokeVoidAsync("tick", time);
 
+    /// <summary>
+    /// Animation duration
+    /// </summary>
+    /// <returns>double</returns>
     public async Task<double> Duration() =>
         await AnimationJsRef.InvokeAsync<double>("getDuration");
 
+    /// <summary>
+    /// Animation delay
+    /// </summary>
+    /// <returns>double</returns>
     public async Task<double> Delay() =>
         await AnimationJsRef.InvokeAsync<double>("getDelay");
 
+    /// <summary>
+    /// Returns string representation of animation direction
+    /// </summary>
+    /// <returns>string</returns>
     public async Task<string> Direction()
     {
         return await AnimationJsRef.InvokeAsync<string>("getDirection");

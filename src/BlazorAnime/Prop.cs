@@ -10,9 +10,9 @@ public abstract partial class Prop
     /// Pseudo elements can't be targeted using JavaScript.
     /// </para>
     /// </summary>
-    /// <param name="el"></param>
+    /// <param name="element"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Targets(string el) => Create("targets", el);
+    public static Prop Targets(string element) => Create("targets", element);
     
     /// <summary>
     /// Can be any CSS selectors
@@ -20,9 +20,9 @@ public abstract partial class Prop
     /// Pseudo elements can't be targeted using JavaScript.
     /// </para>
     /// </summary>
-    /// <param name="els"></param>
+    /// <param name="elements"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Targets(string[] els) => Create("targets", els);
+    public static Prop Targets(string[] elements) => Create("targets", elements);
     
     /// <summary>
     /// Can be any custom objects, DOM Nodes, or NodeList
@@ -30,9 +30,9 @@ public abstract partial class Prop
     /// Custom objects with at least one property containing a numerical value.
     /// </para>
     /// </summary>
-    /// <param name="els"></param>
+    /// <param name="elements"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Targets(object[] els) => Create("targets", els);
+    public static Prop Targets(object[] elements) => Create("targets", elements);
 
     /// <summary>
     /// Defines the duration in milliseconds of the animation.

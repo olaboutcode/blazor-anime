@@ -51,7 +51,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="targets"></param>
     /// <param name="props"></param>
-    public async void Set(string[] targets, IEnumerable<Prop> props)
+    public async Task Set(string[] targets, IEnumerable<Prop> props)
     {
         await JsRuntime.InvokeVoidAsync(IdentifierSetElementValue, targets, props.ToObject());
     }
@@ -61,7 +61,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="targets"></param>
     /// <param name="props"></param>
-    public async void Set(object[] targets, IEnumerable<Prop> props)
+    public async Task Set(object[] targets, IEnumerable<Prop> props)
     {
         await JsRuntime.InvokeVoidAsync(IdentifierSetElementValue, targets, props.ToObject());
     }
@@ -137,7 +137,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// <br/>like a video or an audio track that can continuously plays in the background.
     /// </summary>
     /// <param name="value"></param>
-    public async void SuspendWhenDocumentHidden(bool value)
+    public async Task SuspendWhenDocumentHidden(bool value)
     {
         await JsRuntime.InvokeVoidAsync(IdentifierSuspendWhenDocHidden, value);
     }
@@ -162,17 +162,17 @@ public interface IAnime
     
     Task<Timeline> Timeline(IEnumerable<Prop> props);
 
-    void Set(string[] targets, IEnumerable<Prop> props);
+    Task Set(string[] targets, IEnumerable<Prop> props);
 
-    void Set(object[] targets, IEnumerable<Prop> props);
+    Task Set(object[] targets, IEnumerable<Prop> props);
 
     Task<string> Get(object target, string propName);
 
     Task<double> Get(object target, string propName, string cssUnit);
 
     Task<int> Random(int minValue, int maxValue);
+    
+    Task SuspendWhenDocumentHidden(bool value);
 
     Task<int> RunningLength();
-
-    void SuspendWhenDocumentHidden(bool value);
 }
