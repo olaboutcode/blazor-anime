@@ -16,9 +16,17 @@ public class Animation(IJSObjectReference animationJsRef)
     public async void Pause() =>
         await AnimationJsRef.InvokeVoidAsync("pause");
     
+    /// <summary>
+    /// Progresses a running animation.
+    /// </summary>
+    /// <param name="progress"></param>
     public async void Progress(double progress) =>
         await AnimationJsRef.InvokeVoidAsync("progress", progress);
 
+    /// <summary>
+    /// Returns animation current progress.
+    /// </summary>
+    /// <returns></returns>
     public async Task<double> GetProgress() =>
         await AnimationJsRef.InvokeAsync<double>("getProgress");
 
