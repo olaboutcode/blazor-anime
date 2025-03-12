@@ -207,6 +207,16 @@ public abstract partial class Prop
     /// If the original value has a unit, it will be automatically added to the animated value.
     /// </para>
     /// </summary>
+    /// <param name="values"></param>
+    /// <returns>Animation Property</returns>
+    public static Prop Value(string[] values) => Create("value", values);
+    
+    /// <summary>
+    /// Define an animation prop value
+    /// <para>
+    /// If the original value has a unit, it will be automatically added to the animated value.
+    /// </para>
+    /// </summary>
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static Prop Value(Color value) => Create("value", value);
@@ -369,6 +379,13 @@ public abstract partial class Prop
     /// <returns>Animation Property</returns>
     public static Prop StrokeDashoffset(int value) => Create("strokeDashoffset", value);
 
+    /// <summary>
+    /// Creates transition between two svg shapes.
+    /// </summary>
+    /// <param name="props"></param>
+    /// <returns>Animation Property</returns>
+    public static Prop Points(List<Prop> props) => Create("points", props);
+    
     /// <summary>
     /// Creates transition between two svg shapes.
     /// </summary>

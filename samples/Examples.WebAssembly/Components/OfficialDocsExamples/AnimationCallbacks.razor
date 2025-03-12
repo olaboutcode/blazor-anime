@@ -1,5 +1,98 @@
+@using BlazorAnime;
+
+@implements IAsyncDisposable;
+@inject IAnime Anime;
+
 <h3>AnimationCallbacks</h3>
 
+<h4>Animation Began: @(animationBegun ? "TRUE" : "FALSE")</h4>
+<h4>Animation Complete: @(animationComplete ? "TRUE" : "FALSE")</h4>
+<h4>Animation Loop Begun: @(loopBegun ? "TRUE" : "FALSE")</h4>
+<h4>Animation Loop Complete: @(loopComplete ? "TRUE" : "FALSE")</h4>
+<h4>Animation Change Begun: @(changeBegun ? "TRUE" : "FALSE")</h4>
+<h4>Animation Change Complete: @(changeComplete ? "TRUE" : "FALSE")</h4>
+<h4>Update Count: @updateCount</h4>
+
 @code {
+    private Animation? _animation;
+    private bool animationBegun;
+    private bool animationComplete;
+    private bool loopBegun;
+    private bool loopComplete;
+    private bool changeBegun;
+    private bool changeComplete;
+    private int updateCount;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _animation ??= await Anime.Animation([
+                Prop.Targets(".motion-path-demo .el"),
+                Prop.Create("translateX", 270),
+                Prop.Delay(1000),
+                Prop.Direction.Alternate,
+                Prop.Loop(3),
+                Prop.Easing.EaseInOutCirc,
+                Prop.AutoPlay(true),
+                Prop.Update(this, nameof(OnUpdate), OnUpdate),
+                Prop.Begin(this, nameof(OnBegin), OnBegin),
+                Prop.Complete(this, nameof(OnComplete), OnComplete),
+                Prop.LoopBegin(this, nameof(OnLoopBegin), OnLoopBegin),
+                Prop.LoopComplete(this, nameof(OnLoopComplete), OnLoopComplete),
+                Prop.ChangeBegin(this, nameof(OnChangeBegin), OnChangeBegin),
+                Prop.ChangeComplete(this, nameof(OnChangeComplete), OnChangeComplete),
+            ]);
+        }
+    }
+
+    [JSInvokable]
+    public void OnBegin()
+    {
+        animationBegun = true;
+    }
+
+    [JSInvokable]
+    public void OnUpdate()
+    {
+        updateCount++;
+    }
     
+    [JSInvokable]
+    public void OnComplete()
+    {
+        animationBegun = true;
+    }
+    
+    [JSInvokable]
+    public void OnLoopBegin()
+    {
+        animationBegun = true;
+    }
+    
+    [JSInvokable]
+    public void OnLoopComplete()
+    {
+        animationBegun = true;
+    }
+    
+    [JSInvokable]
+    public void OnChangeBegin()
+    {
+        animationBegun = true;
+    }
+    
+    [JSInvokable]
+    public void OnChangeComplete()
+    {
+        animationBegun = true;
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (_animation is not null)
+        {
+            await _animation.DisposeAsync();
+        }
+    }
 }

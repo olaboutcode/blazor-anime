@@ -1,5 +1,40 @@
+@using BlazorAnime;
+
+@implements IAsyncDisposable;
+@inject IAnime Anime;
+
 <h3>SvgLineDrawing</h3>
 
 @code {
-    
+    private Animation? _animation;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _animation ??= await Anime.Animation([
+                Prop.Targets(".line-drawing-demo .lines path"),
+                Prop.StrokeDashoffset(0),
+                Prop.Easing.EaseInOutSine,
+                Prop.Duration(1500),
+                Prop.Delay(this, nameof(OnDelay), OnDelay),
+                Prop.Direction.Alternate,
+                Prop.Loop(true)
+            ]);
+        }
+    }
+
+    [JSInvokable]
+    public double OnDelay(int index)
+    {
+        return index * 250;
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (_animation is not null)
+        {
+            await _animation.DisposeAsync();
+        }
+    }
 }
