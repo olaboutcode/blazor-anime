@@ -1,5 +1,31 @@
-<h3>TimelineBasics</h3>
+@implements IAsyncDisposable;
+@inject IAnime Anime;
 
 @code {
-    
+    private Timeline? _timeline;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _timeline ??= await Anime.Timeline([
+                Prop.Duration(750),
+                Prop.Easing.EaseOutExpo,
+                Prop.AutoPlay(true)
+            ]);
+
+            _timeline?.Add([
+                Prop.Targets(".offsets-demo .el.square"),
+                Prop.Create("translateX", 250)
+            ]);
+        }
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (_timeline is not null)
+        {
+            await _timeline.DisposeAsync();
+        }
+    }
 }

@@ -1,5 +1,25 @@
-<h3>AnimationEasings</h3>
+@implements IAsyncDisposable;
+@inject IAnime Anime;
 
 @code {
-    
+    private Animation? _animation;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _animation ??= await Anime.Animation([
+                Prop.Duration(750),
+                Prop.AutoPlay(true)
+            ]);
+        }
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (_animation is not null)
+        {
+            await _animation.DisposeAsync();
+        }
+    }
 }
