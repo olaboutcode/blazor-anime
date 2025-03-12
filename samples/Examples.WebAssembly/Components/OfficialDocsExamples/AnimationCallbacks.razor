@@ -1,27 +1,26 @@
-@using BlazorAnime;
-
 @implements IAsyncDisposable;
 @inject IAnime Anime;
 
 <h3>AnimationCallbacks</h3>
 
-<h4>Animation Began: @(animationBegun ? "TRUE" : "FALSE")</h4>
-<h4>Animation Complete: @(animationComplete ? "TRUE" : "FALSE")</h4>
-<h4>Animation Loop Begun: @(loopBegun ? "TRUE" : "FALSE")</h4>
-<h4>Animation Loop Complete: @(loopComplete ? "TRUE" : "FALSE")</h4>
-<h4>Animation Change Begun: @(changeBegun ? "TRUE" : "FALSE")</h4>
-<h4>Animation Change Complete: @(changeComplete ? "TRUE" : "FALSE")</h4>
-<h4>Update Count: @updateCount</h4>
+<h4>Animation Began: @(_animationBegun ? "TRUE" : "FALSE")</h4>
+<h4>Animation Complete: @(_animationComplete ? "TRUE" : "FALSE")</h4>
+<h4>Animation Loop Begun: @(_loopBegun ? "TRUE" : "FALSE")</h4>
+<h4>Animation Loop Complete: @(_loopComplete ? "TRUE" : "FALSE")</h4>
+<h4>Animation Change Begun: @(_changeBegun ? "TRUE" : "FALSE")</h4>
+<h4>Animation Change Complete: @(_changeComplete ? "TRUE" : "FALSE")</h4>
+<h4>Update Count: @_updateCount</h4>
 
 @code {
     private Animation? _animation;
-    private bool animationBegun;
-    private bool animationComplete;
-    private bool loopBegun;
-    private bool loopComplete;
-    private bool changeBegun;
-    private bool changeComplete;
-    private int updateCount;
+    
+    private bool _animationBegun;
+    private bool _animationComplete;
+    private bool _loopBegun;
+    private bool _loopComplete;
+    private bool _changeBegun;
+    private bool _changeComplete;
+    private int _updateCount;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -49,43 +48,43 @@
     [JSInvokable]
     public void OnBegin()
     {
-        animationBegun = true;
+        _animationBegun = true;
     }
 
     [JSInvokable]
     public void OnUpdate()
     {
-        updateCount++;
+        _updateCount++;
     }
     
     [JSInvokable]
     public void OnComplete()
     {
-        animationBegun = true;
+        _animationComplete = true;
     }
     
     [JSInvokable]
     public void OnLoopBegin()
     {
-        animationBegun = true;
+        _loopBegun = true;
     }
     
     [JSInvokable]
     public void OnLoopComplete()
     {
-        animationBegun = true;
+        _loopComplete = true;
     }
     
     [JSInvokable]
     public void OnChangeBegin()
     {
-        animationBegun = true;
+        _changeBegun = true;
     }
     
     [JSInvokable]
     public void OnChangeComplete()
     {
-        animationBegun = true;
+        _changeComplete = true;
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()
