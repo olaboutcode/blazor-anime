@@ -1,13 +1,18 @@
 @implements IAsyncDisposable;
 @inject IAnime Anime;
 
-<h4>Animation Began: @(_animationBegun ? "TRUE" : "FALSE")</h4>
-<h4>Animation Complete: @(_animationComplete ? "TRUE" : "FALSE")</h4>
-<h4>Animation Loop Begun: @(_loopBegun ? "TRUE" : "FALSE")</h4>
-<h4>Animation Loop Complete: @(_loopComplete ? "TRUE" : "FALSE")</h4>
-<h4>Animation Change Begun: @(_changeBegun ? "TRUE" : "FALSE")</h4>
-<h4>Animation Change Complete: @(_changeComplete ? "TRUE" : "FALSE")</h4>
-<h4>Update Count: @_updateCount</h4>
+<div class="demo">
+    <div class="demo-content animation-callbacks-demo">
+        <p>Animation Began: @(_animationBegun ? "TRUE" : "FALSE")</p>
+        <p>Animation Complete: @(_animationComplete ? "TRUE" : "FALSE")</p>
+        <p>Animation Loop Begun: @(_loopBegun ? "TRUE" : "FALSE")</p>
+        <p>Animation Loop Complete: @(_loopComplete ? "TRUE" : "FALSE")</p>
+        <p>Animation Change Begun: @(_changeBegun ? "TRUE" : "FALSE")</p>
+        <p>Animation Change Complete: @(_changeComplete ? "TRUE" : "FALSE")</p>
+        <p>Update Count: @_updateCount</p>
+        <div class="el large square"></div>
+    </div>
+</div>
 
 @code {
     private Animation? _animation;
@@ -25,11 +30,11 @@
         if (firstRender)
         {
             _animation ??= await Anime.Animation([
-                Prop.Targets(".motion-path-demo .el"),
+                Prop.Targets(".animation-callbacks-demo .el"),
                 Prop.Create("translateX", 270),
                 Prop.Delay(1000),
+                Prop.Duration(500),
                 Prop.Direction.Alternate,
-                Prop.Loop(3),
                 Prop.Easing.EaseInOutCirc,
                 Prop.AutoPlay(true),
                 Prop.Update(this, nameof(OnUpdate), OnUpdate),
