@@ -157,7 +157,7 @@
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animation([
+            _animation ??= await Anime.Animation(
                 Prop.Targets(".staggering-grid-demo .el"),
                 Prop.AutoPlay(true),
                 Prop.Loop(3),
@@ -177,7 +177,7 @@
                     StaggerProp.Grid(14, 5),
                     StaggerProp.From.Center
                 ]))
-            ]);
+            );
         }
     }
 

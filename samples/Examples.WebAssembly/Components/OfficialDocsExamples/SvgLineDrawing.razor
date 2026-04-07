@@ -8,7 +8,7 @@
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animation([
+            _animation ??= await Anime.Animation(
                 Prop.Targets(".line-drawing-demo .lines path"),
                 Prop.StrokeDashoffset(0),
                 Prop.Easing.EaseInOutSine,
@@ -16,7 +16,7 @@
                 Prop.Delay(this, nameof(OnDelay), OnDelay),
                 Prop.Direction.Alternate,
                 Prop.Loop(true)
-            ]);
+            );
         }
     }
 

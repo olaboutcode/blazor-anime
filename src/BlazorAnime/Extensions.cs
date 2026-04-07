@@ -19,7 +19,7 @@ internal static class InternalExtensions
 {
     internal static System.Dynamic.ExpandoObject ToObject(this IEnumerable<Prop> props)
     {
-        Dictionary<string, Prop> properties = new();
+        Dictionary<string, Prop> properties = [];
         foreach (var prop in props)
         {
             properties[prop.GetName()] = prop;
@@ -34,7 +34,7 @@ internal static class InternalExtensions
     
     internal static System.Dynamic.ExpandoObject ToObject(this IEnumerable<StgOptionProp> props)
     {
-        Dictionary<string, StgOptionProp> properties = new();
+        Dictionary<string, StgOptionProp> properties = [];
         foreach (var prop in props)
         {
             properties[prop.GetName()] = prop;

@@ -24,15 +24,15 @@
         {
             var path = await Anime.Path(".somePath");
             
-            _animation ??= await Anime.Animation([
+            _animation ??= await Anime.Animation(
                 Prop.Targets(".motion-path-demo .el"),
                 Prop.Create("translateX", await path.Get("x")),
                 Prop.Create("translateY", await path.Get("y")),
                 Prop.Create("rotate", await path.Get("angle")),
                 Prop.Easing.Linear,
                 Prop.Duration(2000),
-                Prop.Loop(true),
-            ]);
+                Prop.Loop(true)
+            );
         }
     }
 

@@ -8,16 +8,16 @@
     {
         if (firstRender)
         {
-            _timeline ??= await Anime.Timeline([
+            _timeline ??= await Anime.Timeline(
                 Prop.Duration(750),
                 Prop.Easing.EaseOutExpo,
                 Prop.AutoPlay(true)
-            ]);
+            );
 
-            _timeline?.Add([
+            _timeline?.Add(
                 Prop.Targets(".offsets-demo .el.square"),
                 Prop.Create("translateX", 250)
-            ]);
+            );
         }
     }
 

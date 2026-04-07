@@ -8,7 +8,7 @@
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animation([
+            _animation ??= await Anime.Animation(
                 Prop.Targets(".morphing-demo .polymorph"),
                 Prop.Points([
                     Prop.Value([
@@ -22,7 +22,7 @@
                 Prop.Easing.EaseOutQuad,
                 Prop.Duration(2000),
                 Prop.Loop(true)
-            ]);
+            );
         }
     }
 

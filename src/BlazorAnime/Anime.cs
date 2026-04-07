@@ -9,7 +9,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation</returns>
-    public async Task<Animation> Animation(List<Prop> props)
+    public async Task<Animation> Animation(params Prop[] props)
     {
         var animationJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateAnimation,
@@ -23,7 +23,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="defaultProps"></param>
     /// <returns>Timeline</returns>
-    public async Task<Timeline> Timeline(List<Prop> defaultProps)
+    public async Task<Timeline> Timeline(params Prop[] defaultProps)
     {
         var timelineJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateTimeline,
@@ -158,9 +158,9 @@ public interface IAnime
 {
     Task<Path> Path(string target);
     
-    Task<Animation> Animation(List<Prop> props);
+    Task<Animation> Animation(params Prop[] props);
     
-    Task<Timeline> Timeline(List<Prop> props);
+    Task<Timeline> Timeline(params Prop[] props);
 
     Task Set(string[] targets, List<Prop> props);
 

@@ -8,7 +8,7 @@ public class Timeline(IJSObjectReference timelineJsRef)
     /// Add Timeline animation props
     /// </summary>
     /// <param name="props"></param>
-    public async Task Add(List<Prop> props) =>
+    public async Task Add(params Prop[] props) =>
         await TimelineJsRef.InvokeVoidAsync("add", props.ToObject());
 
     /// <summary>
@@ -16,7 +16,7 @@ public class Timeline(IJSObjectReference timelineJsRef)
     /// </summary>
     /// <param name="props"></param>
     /// <param name="offSet"></param>
-    public async Task Add(List<Prop> props, double offSet) =>
+    public async Task Add(Prop[] props, double offSet) =>
         await TimelineJsRef.InvokeVoidAsync("add", props.ToObject(), offSet);
 
     /// <summary>
@@ -24,7 +24,7 @@ public class Timeline(IJSObjectReference timelineJsRef)
     /// </summary>
     /// <param name="props"></param>
     /// <param name="offSet"></param>
-    public async Task Add(List<Prop> props, OffSet offSet) =>
+    public async Task Add(Prop[] props, OffSet offSet) =>
         await TimelineJsRef.InvokeVoidAsync("add", props.ToObject(), offSet.GetValue());
 
     /// <summary>

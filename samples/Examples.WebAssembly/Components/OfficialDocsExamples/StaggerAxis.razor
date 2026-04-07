@@ -159,7 +159,7 @@
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animation([
+            _animation ??= await Anime.Animation(
                 Prop.Targets(".staggering-axis-grid-demo .el"),
                 Prop.AutoPlay(true),
                 Prop.Loop(3),
@@ -183,7 +183,7 @@
                     StaggerProp.From.Center
                 ])),
                 Prop.Easing.EaseInOutQuad
-            ]);
+            );
         }
     } 
     
