@@ -1,5 +1,6 @@
 namespace BlazorAnime;
 
+using System.Runtime.CompilerServices;
 using Microsoft.JSInterop;
 
 public abstract partial class Prop
@@ -73,6 +74,15 @@ public abstract partial class Prop
     public static Prop Delay(object caller, string callbackName) =>
         Create("delay", caller, callbackName);
     
+    /// <summary>
+    /// Defines the delay in milliseconds of the animation with a custom callback
+    /// </summary>
+    /// <param name="caller"></param>
+    /// <param name="callback"></param>
+    /// <returns>Animation Property</returns>
+    public static Prop Delay(object caller, Delegate callback) =>
+        Create("delay", caller, callback);
+
     /// <summary>
     /// Defines the staggered delay in milliseconds of the animation
     /// </summary>
@@ -248,6 +258,15 @@ public abstract partial class Prop
     /// <returns>Animation Property</returns>
     public static Prop Update(object caller, string callbackName) =>
         Create("update", caller, callbackName);
+
+    /// <summary>
+    /// Callback triggered on every frame as soon as the animation starts playing.
+    /// </summary>
+    /// <param name="caller"></param>
+    /// <param name="callback"></param>
+    /// <returns>Animation Property</returns>
+    public static Prop Update(object caller, Delegate callback) =>
+        Create("update", caller, callback);
 
     /// <summary>
     /// Callback is triggered once, when the animation starts playing.
@@ -551,6 +570,37 @@ public abstract partial class Prop
         var paramsCount = callerType.GetMethod(callbackName)?.GetParameters().Length
             ?? throw new ArgumentException($"Method {callbackName} not found in {callerType.FullName}");
         return new CallbackProp(propName, callbackName, paramsCount, DotNetObjectReference.Create(caller));
+    }
+
+    /// <summary>
+    /// Animate any CSS property with a custom callback
+    /// <para>
+    /// Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
+    /// <br/>Prioritize opacity and CSS transforms as much as possible.
+    /// </para>
+    /// </summary>
+    /// <param name="propName"></param>
+    /// <param name="caller"></param>
+    /// <param name="callback"></param>
+    /// <returns>Animation Property</returns>
+    /// Throws ArgumentException if the method is not found in the caller object
+    public static Prop Create(string propName, object caller, Delegate callback)
+    {
+        ArgumentNullException.ThrowIfNull(callback);
+        bool isLambda = callback.Method.IsDefined(typeof(CompilerGeneratedAttribute), false);
+        if (isLambda)
+        {
+            throw new ArgumentException(
+                "Lambda expressions are not supported as callbacks. Please use a named method.");
+        }
+
+        var callerType = caller.GetType();
+        var paramsCount = callerType.GetMethod(callback.Method.Name)?.GetParameters().Length
+            ?? throw new ArgumentException($"Method {callback.Method.Name} not found in {callerType.FullName}");
+        return new CallbackProp(
+            propName,
+            callback.Method.Name,
+            paramsCount, DotNetObjectReference.Create(caller));
     }
     
     /// <summary>

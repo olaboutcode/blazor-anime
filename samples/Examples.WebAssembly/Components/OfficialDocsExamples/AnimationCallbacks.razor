@@ -37,7 +37,7 @@
                 Prop.Direction.Alternate,
                 Prop.Easing.EaseInOutCirc,
                 Prop.AutoPlay(true),
-                Prop.Update(this, nameof(OnUpdate)),
+                Prop.Update(this, OnUpdate),
                 Prop.Begin(this, nameof(OnBegin)),
                 Prop.Complete(this, nameof(OnComplete)),
                 Prop.LoopBegin(this, nameof(OnLoopBegin)),
