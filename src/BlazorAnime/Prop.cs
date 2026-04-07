@@ -80,8 +80,8 @@ public abstract partial class Prop
     /// <param name="caller"></param>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Delay(object caller, Delegate callback) =>
-        Create("delay", caller, callback);
+    public static Prop Delay(Delegate callback) =>
+        Create("delay", callback);
 
     /// <summary>
     /// Defines the staggered delay in milliseconds of the animation
@@ -265,8 +265,8 @@ public abstract partial class Prop
     /// <param name="caller"></param>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Update(object caller, Delegate callback) =>
-        Create("update", caller, callback);
+    public static Prop Update(Delegate callback) =>
+        Create("update", callback);
 
     /// <summary>
     /// Callback is triggered once, when the animation starts playing.
@@ -584,7 +584,7 @@ public abstract partial class Prop
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     /// Throws ArgumentException if the method is not found in the caller object
-    public static Prop Create(string propName, object caller, Delegate callback)
+    public static Prop Create(string propName, Delegate callback)
     {
         ArgumentNullException.ThrowIfNull(callback);
         bool isLambda = callback.Method.IsDefined(typeof(CompilerGeneratedAttribute), false);
@@ -594,13 +594,22 @@ public abstract partial class Prop
                 "Lambda expressions are not supported as callbacks. Please use a named method.");
         }
 
-        var callerType = caller.GetType();
+        if (callback.GetInvocationList().Length > 1)
+        {
+            throw new ArgumentException(
+                "Multicast delegates are not supported as callbacks. Please use a single method.");
+        }
+
+        object target = callback.Target
+            ?? throw new ArgumentException("Callback target cannot be null.");
+
+        var callerType = target.GetType();
         var paramsCount = callerType.GetMethod(callback.Method.Name)?.GetParameters().Length
             ?? throw new ArgumentException($"Method {callback.Method.Name} not found in {callerType.FullName}");
         return new CallbackProp(
             propName,
             callback.Method.Name,
-            paramsCount, DotNetObjectReference.Create(caller));
+            paramsCount, DotNetObjectReference.Create(target));
     }
     
     /// <summary>
