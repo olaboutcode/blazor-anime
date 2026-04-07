@@ -67,21 +67,9 @@ public abstract partial class Prop
     /// <summary>
     /// Defines the delay in milliseconds of the animation with a custom callback
     /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Delay(object caller, string callbackName) =>
-        Create("delay", caller, callbackName);
-    
-    /// <summary>
-    /// Defines the delay in milliseconds of the animation with a custom callback
-    /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callback"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop Delay(Delegate callback) =>
-        Create("delay", callback);
+    public static Prop Delay(Delegate callback) => Create("delay", callback);
 
     /// <summary>
     /// Defines the staggered delay in milliseconds of the animation
@@ -101,12 +89,9 @@ public abstract partial class Prop
     /// <summary>
     /// Adds some extra time in milliseconds at the end of the animation with a custom callback
     /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop EndDelay(object caller, string callbackName) =>
-        Create("delay", caller, callbackName);
+    public static Prop EndDelay(Delegate callback) => Create("delay", callback);
     
     /// <summary>
     /// Adds staggered extra time in milliseconds at the end of the animation
@@ -253,16 +238,6 @@ public abstract partial class Prop
     /// <summary>
     /// Callback triggered on every frame as soon as the animation starts playing.
     /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop Update(object caller, string callbackName) =>
-        Create("update", caller, callbackName);
-
-    /// <summary>
-    /// Callback triggered on every frame as soon as the animation starts playing.
-    /// </summary>
-    /// <param name="caller"></param>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     public static Prop Update(Delegate callback) =>
@@ -274,11 +249,10 @@ public abstract partial class Prop
     /// Begin() callbacks are called if the animation's duration is 0.
     /// </para>
     /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
+    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Begin(object caller, string callbackName) =>
-        Create("begin", caller, callbackName);
+    public static Prop Begin(Delegate callback) =>
+        Create("begin", callback);
     
     /// <summary>
     /// Callback is triggered once, when the animation is completed.
@@ -286,40 +260,36 @@ public abstract partial class Prop
     /// Complete() callbacks are called if the animation's duration is 0.
     /// </para>
     /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
+    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Complete(object caller, string callbackName) =>
-        Create("complete", caller, callbackName);
+    public static Prop Complete(Delegate callback) =>
+        Create("complete", callback);
 
     
 
     /// <summary>
     /// LoopBegin() callback is triggered once everytime a loop begin.
     /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
+    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop LoopBegin(object caller, string callbackName) =>
-        Create("loopBegin", caller, callbackName);
+    public static Prop LoopBegin(Delegate callback) =>
+        Create("loopBegin", callback);
     
     /// <summary>
     /// LoopComplete() callback is triggered once everytime a loop is completed.
     /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
+    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop LoopComplete(object caller, string callbackName) =>
-        Create("loopComplete", caller, callbackName);
+    public static Prop LoopComplete(Delegate callback) =>
+        Create("loopComplete", callback);
 
     /// <summary>
     /// Callback triggered on every frames in between the animation's delay and endDelay.
     /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
+    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Change(object caller, string callbackName) =>
-        Create("change", caller, callbackName);
+    public static Prop Change(Delegate callback) =>
+        Create("change", callback);
     
     /// <summary>
     /// changeBegin() callback is triggered everytime the animation starts changing.
@@ -327,11 +297,10 @@ public abstract partial class Prop
     /// Animation direction will affect the order in which changeBegin() is triggered.
     /// </para>
     /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
+    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop ChangeBegin(object caller, string callbackName) =>
-        Create("changeBegin", caller, callbackName);
+    public static Prop ChangeBegin(Delegate callback) =>
+        Create("changeBegin", callback);
     
     /// <summary>
     /// changeComplete() callback is triggered everytime the animation stops changing.
@@ -339,11 +308,10 @@ public abstract partial class Prop
     /// Animation direction will affect the order in which changeComplete() is triggered.
     /// </para>
     /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
+    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop ChangeComplete(object caller, string callbackName) =>
-        Create("changeComplete", caller, callbackName);
+    public static Prop ChangeComplete(Delegate callback) =>
+        Create("changeComplete", callback);
 
     /// <summary>
     /// Creates path drawing animation using the 'stroke-dashoffset' property.
@@ -560,27 +528,6 @@ public abstract partial class Prop
     /// </para>
     /// </summary>
     /// <param name="propName"></param>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
-    /// <returns>Animation Property</returns>
-    /// Throws ArgumentException if the method is not found in the caller object
-    public static Prop Create(string propName, object caller, string callbackName)
-    {
-        var callerType = caller.GetType();
-        var paramsCount = callerType.GetMethod(callbackName)?.GetParameters().Length
-            ?? throw new ArgumentException($"Method {callbackName} not found in {callerType.FullName}");
-        return new CallbackProp(propName, callbackName, paramsCount, DotNetObjectReference.Create(caller));
-    }
-
-    /// <summary>
-    /// Animate any CSS property with a custom callback
-    /// <para>
-    /// Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
-    /// <br/>Prioritize opacity and CSS transforms as much as possible.
-    /// </para>
-    /// </summary>
-    /// <param name="propName"></param>
-    /// <param name="caller"></param>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     /// Throws ArgumentException if the method is not found in the caller object
@@ -606,10 +553,12 @@ public abstract partial class Prop
         var callerType = target.GetType();
         var paramsCount = callerType.GetMethod(callback.Method.Name)?.GetParameters().Length
             ?? throw new ArgumentException($"Method {callback.Method.Name} not found in {callerType.FullName}");
+        
         return new CallbackProp(
             propName,
             callback.Method.Name,
-            paramsCount, DotNetObjectReference.Create(target));
+            paramsCount,
+            DotNetObjectReference.Create(target));
     }
     
     /// <summary>

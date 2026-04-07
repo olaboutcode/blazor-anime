@@ -38,12 +38,12 @@
                 Prop.Easing.EaseInOutCirc,
                 Prop.AutoPlay(true),
                 Prop.Update(OnUpdate),
-                Prop.Begin(this, nameof(OnBegin)),
-                Prop.Complete(this, nameof(OnComplete)),
-                Prop.LoopBegin(this, nameof(OnLoopBegin)),
-                Prop.LoopComplete(this, nameof(OnLoopComplete)),
-                Prop.ChangeBegin(this, nameof(OnChangeBegin)),
-                Prop.ChangeComplete(this, nameof(OnChangeComplete))
+                Prop.Begin(OnBegin),
+                Prop.Complete(OnComplete),
+                Prop.LoopBegin(OnLoopBegin),
+                Prop.LoopComplete(OnLoopComplete),
+                Prop.ChangeBegin(OnChangeBegin),
+                Prop.ChangeComplete(OnChangeComplete)
             );
         }
     }
