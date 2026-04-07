@@ -70,28 +70,8 @@ public abstract partial class Prop
     /// <param name="callbackName"></param>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Delay(object caller, string callbackName, Func<double> callback) =>
-        Create("delay", caller, callbackName, callback);
-    
-    /// <summary>
-    /// Defines the delay in milliseconds of the animation with a custom callback
-    /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop Delay(object caller, string callbackName, Func<int, double> callback) =>
-        Create("delay", caller, callbackName, callback);
-    
-    /// <summary>
-    /// Defines the delay in milliseconds of the animation with a custom callback
-    /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop Delay(object caller, string callbackName, Func<int, int, double> callback) =>
-        Create("delay", caller, callbackName, callback);
+    public static Prop Delay(object caller, string callbackName) =>
+        Create("delay", caller, callbackName);
     
     /// <summary>
     /// Defines the staggered delay in milliseconds of the animation
@@ -115,28 +95,8 @@ public abstract partial class Prop
     /// <param name="callbackName"></param>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop EndDelay(object caller, string callbackName, Func<double> callback) =>
-        Create("delay", caller, callbackName, callback);
-    
-    /// <summary>
-    /// Adds some extra time in milliseconds at the end of the animation with a custom callback
-    /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop EndDelay(object caller, string callbackName, Func<int, double> callback) =>
-        Create("delay", caller, callbackName, callback);
-    
-    /// <summary>
-    /// Adds some extra time in milliseconds at the end of the animation with a custom callback
-    /// </summary>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop EndDelay(object caller, string callbackName, Func<int, int, double> callback) =>
-        Create("delay", caller, callbackName, callback);
+    public static Prop EndDelay(object caller, string callbackName) =>
+        Create("delay", caller, callbackName);
     
     /// <summary>
     /// Adds staggered extra time in milliseconds at the end of the animation
@@ -285,10 +245,9 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="caller"></param>
     /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Update(object caller, string callbackName, Action callback) =>
-        Create("update", caller, callbackName, callback);
+    public static Prop Update(object caller, string callbackName) =>
+        Create("update", caller, callbackName);
 
     /// <summary>
     /// Callback is triggered once, when the animation starts playing.
@@ -298,10 +257,9 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="caller"></param>
     /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Begin(object caller, string callbackName, Action callback) =>
-        Create("begin", caller, callbackName, callback);
+    public static Prop Begin(object caller, string callbackName) =>
+        Create("begin", caller, callbackName);
     
     /// <summary>
     /// Callback is triggered once, when the animation is completed.
@@ -311,40 +269,38 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="caller"></param>
     /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Complete(object caller, string callbackName, Action callback) =>
-        Create("complete", caller, callbackName, callback);
+    public static Prop Complete(object caller, string callbackName) =>
+        Create("complete", caller, callbackName);
+
+    
 
     /// <summary>
     /// LoopBegin() callback is triggered once everytime a loop begin.
     /// </summary>
     /// <param name="caller"></param>
     /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop LoopBegin(object caller, string callbackName, Action callback) =>
-        Create("loopBegin", caller, callbackName, callback);
+    public static Prop LoopBegin(object caller, string callbackName) =>
+        Create("loopBegin", caller, callbackName);
     
     /// <summary>
     /// LoopComplete() callback is triggered once everytime a loop is completed.
     /// </summary>
     /// <param name="caller"></param>
     /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop LoopComplete(object caller, string callbackName, Action callback) =>
-        Create("loopComplete", caller, callbackName, callback);
+    public static Prop LoopComplete(object caller, string callbackName) =>
+        Create("loopComplete", caller, callbackName);
 
     /// <summary>
     /// Callback triggered on every frames in between the animation's delay and endDelay.
     /// </summary>
     /// <param name="caller"></param>
     /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Change(object caller, string callbackName, Action callback) =>
-        Create("change", caller, callbackName, callback);
+    public static Prop Change(object caller, string callbackName) =>
+        Create("change", caller, callbackName);
     
     /// <summary>
     /// changeBegin() callback is triggered everytime the animation starts changing.
@@ -354,10 +310,9 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="caller"></param>
     /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop ChangeBegin(object caller, string callbackName, Action callback) =>
-        Create("changeBegin", caller, callbackName, callback);
+    public static Prop ChangeBegin(object caller, string callbackName) =>
+        Create("changeBegin", caller, callbackName);
     
     /// <summary>
     /// changeComplete() callback is triggered everytime the animation stops changing.
@@ -367,10 +322,9 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="caller"></param>
     /// <param name="callbackName"></param>
-    /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop ChangeComplete(object caller, string callbackName, Action callback) =>
-        Create("changeComplete", caller, callbackName, callback);
+    public static Prop ChangeComplete(object caller, string callbackName) =>
+        Create("changeComplete", caller, callbackName);
 
     /// <summary>
     /// Creates path drawing animation using the 'stroke-dashoffset' property.
@@ -578,7 +532,7 @@ public abstract partial class Prop
     /// <returns>Animation Property</returns>
     public static Prop Create(string name, Stagger stagger) =>
         new StgProp(name, stagger.GetValue(), stagger.GetOptions().ToObject());
-    
+
     /// <summary>
     /// Animate any CSS property with a custom callback
     /// <para>
@@ -589,55 +543,15 @@ public abstract partial class Prop
     /// <param name="propName"></param>
     /// <param name="caller"></param>
     /// <param name="callbackName"></param>
-    /// <param name="_"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Create(string propName, object caller, string callbackName, Action _) =>
-        new CallbackProp(propName, callbackName, 0, DotNetObjectReference.Create(caller));
-    
-    /// <summary>
-    /// Animate any CSS property with a custom callback
-    /// <para>
-    /// Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
-    /// <br/>Prioritize opacity and CSS transforms as much as possible.
-    /// </para>
-    /// </summary>
-    /// <param name="propName"></param>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
-    /// <param name="_"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop Create(string propName, object caller, string callbackName, Func<double> _) =>
-        new CallbackProp(propName, callbackName, 2, DotNetObjectReference.Create(caller));
-    
-    /// <summary>
-    /// Animate any CSS property with a custom callback
-    /// <para>
-    /// Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
-    /// <br/>Prioritize opacity and CSS transforms as much as possible.
-    /// </para>
-    /// </summary>
-    /// <param name="propName"></param>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
-    /// <param name="_"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop Create(string propName, object caller, string callbackName, Func<int, double> _) =>
-        new CallbackProp(propName, callbackName, 2, DotNetObjectReference.Create(caller));
-    
-    /// <summary>
-    /// Animate any CSS property with a custom callback
-    /// <para>
-    /// Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
-    /// <br/>Prioritize opacity and CSS transforms as much as possible.
-    /// </para>
-    /// </summary>
-    /// <param name="propName"></param>
-    /// <param name="caller"></param>
-    /// <param name="callbackName"></param>
-    /// <param name="_"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop Create(string propName, object caller, string callbackName, Func<int, int, double> _) =>
-        new CallbackProp(propName, callbackName, 3, DotNetObjectReference.Create(caller));
+    /// Throws ArgumentException if the method is not found in the caller object
+    public static Prop Create(string propName, object caller, string callbackName)
+    {
+        var callerType = caller.GetType();
+        var paramsCount = callerType.GetMethod(callbackName)?.GetParameters().Length
+            ?? throw new ArgumentException($"Method {callbackName} not found in {callerType.FullName}");
+        return new CallbackProp(propName, callbackName, paramsCount, DotNetObjectReference.Create(caller));
+    }
     
     /// <summary>
     /// Animate any CSS property.

@@ -37,13 +37,13 @@
                 Prop.Direction.Alternate,
                 Prop.Easing.EaseInOutCirc,
                 Prop.AutoPlay(true),
-                Prop.Update(this, nameof(OnUpdate), OnUpdate),
-                Prop.Begin(this, nameof(OnBegin), OnBegin),
-                Prop.Complete(this, nameof(OnComplete), OnComplete),
-                Prop.LoopBegin(this, nameof(OnLoopBegin), OnLoopBegin),
-                Prop.LoopComplete(this, nameof(OnLoopComplete), OnLoopComplete),
-                Prop.ChangeBegin(this, nameof(OnChangeBegin), OnChangeBegin),
-                Prop.ChangeComplete(this, nameof(OnChangeComplete), OnChangeComplete)
+                Prop.Update(this, nameof(OnUpdate)),
+                Prop.Begin(this, nameof(OnBegin)),
+                Prop.Complete(this, nameof(OnComplete)),
+                Prop.LoopBegin(this, nameof(OnLoopBegin)),
+                Prop.LoopComplete(this, nameof(OnLoopComplete)),
+                Prop.ChangeBegin(this, nameof(OnChangeBegin)),
+                Prop.ChangeComplete(this, nameof(OnChangeComplete))
             );
         }
     }
@@ -58,6 +58,7 @@
     public void OnUpdate()
     {
         _updateCount++;
+        StateHasChanged();
     }
     
     [JSInvokable]
