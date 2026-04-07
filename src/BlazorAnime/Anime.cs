@@ -9,7 +9,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation</returns>
-    public async Task<Animation> Animation(params Prop[] props)
+    public async Task<Animation> Animate(params Prop[] props)
     {
         var animationJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateAnimation,
@@ -158,7 +158,7 @@ public interface IAnime
 {
     Task<Path> Path(string target);
     
-    Task<Animation> Animation(params Prop[] props);
+    Task<Animation> Animate(params Prop[] props);
     
     Task<Timeline> Timeline(params Prop[] props);
 

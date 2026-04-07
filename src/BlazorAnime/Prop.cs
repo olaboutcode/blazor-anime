@@ -1,6 +1,7 @@
 namespace BlazorAnime;
 
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 public abstract partial class Prop
@@ -551,12 +552,13 @@ public abstract partial class Prop
             ?? throw new ArgumentException("Callback target cannot be null.");
 
         var callerType = target.GetType();
-        var paramsCount = callerType.GetMethod(callback.Method.Name)?.GetParameters().Length
-            ?? throw new ArgumentException($"Method {callback.Method.Name} not found in {callerType.FullName}");
+        var methodName = callback.Method.Name;
+        var paramsCount = callerType.GetMethod(methodName)?.GetParameters().Length
+            ?? throw new ArgumentException($"Method {methodName} not found in {callerType.FullName}");
         
         return new CallbackProp(
             propName,
-            callback.Method.Name,
+            methodName,
             paramsCount,
             DotNetObjectReference.Create(target));
     }

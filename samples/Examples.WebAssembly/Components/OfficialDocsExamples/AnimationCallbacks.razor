@@ -29,7 +29,7 @@
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animation(
+            _animation ??= await Anime.Animate(
                 Prop.Targets(".animation-callbacks-demo .el"),
                 Prop.Create("translateX", 270),
                 Prop.Delay(1000),
