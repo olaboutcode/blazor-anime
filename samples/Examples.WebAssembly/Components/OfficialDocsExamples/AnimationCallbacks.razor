@@ -13,6 +13,7 @@
         <p>Update Count: @_updateCount</p>
         <p>Progress: @_progress</p>
         <div class="el large square"></div>
+        <div class="el large square" style="background-color: red;"></div>
         <button
             style="background-color: lightblue; color: black;"
             @onclick="OnPlayButtonClicked">Play</button>
@@ -44,7 +45,7 @@
                 "test",
                 Prop.Targets(".animation-callbacks-demo .el"),
                 Prop.Create("translateX", 270),
-                Prop.Delay(1000),
+                Prop.Delay(OnDelay),
                 Prop.Duration(500),
                 Prop.Direction.Alternate,
                 Prop.Easing.EaseInOutCirc,
@@ -58,6 +59,12 @@
                 Prop.ChangeComplete(OnChangeComplete)
             );
         }
+    }
+
+    [JSInvokable]
+    public double OnDelay(int index, int targetsCount)
+    {
+        return index * 100;
     }
 
     [JSInvokable]
