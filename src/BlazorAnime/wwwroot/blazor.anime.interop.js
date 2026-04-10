@@ -58,18 +58,24 @@ let transformProps = (props) => {
                 const dotNetRef = prop.value.value.dotNetRef;
                 const callbackName = prop.value.value.callback;
                 const paramCount = prop.value.paramCount;
+
                 if (callbackName !== '' && dotNetRef !== undefined) {
                     switch (paramCount) {
                         case 2:
-                            finalProps[name] = (_, index) =>
-                                dotNetRef.invokeMethod(callbackName, index);
+                            finalProps[name] = (state, index) => {
+                                dotNetRef.invokeMethod(callbackName, state, index);
+                            }
                             break;
                         case 3:
-                            finalProps[name] = (_, index, targetsLength) =>
-                                dotNetRef.invokeMethod(callbackName, index, targetsLength);
+                            finalProps[name] = (state, index, targetsLength) => {
+                                dotNetRef.invokeMethod(callbackName, state, index, targetsLength);
+                            }
                             break;
                         default:
-                            finalProps[name] = () => dotNetRef.invokeMethod(callbackName)
+                            finalProps[name] = (state) => {
+                                console.log(`state in callback: ${JSON.stringify(state)}`);
+                                dotNetRef.invokeMethod(callbackName, state)
+                            }
                     }
                 }
             }

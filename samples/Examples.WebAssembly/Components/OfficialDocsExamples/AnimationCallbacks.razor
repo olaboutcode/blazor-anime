@@ -10,6 +10,7 @@
         <p>Animation Change Begun: @(_changeBegun ? "TRUE" : "FALSE")</p>
         <p>Animation Change Complete: @(_changeComplete ? "TRUE" : "FALSE")</p>
         <p>Update Count: @_updateCount</p>
+        <p>Progress: @_progress</p>
         <div class="el large square"></div>
     </div>
 </div>
@@ -24,6 +25,7 @@
     private bool _changeBegun;
     private bool _changeComplete;
     private int _updateCount;
+    private float _progress;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -49,44 +51,45 @@
     }
 
     [JSInvokable]
-    public void OnBegin()
+    public void OnBegin(AnimationState state)
     {
         _animationBegun = true;
     }
 
     [JSInvokable]
-    public void OnUpdate()
+    public void OnUpdate(AnimationState state)
     {
         _updateCount++;
-        StateHasChanged();
+        _progress = state.Progress;
+        //StateHasChanged();
     }
     
     [JSInvokable]
-    public void OnComplete()
+    public void OnComplete(AnimationState state)
     {
         _animationComplete = true;
     }
     
     [JSInvokable]
-    public void OnLoopBegin()
+    public void OnLoopBegin(AnimationState state)
     {
         _loopBegun = true;
     }
     
     [JSInvokable]
-    public void OnLoopComplete()
+    public void OnLoopComplete(AnimationState state)
     {
         _loopComplete = true;
     }
     
     [JSInvokable]
-    public void OnChangeBegin()
+    public void OnChangeBegin(AnimationState state)
     {
         _changeBegun = true;
     }
     
     [JSInvokable]
-    public void OnChangeComplete()
+    public void OnChangeComplete(AnimationState state)
     {
         _changeComplete = true;
     }

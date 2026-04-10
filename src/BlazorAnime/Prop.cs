@@ -241,8 +241,7 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Update(Delegate callback) =>
-        Create("update", callback);
+    public static Prop Update(Action<AnimationState> callback) => Create("update", callback);
 
     /// <summary>
     /// Callback is triggered once, when the animation starts playing.
@@ -252,8 +251,7 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Begin(Delegate callback) =>
-        Create("begin", callback);
+    public static Prop Begin(Action<AnimationState> callback) => Create("begin", callback);
     
     /// <summary>
     /// Callback is triggered once, when the animation is completed.
@@ -263,34 +261,28 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Complete(Delegate callback) =>
-        Create("complete", callback);
-
-    
+    public static Prop Complete(Action<AnimationState> callback) => Create("complete", callback);
 
     /// <summary>
     /// LoopBegin() callback is triggered once everytime a loop begin.
     /// </summary>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop LoopBegin(Delegate callback) =>
-        Create("loopBegin", callback);
+    public static Prop LoopBegin(Action<AnimationState> callback) => Create("loopBegin", callback);
     
     /// <summary>
     /// LoopComplete() callback is triggered once everytime a loop is completed.
     /// </summary>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop LoopComplete(Delegate callback) =>
-        Create("loopComplete", callback);
+    public static Prop LoopComplete(Action<AnimationState> callback) => Create("loopComplete", callback);
 
     /// <summary>
     /// Callback triggered on every frames in between the animation's delay and endDelay.
     /// </summary>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Change(Delegate callback) =>
-        Create("change", callback);
+    public static Prop Change(Action<AnimationState> callback) => Create("change", callback);
     
     /// <summary>
     /// changeBegin() callback is triggered everytime the animation starts changing.
@@ -300,8 +292,7 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop ChangeBegin(Delegate callback) =>
-        Create("changeBegin", callback);
+    public static Prop ChangeBegin(Action<AnimationState> callback) => Create("changeBegin", callback);
     
     /// <summary>
     /// changeComplete() callback is triggered everytime the animation stops changing.
@@ -311,8 +302,7 @@ public abstract partial class Prop
     /// </summary>
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
-    public static Prop ChangeComplete(Delegate callback) =>
-        Create("changeComplete", callback);
+    public static Prop ChangeComplete(Action<AnimationState> callback) => Create("changeComplete", callback);
 
     /// <summary>
     /// Creates path drawing animation using the 'stroke-dashoffset' property.
@@ -532,7 +522,7 @@ public abstract partial class Prop
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     /// Throws ArgumentException if the method is not found in the caller object
-    public static Prop Create(string propName, Delegate callback)
+    public static Prop Create(string propName, Action<AnimationState> callback)
     {
         ArgumentNullException.ThrowIfNull(callback);
         bool isLambda = callback.Method.IsDefined(typeof(CompilerGeneratedAttribute), false);
@@ -551,15 +541,10 @@ public abstract partial class Prop
         object target = callback.Target
             ?? throw new ArgumentException("Callback target cannot be null.");
 
-        var callerType = target.GetType();
-        var methodName = callback.Method.Name;
-        var paramsCount = callerType.GetMethod(methodName)?.GetParameters().Length
-            ?? throw new ArgumentException($"Method {methodName} not found in {callerType.FullName}");
-        
         return new CallbackProp(
             propName,
-            methodName,
-            paramsCount,
+            callback.Method.Name,
+            1,
             DotNetObjectReference.Create(target));
     }
     
@@ -574,6 +559,9 @@ public abstract partial class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static Prop Create(string name, PathParam value) => new SvgProp(name, value.ParamRef);
+
+    public static implicit operator Prop(KeyValuePair<string, double> kvp) => 
+        Create(kvp.Key, kvp.Value);
 
     /// <summary>
     /// Adds, subtracts or multiplies the original value.
