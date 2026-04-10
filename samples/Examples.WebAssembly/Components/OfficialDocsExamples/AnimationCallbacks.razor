@@ -1,16 +1,7 @@
-@implements IAsyncDisposable;
-@inject IAnime Anime;
 @inherits AnimatedComponent;
 
 <div class="demo">
     <div class="demo-content animation-callbacks-demo">
-        <p>Animation Began: @(_animationBegun ? "TRUE" : "FALSE")</p>
-        <p>Animation Complete: @(_animationComplete ? "TRUE" : "FALSE")</p>
-        <p>Animation Loop Begun: @(_loopBegun ? "TRUE" : "FALSE")</p>
-        <p>Animation Loop Complete: @(_loopComplete ? "TRUE" : "FALSE")</p>
-        <p>Animation Change Begun: @(_changeBegun ? "TRUE" : "FALSE")</p>
-        <p>Animation Change Complete: @(_changeComplete ? "TRUE" : "FALSE")</p>
-        <p>Update Count: @_updateCount</p>
         <p>Progress: @_progress</p>
         <div class="el a large square"></div>
         <div class="el b large square" style="background-color: red;"></div>
@@ -23,14 +14,6 @@
 @code {
     private Animation? _animationA;
     private Animation? _animationB;
-    
-    private bool _animationBegun;
-    private bool _animationComplete;
-    private bool _loopBegun;
-    private bool _loopComplete;
-    private bool _changeBegun;
-    private bool _changeComplete;
-    private int _updateCount;
     private float _progress;
 
     public void OnPlayButtonClicked()
@@ -52,30 +35,19 @@
                 Prop.Direction.Alternate,
                 Prop.Easing.EaseInOutCirc,
                 Prop.AutoPlay(false),
-                Prop.Update(OnUpdate),
-                Prop.Begin(OnBegin),
-                Prop.Complete(OnComplete),
-                Prop.LoopBegin(OnLoopBegin),
-                Prop.LoopComplete(OnLoopComplete),
-                Prop.ChangeBegin(OnChangeBegin),
-                Prop.ChangeComplete(OnChangeComplete)
+                Prop.Update(OnUpdate)
             );
             _animationB ??= await CreateAnimationAsync(
                 nameof(_animationB),
                 Prop.Targets(".animation-callbacks-demo .el.b"),
                 Prop.Create("translateY", 270),
+                Prop.Create("borderRadius", "50%"),
                 Prop.Delay(OnDelay),
-                Prop.Duration(500),
+                Prop.Duration(1000),
                 Prop.Direction.Alternate,
-                Prop.Easing.EaseInOutCirc,
+                Prop.Easing.EaseOutInBounce,
                 Prop.AutoPlay(false),
-                Prop.Update(OnUpdate),
-                Prop.Begin(OnBegin),
-                Prop.Complete(OnComplete),
-                Prop.LoopBegin(OnLoopBegin),
-                Prop.LoopComplete(OnLoopComplete),
-                Prop.ChangeBegin(OnChangeBegin),
-                Prop.ChangeComplete(OnChangeComplete)
+                Prop.Update(OnUpdate)
             );
         }
     }
@@ -87,52 +59,9 @@
     }
 
     [JSInvokable]
-    public override void OnBegin(AnimationState state)
-    {
-        _animationBegun = true;
-        base.OnBegin(state);
-    }
-
-    [JSInvokable]
     public override void OnUpdate(AnimationState state)
     {
-        _updateCount++;
         _progress = state.Progress;
         base.OnUpdate(state);
-    }
-    
-    [JSInvokable]
-    public override void OnComplete(AnimationState state)
-    {
-        _animationComplete = true;
-        base.OnComplete(state);
-    }
-    
-    [JSInvokable]
-    public override void OnLoopBegin(AnimationState state)
-    {
-        _loopBegun = true;
-        base.OnLoopBegin(state);
-    }
-    
-    [JSInvokable]
-    public override void OnLoopComplete(AnimationState state)
-    {
-        _loopComplete = true;
-        base.OnLoopComplete(state);
-    }
-    
-    [JSInvokable]
-    public override void OnChangeBegin(AnimationState state)
-    {
-        _changeBegun = true;
-        base.OnChangeBegin(state);
-    }
-    
-    [JSInvokable]
-    public override void OnChangeComplete(AnimationState state)
-    {
-        _changeComplete = true;
-        base.OnChangeComplete(state);
     }
 }
