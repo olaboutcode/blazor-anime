@@ -72,7 +72,8 @@ public abstract partial class Prop
     /// and the total number of targets 
     /// and returns the delay in milliseconds.</param>
     /// <returns>Animation Property</returns>
-    public static Prop Delay(Func<int, int, double> callback) => CreateCallback("delay", callback);
+    public static Prop Delay(Func<int, int, double> callback) =>
+        CreateValueSetterCallback("delay", callback);
 
     /// <summary>
     /// Defines the staggered delay in milliseconds of the animation
@@ -97,7 +98,8 @@ public abstract partial class Prop
     /// and the total number of targets 
     /// and returns the delay in milliseconds.</param>
     /// <returns>Animation Property</returns>
-    public static Prop EndDelay(Func<int, int, double> callback) => CreateCallback("delay", callback);
+    public static Prop EndDelay(Func<int, int, double> callback) =>
+        CreateValueSetterCallback("delay", callback);
     
     /// <summary>
     /// Adds staggered extra time in milliseconds at the end of the animation
@@ -247,7 +249,7 @@ public abstract partial class Prop
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     public static Prop Update(Action<AnimationState> callback) =>
-        CreateCallback("update", callback);
+        CreateStateCallback("update", callback);
 
     /// <summary>
     /// Callback is triggered once, when the animation starts playing.
@@ -258,7 +260,7 @@ public abstract partial class Prop
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     public static Prop Begin(Action<AnimationState> callback) =>
-        CreateCallback("begin", callback);
+        CreateStateCallback("begin", callback);
     
     /// <summary>
     /// Callback is triggered once, when the animation is completed.
@@ -269,7 +271,7 @@ public abstract partial class Prop
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     public static Prop Complete(Action<AnimationState> callback) =>
-        CreateCallback("complete", callback);
+        CreateStateCallback("complete", callback);
 
     /// <summary>
     /// LoopBegin() callback is triggered once everytime a loop begin.
@@ -277,7 +279,7 @@ public abstract partial class Prop
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     public static Prop LoopBegin(Action<AnimationState> callback) =>
-        CreateCallback("loopBegin", callback);
+        CreateStateCallback("loopBegin", callback);
     
     /// <summary>
     /// LoopComplete() callback is triggered once everytime a loop is completed.
@@ -285,7 +287,7 @@ public abstract partial class Prop
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     public static Prop LoopComplete(Action<AnimationState> callback) =>
-        CreateCallback("loopComplete", callback);
+        CreateStateCallback("loopComplete", callback);
 
     /// <summary>
     /// Callback triggered on every frames in between the animation's delay and endDelay.
@@ -293,7 +295,7 @@ public abstract partial class Prop
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     public static Prop Change(Action<AnimationState> callback) =>
-        CreateCallback("change", callback);
+        CreateStateCallback("change", callback);
     
     /// <summary>
     /// changeBegin() callback is triggered everytime the animation starts changing.
@@ -304,7 +306,7 @@ public abstract partial class Prop
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     public static Prop ChangeBegin(Action<AnimationState> callback) =>
-        CreateCallback("changeBegin", callback);
+        CreateStateCallback("changeBegin", callback);
     
     /// <summary>
     /// changeComplete() callback is triggered everytime the animation stops changing.
@@ -315,7 +317,7 @@ public abstract partial class Prop
     /// <param name="callback"></param>
     /// <returns>Animation Property</returns>
     public static Prop ChangeComplete(Action<AnimationState> callback) =>
-        CreateCallback("changeComplete", callback);
+        CreateStateCallback("changeComplete", callback);
 
     /// <summary>
     /// Creates path drawing animation using the 'stroke-dashoffset' property.
@@ -525,80 +527,6 @@ public abstract partial class Prop
     /// <returns>Animation Property</returns>
     public static Prop Create(string name, Stagger stagger) =>
         new StgProp(name, stagger.GetValue(), stagger.GetOptions().ToObject());
-
-    /// <summary>
-    /// Animate any CSS property with a custom callback
-    /// <para>
-    /// Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
-    /// <br/>Prioritize opacity and CSS transforms as much as possible.
-    /// </para>
-    /// </summary>
-    /// <param name="propName"></param>
-    /// <param name="callback"></param>
-    /// <returns>Animation Property</returns>
-    /// Throws ArgumentException if the method is not found in the caller object
-    public static Prop CreateCallback(string propName, Func<int, int, double> callback)
-    {
-        ArgumentNullException.ThrowIfNull(callback);
-        bool isLambda = callback.Method.IsDefined(typeof(CompilerGeneratedAttribute), false);
-        if (isLambda)
-        {
-            throw new ArgumentException(
-                "Lambda expressions are not supported as callbacks. Please use a named method.");
-        }
-
-        if (callback.GetInvocationList().Length > 1)
-        {
-            throw new ArgumentException(
-                "Multicast delegates are not supported as callbacks. Please use a single method.");
-        }
-
-        object target = callback.Target
-            ?? throw new ArgumentException("Callback target cannot be null.");
-
-        return new CallbackProp(
-            propName,
-            callback.Method.Name,
-            callback.Method.GetParameters().Length,
-            DotNetObjectReference.Create(target));
-    }
-
-    /// <summary>
-    /// Animate any CSS property with a custom callback
-    /// <para>
-    /// Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
-    /// <br/>Prioritize opacity and CSS transforms as much as possible.
-    /// </para>
-    /// </summary>
-    /// <param name="propName"></param>
-    /// <param name="callback"></param>
-    /// <returns>Animation Property</returns>
-    /// Throws ArgumentException if the method is not found in the caller object
-    public static Prop CreateCallback(string propName, Action<AnimationState> callback)
-    {
-        ArgumentNullException.ThrowIfNull(callback);
-        bool isLambda = callback.Method.IsDefined(typeof(CompilerGeneratedAttribute), false);
-        if (isLambda)
-        {
-            throw new ArgumentException(
-                "Lambda expressions are not supported as callbacks. Please use a named method.");
-        }
-
-        if (callback.GetInvocationList().Length > 1)
-        {
-            throw new ArgumentException(
-                "Multicast delegates are not supported as callbacks. Please use a single method.");
-        }
-
-        object target = callback.Target
-            ?? throw new ArgumentException("Callback target cannot be null.");
-
-        return new CallbackProp(
-            propName,
-            callback.Method.Name,
-            callback.Method.GetParameters().Length,
-            DotNetObjectReference.Create(target));
-    }
     
     /// <summary>
     /// Animate any CSS property.
@@ -611,6 +539,48 @@ public abstract partial class Prop
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
     public static Prop Create(string name, PathParam value) => new SvgProp(name, value.ParamRef);
+
+    /// <summary>
+    /// Animate any CSS property with a custom callback
+    /// <para>
+    /// Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
+    /// <br/>Prioritize opacity and CSS transforms as much as possible.
+    /// </para>
+    /// </summary>
+    /// <param name="propName"></param>
+    /// <param name="callback"></param>
+    /// <returns>Animation Property</returns>
+    /// Throws ArgumentException if the method is not found in the caller object
+    private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, double> callback)
+    {
+        Checks.EnsureAcceptableCallback(callback);
+        return new CallbackProp(
+            propName,
+            callback.Method.Name,
+            callback.Method.GetParameters().Length,
+            DotNetObjectReference.Create(callback.Target!));
+    }
+
+    /// <summary>
+    /// Animate any CSS property with a custom callback
+    /// <para>
+    /// Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
+    /// <br/>Prioritize opacity and CSS transforms as much as possible.
+    /// </para>
+    /// </summary>
+    /// <param name="propName"></param>
+    /// <param name="callback"></param>
+    /// <returns>Animation Property</returns>
+    /// Throws ArgumentException if the method is not found in the caller object
+    private static CallbackProp CreateStateCallback(string propName, Action<AnimationState> callback)
+    {
+        Checks.EnsureAcceptableCallback(callback);
+        return new CallbackProp(
+            propName,
+            callback.Method.Name,
+            callback.Method.GetParameters().Length,
+            DotNetObjectReference.Create(callback.Target!));
+    }
 
     /// <summary>
     /// Adds, subtracts or multiplies the original value.
