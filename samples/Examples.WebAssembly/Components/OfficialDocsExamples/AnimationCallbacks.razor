@@ -12,8 +12,8 @@
         <p>Animation Change Complete: @(_changeComplete ? "TRUE" : "FALSE")</p>
         <p>Update Count: @_updateCount</p>
         <p>Progress: @_progress</p>
-        <div class="el large square"></div>
-        <div class="el large square" style="background-color: red;"></div>
+        <div class="el a large square"></div>
+        <div class="el b large square" style="background-color: red;"></div>
         <button
             style="background-color: lightblue; color: black;"
             @onclick="OnPlayButtonClicked">Play</button>
@@ -21,7 +21,8 @@
 </div>
 
 @code {
-    private Animation? _animation;
+    private Animation? _animationA;
+    private Animation? _animationB;
     
     private bool _animationBegun;
     private bool _animationComplete;
@@ -34,17 +35,35 @@
 
     public void OnPlayButtonClicked()
     {
-        _animation?.Play();
+        _animationA?.Play();
+        _animationB?.Play();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _animation ??= await CreateAnimationAsync(
-                "test",
-                Prop.Targets(".animation-callbacks-demo .el"),
+            _animationA ??= await CreateAnimationAsync(
+                nameof(_animationA),
+                Prop.Targets(".animation-callbacks-demo .el.a"),
                 Prop.Create("translateX", 270),
+                Prop.Delay(OnDelay),
+                Prop.Duration(500),
+                Prop.Direction.Alternate,
+                Prop.Easing.EaseInOutCirc,
+                Prop.AutoPlay(false),
+                Prop.Update(OnUpdate),
+                Prop.Begin(OnBegin),
+                Prop.Complete(OnComplete),
+                Prop.LoopBegin(OnLoopBegin),
+                Prop.LoopComplete(OnLoopComplete),
+                Prop.ChangeBegin(OnChangeBegin),
+                Prop.ChangeComplete(OnChangeComplete)
+            );
+            _animationB ??= await CreateAnimationAsync(
+                nameof(_animationB),
+                Prop.Targets(".animation-callbacks-demo .el.b"),
+                Prop.Create("translateY", 270),
                 Prop.Delay(OnDelay),
                 Prop.Duration(500),
                 Prop.Direction.Alternate,
