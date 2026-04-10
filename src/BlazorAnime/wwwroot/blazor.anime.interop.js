@@ -14,12 +14,12 @@ let transformProps = (props) => {
     let finalProps = {};
     for (const key in props) {
         if (props.hasOwnProperty(key)) {
-            let prop = props[key];
-            let name = prop.name;
-            let propType = prop.value.propType;
+            const prop = props[key];
+            const name = prop.name;
+            const propType = prop.value.propType;
 
             if (propType === 'setter') {
-                let setterValue = prop.value.value;
+                const setterValue = prop.value.value;
                 if (setterValue instanceof Array) {
                     finalProps[name] = [];
                     setterValue.forEach((setterVal) => {
@@ -45,8 +45,8 @@ let transformProps = (props) => {
             }
 
             if (propType === 'stagger') {
-                let staggerProps = prop.value.value;
-                let value = (staggerProps.value instanceof Array)
+                const staggerProps = prop.value.value;
+                const value = (staggerProps.value instanceof Array)
                     ? [staggerProps.value[0], staggerProps.value[1]]
                     : staggerProps.value;
                 finalProps[name] = (Object.keys(staggerProps.options).length === 0)
