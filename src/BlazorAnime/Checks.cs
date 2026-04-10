@@ -4,6 +4,13 @@ namespace BlazorAnime;
 
 public static class Checks
 {
+    public static void EnsureValidProp(string name, object value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
+        ArgumentNullException.ThrowIfNull(value, nameof(value));
+    }
+
+
     public static void EnsureAcceptableCallback(Delegate callback)
     {
         ArgumentNullException.ThrowIfNull(callback);

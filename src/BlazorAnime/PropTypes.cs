@@ -2,11 +2,19 @@ namespace BlazorAnime;
 
 using Microsoft.JSInterop;
 
-public abstract partial class Prop(string name, object value)
+public abstract partial class Prop
 {
-    protected string Name { get; } = LowerFirstChar(name);
+    public Prop(string name, object value)
+    {
+        Checks.EnsureValidProp(name, value);
+        Name = LowerFirstChar(name);
+        _value = value;
+    }
+
+    protected string Name { get; init; }
+    private object _value { get; init; }
     
-    protected object GetPrimValue() => value;
+    protected object GetPrimValue() => _value;
     
     public string GetName() => Name;
 
@@ -15,7 +23,7 @@ public abstract partial class Prop(string name, object value)
         return new
         {
             name = Name,
-            value = new { propType = "setter", value }
+            value = new { propType = "setter", value = _value }
         };
     }
 
