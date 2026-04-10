@@ -6,17 +6,30 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
 {
     [Inject]private IAnime Anime { get; set; } = default!;
     private readonly Dictionary<string, Animation> _animations = [];
+    private readonly Dictionary<string, Timeline> _timelines = [];
     
     protected IReadOnlyList<Animation> GetAnimations() =>
         [.. _animations.Values];
     protected Animation? GetAnimation(string id) => 
         _animations.TryGetValue(id, out var anim) ? anim : null;
+    
+    protected IReadOnlyList<Timeline> GetTimelines() =>
+        [.. _timelines.Values];
+    protected Timeline? GetTimeline(string id) => 
+        _timelines.TryGetValue(id, out var tl) ? tl : null;
 
     protected async Task<Animation> CreateAnimationAsync(string id, params Prop[] props)
     {
          var animation = await Anime.Animate(props);
          _animations.Add(id, animation);
          return animation;
+    }
+
+    protected async Task<Timeline> CreateTimelineAsync(string id, params Prop[] props)
+    {
+         var timeline = await Anime.Timeline(props);
+         _timelines.Add(id, timeline);
+         return timeline;
     }
 
     public virtual void OnBegin(AnimationState state) => StateHasChanged();
@@ -32,6 +45,10 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
         foreach (var animation in _animations)
         {
             await animation.Value.DisposeAsync();
+        }
+        foreach (var timeline in _timelines)
+        {
+            await timeline.Value.DisposeAsync();
         }
         GC.SuppressFinalize(this);
     }
