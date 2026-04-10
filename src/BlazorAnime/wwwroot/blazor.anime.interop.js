@@ -62,13 +62,8 @@ let transformProps = (props) => {
                 if (callbackName !== '' && dotNetRef !== undefined) {
                     switch (paramCount) {
                         case 2:
-                            finalProps[name] = (state, index) => {
-                                dotNetRef.invokeMethod(callbackName, state, index);
-                            }
-                            break;
-                        case 3:
-                            finalProps[name] = (state, index, targetsLength) => {
-                                dotNetRef.invokeMethod(callbackName, state, index, targetsLength);
+                            finalProps[name] = (elOrState, index, targetsLength) => {
+                                dotNetRef.invokeMethod(callbackName, elOrState, index, targetsLength);
                             }
                             break;
                         default:

@@ -68,9 +68,12 @@ public abstract partial class Prop
     /// <summary>
     /// Defines the delay in milliseconds of the animation with a custom callback
     /// </summary>
-    /// <param name="callback"></param>
+    /// <param name="callback">
+    /// It accepts the index of the target element 
+    /// and the total number of targets 
+    /// and returns the delay in milliseconds.</param>
     /// <returns>Animation Property</returns>
-    public static Prop Delay(Delegate callback) => Create("delay", callback);
+    public static Prop Delay(Func<int, int, double> callback) => Create("delay", callback);
 
     /// <summary>
     /// Defines the staggered delay in milliseconds of the animation
@@ -90,9 +93,12 @@ public abstract partial class Prop
     /// <summary>
     /// Adds some extra time in milliseconds at the end of the animation with a custom callback
     /// </summary>
-    /// <param name="callback"></param>
+    /// <param name="callback">
+    /// It accepts the index of the target element 
+    /// and the total number of targets 
+    /// and returns the delay in milliseconds.</param>
     /// <returns>Animation Property</returns>
-    public static Prop EndDelay(Delegate callback) => Create("delay", callback);
+    public static Prop EndDelay(Func<int, int, double> callback) => Create("delay", callback);
     
     /// <summary>
     /// Adds staggered extra time in milliseconds at the end of the animation
@@ -544,7 +550,7 @@ public abstract partial class Prop
         return new CallbackProp(
             propName,
             callback.Method.Name,
-            1,
+            callback.Method.GetParameters().Length,
             DotNetObjectReference.Create(target));
     }
     
