@@ -2,7 +2,7 @@ namespace BlazorAnime;
 
 using Microsoft.JSInterop;
 
-public class Animation(IJSObjectReference animationJsRef)
+public class Animation(IJSObjectReference animationJsRef): IAsyncDisposable
 {
     /// <summary>
     /// Plays a paused animation, or starts the animation if the autoplay parameters is set to false.

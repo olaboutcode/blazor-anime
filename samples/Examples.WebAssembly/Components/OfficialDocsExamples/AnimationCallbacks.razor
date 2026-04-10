@@ -1,5 +1,6 @@
 @implements IAsyncDisposable;
 @inject IAnime Anime;
+@inherits AnimatedComponent;
 
 <div class="demo">
     <div class="demo-content animation-callbacks-demo">
@@ -12,6 +13,9 @@
         <p>Update Count: @_updateCount</p>
         <p>Progress: @_progress</p>
         <div class="el large square"></div>
+        <button
+            style="background-color: lightblue; color: black;"
+            @onclick="OnPlayButtonClicked">Play</button>
     </div>
 </div>
 
@@ -27,18 +31,24 @@
     private int _updateCount;
     private float _progress;
 
+    public void OnPlayButtonClicked()
+    {
+        _animation?.Play();
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animate(
+            _animation ??= await CreateAnimationAsync(
+                "test",
                 Prop.Targets(".animation-callbacks-demo .el"),
                 Prop.Create("translateX", 270),
                 Prop.Delay(1000),
                 Prop.Duration(500),
                 Prop.Direction.Alternate,
                 Prop.Easing.EaseInOutCirc,
-                Prop.AutoPlay(true),
+                Prop.AutoPlay(false),
                 Prop.Update(OnUpdate),
                 Prop.Begin(OnBegin),
                 Prop.Complete(OnComplete),
@@ -51,54 +61,52 @@
     }
 
     [JSInvokable]
-    public void OnBegin(AnimationState state)
+    public override void OnBegin(AnimationState state)
     {
         _animationBegun = true;
+        base.OnBegin(state);
     }
 
     [JSInvokable]
-    public void OnUpdate(AnimationState state)
+    public override void OnUpdate(AnimationState state)
     {
         _updateCount++;
         _progress = state.Progress;
-        //StateHasChanged();
+        base.OnUpdate(state);
     }
     
     [JSInvokable]
-    public void OnComplete(AnimationState state)
+    public override void OnComplete(AnimationState state)
     {
         _animationComplete = true;
+        base.OnComplete(state);
     }
     
     [JSInvokable]
-    public void OnLoopBegin(AnimationState state)
+    public override void OnLoopBegin(AnimationState state)
     {
         _loopBegun = true;
+        base.OnLoopBegin(state);
     }
     
     [JSInvokable]
-    public void OnLoopComplete(AnimationState state)
+    public override void OnLoopComplete(AnimationState state)
     {
         _loopComplete = true;
+        base.OnLoopComplete(state);
     }
     
     [JSInvokable]
-    public void OnChangeBegin(AnimationState state)
+    public override void OnChangeBegin(AnimationState state)
     {
         _changeBegun = true;
+        base.OnChangeBegin(state);
     }
     
     [JSInvokable]
-    public void OnChangeComplete(AnimationState state)
+    public override void OnChangeComplete(AnimationState state)
     {
         _changeComplete = true;
-    }
-
-    async ValueTask IAsyncDisposable.DisposeAsync()
-    {
-        if (_animation is not null)
-        {
-            await _animation.DisposeAsync();
-        }
+        base.OnChangeComplete(state);
     }
 }
