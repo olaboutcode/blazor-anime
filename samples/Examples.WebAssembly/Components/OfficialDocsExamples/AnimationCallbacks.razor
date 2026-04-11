@@ -26,6 +26,18 @@
     {
         if (firstRender)
         {
+           @* _animationA ??= await CreateAnimationAsync(
+                nameof(_animationA),
+                (".animation-callbacks-demo .el.a"),
+                ("translateX", 270),
+                ("backgroundColor", "#FFA500"),
+                Prop.Delay(OnDelay),
+                Prop.Duration(500),
+                Prop.Direction.Alternate,
+                Prop.Easing.EaseInOutCirc,
+                Prop.AutoPlay(false),
+                Prop.Update(OnUpdate)
+            ); *@
             _animationA ??= await CreateAnimationAsync(
                 nameof(_animationA),
                 Prop.Targets(".animation-callbacks-demo .el.a"),
