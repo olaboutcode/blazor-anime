@@ -1,140 +1,148 @@
 namespace BlazorAnime.V2;
 
+public class AnimeProp
+{
+    internal AnimeProp(string name, object value)
+    {
+        this.Name = name;
+        this.Value = value;
+    }
+
+    internal string Name { get; init; }
+    internal object Value { get; init; }
+}
+
 public static class Prop
 {
-    public static (string name, string value) Targets(string value) => ("targets", value);
-    public static (string name, object value) Targets(object value) => ("targets", value);
-    public static (string name, object[] value) Targets(object[] value) => ("targets", value);
-    public static (string name, string[] value) Targets(string[] value) => ("targets", value);
+    public static AnimeProp Targets(string value) => ("targets", value).GetValue();
+    public static AnimeProp Targets(object value) => ("targets", value).GetValue();
+    public static AnimeProp Targets(object[] value) => ("targets", value).GetValue();
+    public static AnimeProp Targets(string[] value) => ("targets", value).GetValue();
     
-    public static (string name, float value) Duration(float value) => ("duration", value);
-    public static (string name, object value) Duration(float from, float to) => ("duration", new { from, to });
-    public static (string name, List<(string name, object value)> value) Duration(
-        List<(string name, object value)> value) => ("duration", value);
+    public static AnimeProp Duration(float value) => ("duration", value).GetValue();
+    public static AnimeProp Duration(float from, float to) => ("duration", new { from, to }).GetValue();
+    public static AnimeProp Duration(List<(string name, object value)> value) => ("duration", value).GetValue();
 
-    public static (string name, float value) Delay(float value) => ("delay", value);
-    public static (string name, Stagger stagger) Delay(Stagger stagger) => ("delay", stagger);
-    public static (string name, Func<int, int, double> callback) Delay(
-        Func<int, int, double> callback) => ("delay", callback);
+    public static AnimeProp Delay(float value) => ("delay", value).GetValue();
+    public static AnimeProp Delay(Stagger stagger) => ("delay", stagger).GetValue();
+    public static AnimeProp Delay(Func<int, int, double> callback) => ("delay", callback).GetValue();
 
-    public static (string name, float value) EndDelay(float value) => ("endDelay", value);
-    public static (string name, Stagger stagger) EndDelay(Stagger stagger) => ("endDelay", stagger);
-    public static (string name, Func<int, int, double> callback) EndDelay(
-        Func<int, int, double> callback) => ("endDelay", callback);
+    public static AnimeProp EndDelay(float value) => ("endDelay", value).GetValue();
+    public static AnimeProp EndDelay(Stagger stagger) => ("endDelay", stagger).GetValue();
+    public static AnimeProp EndDelay(Func<int, int, double> callback) => ("endDelay", callback).GetValue();
 
-    public static (string name, int value) Round(int value) => ("round", value);
-    public static (string name, bool value) Loopp(bool value) => ("loop", value);
-    public static (string name, bool value) Loop(bool value) => ("loop", value);
-    public static (string name, bool value) AutoPlay(bool value) => ("autoPlay", value);
+    public static AnimeProp Round(int value) => ("round", value).GetValue();
+    public static AnimeProp Loopp(bool value) => ("loop", value).GetValue();
+    public static AnimeProp Loop(bool value) => ("loop", value).GetValue();
+    public static AnimeProp AutoPlay(bool value) => ("autoPlay", value).GetValue();
 
-    public static (string name, Action<AnimationState> callback) Update(
-        Action<AnimationState> callback) => ("update", callback);
-    public static (string name, Action<AnimationState> callback) Begin(
-        Action<AnimationState> callback) => ("begin", callback);
-    public static (string name, Action<AnimationState> callback) LoopBegin(
-        Action<AnimationState> callback) => ("loopBegin", callback);
-    public static (string name, Action<AnimationState> callback) LoopComplete(
-        Action<AnimationState> callback) => ("loopComplete", callback);
-    public static (string name, Action<AnimationState> callback) Complete(
-        Action<AnimationState> callback) => ("complete", callback);
-    public static (string name, Action<AnimationState> callback) Change(
-        Action<AnimationState> callback) => ("change", callback);
-    public static (string name, Action<AnimationState> callback) ChangeBegin(
-        Action<AnimationState> callback) => ("changeBegin", callback);
-    public static (string name, Action<AnimationState> callback) ChangeComplete(
-        Action<AnimationState> callback) => ("changeComplete", callback);
+    public static AnimeProp Update(
+        Action<AnimationState> callback) => ("update", callback).GetValue();
+    public static AnimeProp Begin(
+        Action<AnimationState> callback) => ("begin", callback).GetValue();
+    public static AnimeProp LoopBegin(
+        Action<AnimationState> callback) => ("loopBegin", callback).GetValue();
+    public static AnimeProp LoopComplete(
+        Action<AnimationState> callback) => ("loopComplete", callback).GetValue();
+    public static AnimeProp Complete(
+        Action<AnimationState> callback) => ("complete", callback).GetValue();
+    public static AnimeProp Change(
+        Action<AnimationState> callback) => ("change", callback).GetValue();
+    public static AnimeProp ChangeBegin(
+        Action<AnimationState> callback) => ("changeBegin", callback).GetValue();
+    public static AnimeProp ChangeComplete(
+        Action<AnimationState> callback) => ("changeComplete", callback).GetValue();
 
-    public static (string name, List<(string name, string value)> value) Points(
-        List<(string name, string value)> value) => ("points", value);
-    public static (string name, object[] value) Points(
-        List<List<(string name, string value)>> value) =>
-            ("points", value.Select(v => v.GetValue()).ToArray());
+    public static AnimeProp Points(
+        List<(string name, string value)> value) => ("points", value).GetValue();
+    public static AnimeProp Points(List<List<AnimeProp>> value) =>
+        ("points", value.Select(v => v.GetValue())).GetValue();
 
-    public static (string name, float value) Create(string name, float value) => Create<float>(name, value);
-    public static (string name, string value) Create(string name, string value) => Create<string>(name, value);
-    public static (string name, object value) Create(string name, object value) => Create<object>(name, value);
-    public static (string name, float[] value) Create(string name, float[] value) => Create<float[]>(name, value);
-    public static (string name, string[] value) Create(string name, string[] value) => Create<string[]>(name, value);
-    public static (string name, object[] value) Create(string name, object[] value) => Create<object[]>(name, value);
-    public static (string name, float[] value) Create(string name, float from, float to) => Create<float[]>(name, [from, to]);
-    public static (string name, string[] value) Create(string name, string from, string to) => Create<string[]>(name, [from, to]);
-    public static (string name, Stagger value) Create(string name, Stagger value) => Create<Stagger>(name, value);
-    public static (string name, PathParam value) Create(string name, PathParam value) => Create<PathParam>(name, value);
-    public static (string name, object[] value) Create(string name, List<List<(string name, string value)>> value) =>
-        (name, value.Select(v => v.GetValue()).ToArray());
+    public static AnimeProp Create(string name, float value) => ("create", value).GetValue();
+    public static AnimeProp Create(string name, string value) => ("create", value).GetValue();
+    public static AnimeProp Create(string name, object value) => ("create", value).GetValue();
+    public static AnimeProp Create(string name, float[] value) => ("create", value).GetValue();
+    public static AnimeProp Create(string name, string[] value) => ("create", value).GetValue();
+    public static AnimeProp Create(string name, object[] value) => ("create", value).GetValue();
+    public static AnimeProp Create(string name, float from, float to) => Create<float[]>(name, [from, to]);
+    public static AnimeProp Create(string name, string from, string to) => Create<string[]>(name, [from, to]);
+    public static AnimeProp Create(string name, Stagger value) => Create<Stagger>(name, value);
+    public static AnimeProp Create(string name, PathParam value) => Create<PathParam>(name, value);
+    public static AnimeProp Create(string name, List<List<AnimeProp>> value) =>
+        ("create", value.Select(v => v.GetValue())).GetValue();
 
-    private static (string name, T value) Create<T>(string name, T value) => (name, value);
+    private static AnimeProp Create<T>(string name, T value) => (name, value).GetValue();
 }
 
 public static class Value
 {
-    public static (string name, string value) Add(float value) => ("value", $"+={value}");
-    public static (string name, string value) Subtract(float value) => ("value", $"-={value}");
-    public static (string name, string value) Multiply(float value) => ("value", $"*={value}");
+    public static AnimeProp Add(float value) => ("value", $"+={value}").GetValue();
+    public static AnimeProp Subtract(float value) => ("value", $"-={value}").GetValue();
+    public static AnimeProp Multiply(float value) => ("value", $"*={value}").GetValue();
 }
 
 public static class Direction
 {
-    public static (string name, string value) Normal { get; } = ("direction", "normal");
-    public static (string name, string value) Reverse { get; } = ("direction", "reverse");
-    public static (string name, string value) Alternate { get; } = ("direction", "alternate");
+    public static AnimeProp Normal { get; } = ("direction", "normal").GetValue();
+    public static AnimeProp Reverse { get; } = ("direction", "reverse").GetValue();
+    public static AnimeProp Alternate { get; } = ("direction", "alternate").GetValue();
 }
 
 public static class Easing
 {
-    public static (string name, string value) Steps(int steps) => ("Easing", $"steps({steps})");
-    public static (string name, string value) CubicBezier(double x1, double y1, double x2, double y2) =>
-        ("Easing", $"cubicBezier({x1}, {y1}, {x2}, {y2})");
-    public static (string name, string value) EaseInElastic(double amplitude, double period)
-        => ("Easing", $"easeInElastic({amplitude}, {period})");
-    public static (string name, string value) EaseOutElastic(double amplitude, double period)
-        => ("Easing", $"easeOutElastic({amplitude}, {period})");
-    public static (string name, string value) EaseInOutElastic(double amplitude, double period)
-        => ("Easing", $"easeInOutElastic({amplitude}, {period})");
-    public static (string name, string value) EaseOutInElastic(double amplitude, double period)
-        => ("Easing", $"easeOutInElastic({amplitude}, {period})");
-    public static (string name, string value) Spring(double mass, double stiffness, double damping, double velocity)
-        => ("Easing", $"spring({mass}, {stiffness}, {damping}, {velocity})");
+    public static AnimeProp Steps(int steps) => ("Easing", $"steps({steps})").GetValue();
+    public static AnimeProp CubicBezier(double x1, double y1, double x2, double y2) =>
+        ("Easing", $"cubicBezier({x1}, {y1}, {x2}, {y2})").GetValue();
+    public static AnimeProp EaseInElastic(double amplitude, double period)
+        => ("Easing", $"easeInElastic({amplitude}, {period})").GetValue();
+    public static AnimeProp EaseOutElastic(double amplitude, double period)
+        => ("Easing", $"easeOutElastic({amplitude}, {period})").GetValue();
+    public static AnimeProp EaseInOutElastic(double amplitude, double period)
+        => ("Easing", $"easeInOutElastic({amplitude}, {period})").GetValue();
+    public static AnimeProp EaseOutInElastic(double amplitude, double period)
+        => ("Easing", $"easeOutInElastic({amplitude}, {period})").GetValue();
+    public static AnimeProp Spring(double mass, double stiffness, double damping, double velocity)
+        => ("Easing", $"spring({mass}, {stiffness}, {damping}, {velocity})").GetValue();
 
-    public static (string name, string value) Spring() => ("Easing", "spring");
-    public static (string name, string value) Linear { get; } = ("Easing", "linear");
-    public static (string name, string value) EaseInQuad { get; } = ("Easing", "easeInQuad");
-    public static (string name, string value) EaseInCubic { get; } = ("Easing", "easeInCubic");
-    public static (string name, string value) EaseInQuart { get; } = ("Easing", "easeInQuart");
-    public static (string name, string value) EaseInQuint { get; } = ("Easing", "easeInQuint");
-    public static (string name, string value) EaseInSine { get; } = ("Easing", "easeInSine");
-    public static (string name, string value) EaseInExpo { get; } = ("Easing", "easeInExpo");
-    public static (string name, string value) EaseInCirc { get; } = ("Easing", "easeInCirc");
-    public static (string name, string value) EaseInBack { get; } = ("Easing", "easeInBack");
-    public static (string name, string value) EaseInBounce { get; } = ("Easing", "easeInBounce");
+    public static AnimeProp Spring() => ("Easing", "spring").GetValue();
+    public static AnimeProp Linear { get; } = ("Easing", "linear").GetValue();
+    public static AnimeProp EaseInQuad { get; } = ("Easing", "easeInQuad").GetValue();
+    public static AnimeProp EaseInCubic { get; } = ("Easing", "easeInCubic").GetValue();
+    public static AnimeProp EaseInQuart { get; } = ("Easing", "easeInQuart").GetValue();
+    public static AnimeProp EaseInQuint { get; } = ("Easing", "easeInQuint").GetValue();
+    public static AnimeProp EaseInSine { get; } = ("Easing", "easeInSine").GetValue();
+    public static AnimeProp EaseInExpo { get; } = ("Easing", "easeInExpo").GetValue();
+    public static AnimeProp EaseInCirc { get; } = ("Easing", "easeInCirc").GetValue();
+    public static AnimeProp EaseInBack { get; } = ("Easing", "easeInBack").GetValue();
+    public static AnimeProp EaseInBounce { get; } = ("Easing", "easeInBounce").GetValue();
 
-    public static (string name, string value) EaseOutQuad { get; } = ("Easing", "easeOutQuad");
-    public static (string name, string value) EaseOutCubic { get; } = ("Easing", "easeOutCubic");
-    public static (string name, string value) EaseOutQuart { get; } = ("Easing", "easeOutQuart");
-    public static (string name, string value) EaseOutQuint { get; } = ("Easing", "easeOutQuint");
-    public static (string name, string value) EaseOutSine { get; } = ("Easing", "easeOutSine");
-    public static (string name, string value) EaseOutExpo { get; } = ("Easing", "easeOutExpo");
-    public static (string name, string value) EaseOutCirc { get; } = ("Easing", "easeOutCirc");
-    public static (string name, string value) EaseOutBack { get; } = ("Easing", "easeOutBack");
-    public static (string name, string value) EaseOutBounce { get; } = ("Easing", "easeOutBounce");
+    public static AnimeProp EaseOutQuad { get; } = ("Easing", "easeOutQuad").GetValue();
+    public static AnimeProp EaseOutCubic { get; } = ("Easing", "easeOutCubic").GetValue();
+    public static AnimeProp EaseOutQuart { get; } = ("Easing", "easeOutQuart").GetValue();
+    public static AnimeProp EaseOutQuint { get; } = ("Easing", "easeOutQuint").GetValue();
+    public static AnimeProp EaseOutSine { get; } = ("Easing", "easeOutSine").GetValue();
+    public static AnimeProp EaseOutExpo { get; } = ("Easing", "easeOutExpo").GetValue();
+    public static AnimeProp EaseOutCirc { get; } = ("Easing", "easeOutCirc").GetValue();
+    public static AnimeProp EaseOutBack { get; } = ("Easing", "easeOutBack").GetValue();
+    public static AnimeProp EaseOutBounce { get; } = ("Easing", "easeOutBounce").GetValue();
 
-    public static (string name, string value) EaseInOutQuad { get; } = ("Easing", "easeInOutQuad");
-    public static (string name, string value) EaseInOutCubic { get; } = ("Easing", "easeInOutCubic");
-    public static (string name, string value) EaseInOutQuart { get; } = ("Easing", "easeInOutQuart");
-    public static (string name, string value) EaseInOutQuint { get; } = ("Easing", "easeInOutQuint");
-    public static (string name, string value) EaseInOutSine { get; } = ("Easing", "easeInOutSine");
-    public static (string name, string value) EaseInOutExpo { get; } = ("Easing", "easeInOutExpo");
-    public static (string name, string value) EaseInOutCirc { get; } = ("Easing", "easeInOutCirc");
-    public static (string name, string value) EaseInOutBack { get; } = ("Easing", "easeInOutBack");
-    public static (string name, string value) EaseInOutBounce { get; } = ("Easing", "easeInOutBounce");
+    public static AnimeProp EaseInOutQuad { get; } = ("Easing", "easeInOutQuad").GetValue();
+    public static AnimeProp EaseInOutCubic { get; } = ("Easing", "easeInOutCubic").GetValue();
+    public static AnimeProp EaseInOutQuart { get; } = ("Easing", "easeInOutQuart").GetValue();
+    public static AnimeProp EaseInOutQuint { get; } = ("Easing", "easeInOutQuint").GetValue();
+    public static AnimeProp EaseInOutSine { get; } = ("Easing", "easeInOutSine").GetValue();
+    public static AnimeProp EaseInOutExpo { get; } = ("Easing", "easeInOutExpo").GetValue();
+    public static AnimeProp EaseInOutCirc { get; } = ("Easing", "easeInOutCirc").GetValue();
+    public static AnimeProp EaseInOutBack { get; } = ("Easing", "easeInOutBack").GetValue();
+    public static AnimeProp EaseInOutBounce { get; } = ("Easing", "easeInOutBounce").GetValue();
 
-    public static (string name, string value) EaseOutInQuad { get; } = ("Easing", "easeOutInQuad");
-    public static (string name, string value) EaseOutInCubic { get; } = ("Easing", "easeOutInCubic");
-    public static (string name, string value) EaseOutInQuart { get; } = ("Easing", "easeOutInQuart");
-    public static (string name, string value) EaseOutInQuint { get; } = ("Easing", "easeOutInQuint");
-    public static (string name, string value) EaseOutInSine { get; } = ("Easing", "easeOutInSine");
-    public static (string name, string value) EaseOutInExpo { get; } = ("Easing", "easeOutInExpo");
-    public static (string name, string value) EaseOutInCirc { get; } = ("Easing", "easeOutInCirc");
-    public static (string name, string value) EaseOutInBack { get; } = ("Easing", "easeOutInBack");
-    public static (string name, string value) EaseOutInBounce { get; } = ("Easing", "easeOutInBounce");
+    public static AnimeProp EaseOutInQuad { get; } = ("Easing", "easeOutInQuad").GetValue();
+    public static AnimeProp EaseOutInCubic { get; } = ("Easing", "easeOutInCubic").GetValue();
+    public static AnimeProp EaseOutInQuart { get; } = ("Easing", "easeOutInQuart").GetValue();
+    public static AnimeProp EaseOutInQuint { get; } = ("Easing", "easeOutInQuint").GetValue();
+    public static AnimeProp EaseOutInSine { get; } = ("Easing", "easeOutInSine").GetValue();
+    public static AnimeProp EaseOutInExpo { get; } = ("Easing", "easeOutInExpo").GetValue();
+    public static AnimeProp EaseOutInCirc { get; } = ("Easing", "easeOutInCirc").GetValue();
+    public static AnimeProp EaseOutInBack { get; } = ("Easing", "easeOutInBack").GetValue();
+    public static AnimeProp EaseOutInBounce { get; } = ("Easing", "easeOutInBounce").GetValue();
 }
