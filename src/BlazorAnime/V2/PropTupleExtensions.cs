@@ -5,55 +5,59 @@ namespace BlazorAnime.V2;
 
 internal static class PropTupleExtensions
 {
-    public static AnimeProp GetValue<T>(this (string name, T value) prop)
+    public static object GetValue<T>(this (string name, T value) prop)
     {
         EnsureValidProp(prop.name, prop.value);
-        return new AnimeProp(
-            LowerFirstChar(prop.name),
-            new { propType = "setter", prop.value }
-        );
+        return new
+        {
+            name = LowerFirstChar(prop.name),
+            value = new { propType = "setter", value = prop.value }
+        };
     }
 
-    public static AnimeProp GetValue<T>(this (string name, T[] value) prop)
+    public static object GetValue<T>(this (string name, T[] value) prop)
     {
         EnsureValidProp(prop.name, prop.value);
-        return new AnimeProp(
-            LowerFirstChar(prop.name),
-            new { propType = "setter", prop.value }
-        );
+        return new
+        {
+            name = LowerFirstChar(prop.name),
+            value = new { propType = "setter", value = prop.value }
+        };
     }
 
-    public static AnimeProp GetValue(this (string name, IJSObjectReference value) prop)
+    public static object GetValue(this (string name, IJSObjectReference value) prop)
     {
         return GetValue(prop);
     }
 
-    public static AnimeProp GetValue(this (string name, object value) prop)
+    public static object GetValue(this (string name, object value) prop)
     {
         return GetValue(prop);
     }
 
-    public static AnimeProp GetValue(this (string name, Stagger value) prop)
+    public static object GetValue(this (string name, Stagger value) prop)
     {
         EnsureValidProp(prop.name, prop.value);
-        return new AnimeProp(
-            LowerFirstChar(prop.name),
-            new { 
+        return new
+        {
+            name = LowerFirstChar(prop.name),
+            value = new { 
                 propType = "stagger", 
                 value = new {
                     value = prop.value.GetValue(),
                     options = prop.value.GetOptions()
                 }
             }
-        );
+        };
     }
 
-    public static AnimeProp GetValue(this (string name, Func<int, int, double> callback) prop)
+    public static object GetValue(this (string name, Func<int, int, double> callback) prop)
     {
         EnsureAcceptableCallback(prop.callback);
-        return new AnimeProp(
-            LowerFirstChar(prop.name),
-            new {
+        return new
+        {
+            name = LowerFirstChar(prop.name),
+            value = new {
                 propType = "callback",
                 paramCount = prop.callback.Method.GetParameters().Length,
                 value = new { 
@@ -61,15 +65,16 @@ internal static class PropTupleExtensions
                     dotNetRef = DotNetObjectReference.Create(prop.callback.Target!)
                 }
             }
-        );
+        };
     }
 
-    public static AnimeProp GetValue(this (string name, Action<AnimationState> callback) prop)
+    public static object GetValue(this (string name, Action<AnimationState> callback) prop)
     {
         EnsureAcceptableCallback(prop.callback);
-        return new AnimeProp(
-            LowerFirstChar(prop.name),
-            new { 
+        return new
+        {
+            name = LowerFirstChar(prop.name),
+            value = new { 
                 propType = "callback",
                 paramCount = prop.callback.Method.GetParameters().Length,
                 value = new { 
@@ -77,29 +82,36 @@ internal static class PropTupleExtensions
                     dotNetRef = DotNetObjectReference.Create(prop.callback.Target!)
                 }
             }
-        );
+        };
     }
 
-    public static object GetValue(this IEnumerable<AnimeProp> props)
+    public static object GetValue<T>(this IEnumerable<(string name, T value)> props)
     {
         dynamic propsObject = new System.Dynamic.ExpandoObject();
-        foreach (var prop in props)
+        foreach (var (pname, pval) in props)
         {
-            ((IDictionary<string, object>)propsObject).Add(LowerFirstChar(prop.Name), prop.Value);
+            if (pval is null) continue;
+            ((IDictionary<string, object>)propsObject).Add(LowerFirstChar(pname), pval);
         }
         return propsObject;
     }
 
-    public static object GetValue(this (string name, IEnumerable<AnimeProp> value) props)
+    public static object GetValue<T>(this (string name, IEnumerable<(string name, T value)> value) props)
     {
+        dynamic propsObject = new System.Dynamic.ExpandoObject();
+        foreach (var (pname, pval) in props.value)
+        {
+            if (pval is null) continue;
+            ((IDictionary<string, object>)propsObject).Add(LowerFirstChar(pname), pval);
+        }
         return new
         {
             name = LowerFirstChar(props.name),
-            value = props.GetValue() 
+            value = propsObject 
         };
     }
 
-    public static AnimeProp GetValue(this (string name, IEnumerable<(string name, object value)> value) props)
+    public static object GetValue(this (string name, IEnumerable<(string name, object value)> value) props)
     {
         return GetValue(props);
     }

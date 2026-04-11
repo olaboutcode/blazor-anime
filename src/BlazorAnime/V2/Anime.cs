@@ -4,7 +4,7 @@ namespace BlazorAnime.V2;
 
 public class Anime(IJSRuntime jSRuntime) : IAnime
 {
-    public async Task<Animation> Animate(params IEnumerable<AnimeProp> props)
+    public async Task<Animation> Animate(params IEnumerable<(string name, object value)> props)
     {
         var animationJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateAnimation,
@@ -13,7 +13,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
         return new Animation(animationJsRef);
     }
 
-    public async Task<Timeline> Timeline(params IEnumerable<AnimeProp> props)
+    public async Task<Timeline> Timeline(params IEnumerable<(string name, object value)> props)
     {
         var timelineJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateTimeline,
@@ -65,12 +65,12 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
         return await JsRuntime.InvokeAsync<int>(IdentifierGetRunningLength);
     }
 
-    public async Task Set(string[] targets, IEnumerable<AnimeProp> props)
+    public async Task Set(string[] targets, List<(string name, object value)> props)
     {
         await JsRuntime.InvokeVoidAsync(IdentifierSetElementValue, targets, props.GetValue());
     }
 
-    public async Task Set(object[] targets, IEnumerable<AnimeProp> props)
+    public async Task Set(object[] targets, List<(string name, object value)> props)
     {
         await JsRuntime.InvokeVoidAsync(IdentifierSetElementValue, targets, props.GetValue());
     }
@@ -96,13 +96,13 @@ public interface IAnime
 {
     Task<Path> Path(string target);
     
-    Task<Animation> Animate(params IEnumerable<AnimeProp> props);
+    Task<Animation> Animate(params IEnumerable<(string name, object value)> props);
     
-    Task<Timeline> Timeline(params IEnumerable<AnimeProp> props);
+    Task<Timeline> Timeline(params IEnumerable<(string name, object value)> props);
 
-    Task Set(string[] targets, IEnumerable<AnimeProp> props);
+    Task Set(string[] targets, List<(string name, object value)> props);
 
-    Task Set(object[] targets, IEnumerable<AnimeProp> props);
+    Task Set(object[] targets, List<(string name, object value)> props);
 
     Task<string> Get(object target, string propName);
 
