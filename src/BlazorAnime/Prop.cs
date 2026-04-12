@@ -176,16 +176,6 @@ public abstract partial class Prop
     
     /// <summary>
     /// Define an animation prop value
-    /// <para>
-    /// If the original value has a unit, it will be automatically added to the animated value.
-    /// </para>
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop Value(Color value) => Create("value", value);
-    
-    /// <summary>
-    /// Define an animation prop value
     /// </summary>
     /// <param name="props"></param>
     /// <returns>Animation Property</returns>
@@ -209,17 +199,6 @@ public abstract partial class Prop
     /// <param name="to"></param>
     /// <returns>Animation Property</returns>
     public static Prop Value(string from, string to) => Create("value", from, to);
-    
-    /// <summary>
-    /// Define an animation prop value
-    /// <para>
-    /// If the original value has a unit, it will be automatically added to the animated value.
-    /// </para>
-    /// </summary>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop Value(Color from, Color to) => Create("value", from, to);
     
     /// <summary>
     /// Define an animation prop value
@@ -410,18 +389,6 @@ public abstract partial class Prop
     /// <param name="name"></param>
     /// <param name="value"></param>
     /// <returns>Animation Property</returns>
-    public static Prop Create(string name, Color value) => new GenProp<string>(name, value.GetValue());
-    
-    /// <summary>
-    /// Animate any CSS property.
-    /// <para>
-    /// Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
-    /// <br/>Prioritize opacity and CSS transforms as much as possible.
-    /// </para>
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="value"></param>
-    /// <returns>Animation Property</returns>
     public static Prop Create(string name, string[] value) => new GenProp<string[]>(name, value);
     
     /// <summary>
@@ -487,20 +454,6 @@ public abstract partial class Prop
     /// <returns>Animation Property</returns>
     public static Prop Create(string name, string from, string to) =>
         new GenProp<string[]>(name, new[] { from, to });
-    
-    /// <summary>
-    /// Animate any CSS property.
-    /// <para>
-    /// Most CSS properties will cause layout changes or repaint, and will result in choppy animation.
-    /// <br/>Prioritize opacity and CSS transforms as much as possible.
-    /// </para>
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
-    /// <returns>Animation Property</returns>
-    public static Prop Create(string name, Color from, Color to) =>
-        new GenProp<object>(name, new[] { from.GetValue(), to.GetValue() });
     
     /// <summary>
     /// Animate any CSS property.
