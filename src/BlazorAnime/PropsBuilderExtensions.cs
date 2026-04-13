@@ -37,7 +37,8 @@ public static class PropsBuilderExtensions
         Action<PropsBuilder> configure) => builder.Prop("points", configure);
     public static PropsBuilder Points(
         this PropsBuilder builder,
-        params Action<PropsBuilder>[] configurations) => builder.Prop("points", configurations);
+        params Action<PropsBuilder>[] build) => builder.Prop("points", build);
+    
     public static PropsBuilder EndDelay(
         this PropsBuilder builder,
         int milliseconds) => builder.Prop("endDelay", milliseconds);
@@ -47,12 +48,14 @@ public static class PropsBuilderExtensions
     public static PropsBuilder EndDelay(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("endDelay", callback);
+    
     public static PropsBuilder Duration(
         this PropsBuilder builder,
         int milliseconds) => builder.Prop("duration", milliseconds);
     public static PropsBuilder AutoPlay(
         this PropsBuilder builder,
         bool autoPlay) => builder.Prop("autoplay", autoPlay);
+
     public static PropsBuilder Delay(
         this PropsBuilder builder,
         int milliseconds) => builder.Prop("delay", milliseconds);
@@ -62,6 +65,7 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Delay(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("delay", callback);
+
     public static PropsBuilder Round(
         this PropsBuilder builder,
         int value) => builder.Prop("round", value);
@@ -76,7 +80,7 @@ public static class PropsBuilderExtensions
         int value) => builder.Prop("strokeDashoffset", value);
     public static PropsBuilder Keyframes(
         this PropsBuilder builder,
-        params Action<PropsBuilder>[] builders) => builder.Prop("keyframes", builders);
+        params Action<PropsBuilder>[] build) => builder.Prop("keyframes", build);
     public static PropsBuilder Perspective(
         this PropsBuilder builder,
         int value) => builder.Prop("perspective", value);
@@ -101,9 +105,14 @@ public static class PropsBuilderExtensions
     public static PropsBuilder RotateZ(
         this PropsBuilder builder,
         Stagger value) => builder.Prop("rotateZ", value);
+
     public static PropsBuilder Scale(
         this PropsBuilder builder,
         double value) => builder.Prop("scale", value);
+    public static PropsBuilder Scale(
+        this PropsBuilder builder,
+        params Func<PropsBuilder, PropsBuilder>[] build) => builder.Prop("scale", build);
+
     public static PropsBuilder BackgroundColor(
         this PropsBuilder builder,
         string value) => builder.Prop("backgroundColor", value);
