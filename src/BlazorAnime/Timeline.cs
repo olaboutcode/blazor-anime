@@ -147,8 +147,6 @@ public class OffSet
     }
 
     private double Value { get; }
-    
     private string Offset { get; }
-    
     public string GetValue() => $"{Offset}{Value}";
 }
