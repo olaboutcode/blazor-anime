@@ -461,4 +461,236 @@ public static class PropsBuilderExtensions
     public static PropsBuilder LineHeight(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("lineHeight", callback);
+    
+    public static PropsBuilder FontWeight(
+        this PropsBuilder builder,
+        double value) => builder.Prop("fontWeight", value);
+    public static PropsBuilder FontWeight(
+        this PropsBuilder builder,
+        string value) => builder.Prop("fontWeight", value);
+    public static PropsBuilder FontWeight(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("fontWeight", callback);
+    
+    public static PropsBuilder WordSpacing(
+        this PropsBuilder builder,
+        double value) => builder.Prop("wordSpacing", value);
+    public static PropsBuilder WordSpacing(
+        this PropsBuilder builder,
+        string value) => builder.Prop("wordSpacing", value);
+    public static PropsBuilder WordSpacing(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("wordSpacing", callback);
+    
+    public static PropsBuilder TextIndent(
+        this PropsBuilder builder,
+        double value) => builder.Prop("textIndent", value);
+    public static PropsBuilder TextIndent(
+        this PropsBuilder builder,
+        string value) => builder.Prop("textIndent", value);
+    public static PropsBuilder TextIndent(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("textIndent", callback);
+
+    // Visual Effects
+    // Shadows, filters, and other visual enhancements
+    public static PropsBuilder BoxShadow(
+        this PropsBuilder builder,
+        string value) => builder.Prop("boxShadow", value);
+    public static PropsBuilder BoxShadow(
+        this PropsBuilder builder,
+        Func<int, int, string> callback) => builder.Prop("boxShadow", callback);
+    
+    public static PropsBuilder TextShadow(
+        this PropsBuilder builder,
+        string value) => builder.Prop("textShadow", value);
+    public static PropsBuilder TextShadow(
+        this PropsBuilder builder,
+        Func<int, int, string> callback) => builder.Prop("textShadow", callback);
+    
+    public static PropsBuilder Filter(
+        this PropsBuilder builder,
+        string value) => builder.Prop("filter", value);
+    public static PropsBuilder Filter(
+        this PropsBuilder builder,
+        Func<int, int, string> callback) => builder.Prop("filter", callback);
+
+    // Min/Max Dimensions
+    // Constraints for element sizing
+    public static PropsBuilder MinWidth(
+        this PropsBuilder builder,
+        double value) => builder.Prop("minWidth", value);
+    public static PropsBuilder MinWidth(
+        this PropsBuilder builder,
+        string value) => builder.Prop("minWidth", value);
+    public static PropsBuilder MinWidth(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("minWidth", callback);
+    
+    public static PropsBuilder MaxWidth(
+        this PropsBuilder builder,
+        double value) => builder.Prop("maxWidth", value);
+    public static PropsBuilder MaxWidth(
+        this PropsBuilder builder,
+        string value) => builder.Prop("maxWidth", value);
+    public static PropsBuilder MaxWidth(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("maxWidth", callback);
+    
+    public static PropsBuilder MinHeight(
+        this PropsBuilder builder,
+        double value) => builder.Prop("minHeight", value);
+    public static PropsBuilder MinHeight(
+        this PropsBuilder builder,
+        string value) => builder.Prop("minHeight", value);
+    public static PropsBuilder MinHeight(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("minHeight", callback);
+    
+    public static PropsBuilder MaxHeight(
+        this PropsBuilder builder,
+        double value) => builder.Prop("maxHeight", value);
+    public static PropsBuilder MaxHeight(
+        this PropsBuilder builder,
+        string value) => builder.Prop("maxHeight", value);
+    public static PropsBuilder MaxHeight(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("maxHeight", callback);
+
+    // Z-Index
+    // Stacking order for positioned elements
+    public static PropsBuilder ZIndex(
+        this PropsBuilder builder,
+        int value) => builder.Prop("zIndex", value);
+    public static PropsBuilder ZIndex(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("zIndex", callback);
+
+    // Outline Properties
+    // Element outline styling (similar to border but doesn't affect layout)
+    public static PropsBuilder OutlineWidth(
+        this PropsBuilder builder,
+        double value) => builder.Prop("outlineWidth", value);
+    public static PropsBuilder OutlineWidth(
+        this PropsBuilder builder,
+        string value) => builder.Prop("outlineWidth", value);
+    public static PropsBuilder OutlineWidth(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("outlineWidth", callback);
+    
+    public static PropsBuilder OutlineColor(
+        this PropsBuilder builder,
+        string value) => builder.Prop("outlineColor", value);
+    public static PropsBuilder OutlineColor(
+        this PropsBuilder builder,
+        Func<int, int, string> callback) => builder.Prop("outlineColor", callback);
+    
+    public static PropsBuilder OutlineOffset(
+        this PropsBuilder builder,
+        double value) => builder.Prop("outlineOffset", value);
+    public static PropsBuilder OutlineOffset(
+        this PropsBuilder builder,
+        string value) => builder.Prop("outlineOffset", value);
+    public static PropsBuilder OutlineOffset(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("outlineOffset", callback);
+
+    // Transform Origin
+    // Pivot point for transform operations
+    public static PropsBuilder TransformOrigin(
+        this PropsBuilder builder,
+        string value) => builder.Prop("transformOrigin", value);
+    public static PropsBuilder TransformOrigin(
+        this PropsBuilder builder,
+        Func<int, int, string> callback) => builder.Prop("transformOrigin", callback);
+
+    // Background Properties
+    // Background image positioning and sizing
+    public static PropsBuilder BackgroundPosition(
+        this PropsBuilder builder,
+        string value) => builder.Prop("backgroundPosition", value);
+    public static PropsBuilder BackgroundPosition(
+        this PropsBuilder builder,
+        Func<int, int, string> callback) => builder.Prop("backgroundPosition", callback);
+    
+    public static PropsBuilder BackgroundSize(
+        this PropsBuilder builder,
+        string value) => builder.Prop("backgroundSize", value);
+    public static PropsBuilder BackgroundSize(
+        this PropsBuilder builder,
+        Func<int, int, string> callback) => builder.Prop("backgroundSize", callback);
+
+    // Flexbox Properties
+    // Flexible box layout properties
+    public static PropsBuilder FlexGrow(
+        this PropsBuilder builder,
+        double value) => builder.Prop("flexGrow", value);
+    public static PropsBuilder FlexGrow(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("flexGrow", callback);
+    
+    public static PropsBuilder FlexShrink(
+        this PropsBuilder builder,
+        double value) => builder.Prop("flexShrink", value);
+    public static PropsBuilder FlexShrink(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("flexShrink", callback);
+    
+    public static PropsBuilder FlexBasis(
+        this PropsBuilder builder,
+        double value) => builder.Prop("flexBasis", value);
+    public static PropsBuilder FlexBasis(
+        this PropsBuilder builder,
+        string value) => builder.Prop("flexBasis", value);
+    public static PropsBuilder FlexBasis(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("flexBasis", callback);
+    
+    public static PropsBuilder Order(
+        this PropsBuilder builder,
+        int value) => builder.Prop("order", value);
+    public static PropsBuilder Order(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("order", callback);
+
+    // Gap Properties
+    // Spacing between flex/grid items
+    public static PropsBuilder Gap(
+        this PropsBuilder builder,
+        double value) => builder.Prop("gap", value);
+    public static PropsBuilder Gap(
+        this PropsBuilder builder,
+        string value) => builder.Prop("gap", value);
+    public static PropsBuilder Gap(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("gap", callback);
+    
+    public static PropsBuilder RowGap(
+        this PropsBuilder builder,
+        double value) => builder.Prop("rowGap", value);
+    public static PropsBuilder RowGap(
+        this PropsBuilder builder,
+        string value) => builder.Prop("rowGap", value);
+    public static PropsBuilder RowGap(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("rowGap", callback);
+    
+    public static PropsBuilder ColumnGap(
+        this PropsBuilder builder,
+        double value) => builder.Prop("columnGap", value);
+    public static PropsBuilder ColumnGap(
+        this PropsBuilder builder,
+        string value) => builder.Prop("columnGap", value);
+    public static PropsBuilder ColumnGap(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("columnGap", callback);
+
+    // Clip Path
+    // Shape clipping for elements
+    public static PropsBuilder ClipPath(
+        this PropsBuilder builder,
+        string value) => builder.Prop("clipPath", value);
+    public static PropsBuilder ClipPath(
+        this PropsBuilder builder,
+        Func<int, int, string> callback) => builder.Prop("clipPath", callback);
 }
