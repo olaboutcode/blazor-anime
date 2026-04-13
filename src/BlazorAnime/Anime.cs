@@ -79,9 +79,12 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="targets"></param>
     /// <param name="props"></param>
-    public async Task Set(string[] targets, List<Prop> props)
+    public async Task Set(string[] targets, Func<PropsBuilder, PropsBuilder> build)
     {
-        await JsRuntime.InvokeVoidAsync(IdentifierSetElementValue, targets, props.ToObject());
+        await JsRuntime.InvokeVoidAsync(
+            IdentifierSetElementValue, 
+            targets, 
+            build(new PropsBuilder()).Build().ToObject());
     }
     
     /// <summary>
@@ -89,9 +92,12 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="targets"></param>
     /// <param name="props"></param>
-    public async Task Set(object[] targets, List<Prop> props)
+    public async Task Set(object[] targets, Func<PropsBuilder, PropsBuilder> build)
     {
-        await JsRuntime.InvokeVoidAsync(IdentifierSetElementValue, targets, props.ToObject());
+        await JsRuntime.InvokeVoidAsync(
+            IdentifierSetElementValue, 
+            targets, 
+            build(new PropsBuilder()).Build().ToObject());
     }
 
     /// <summary>
@@ -189,8 +195,8 @@ public interface IAnime
     Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> configureDefaults);
     Task<Timeline> Timeline(Func<PropsBuilder, Task<PropsBuilder>> configureDefaults);
     Task<Path> GetPath(string svgTarget);
-    Task Set(string[] targets, List<Prop> props);
-    Task Set(object[] targets, List<Prop> props);
+    Task Set(string[] targets, Func<PropsBuilder, PropsBuilder> build);
+    Task Set(object[] targets, Func<PropsBuilder, PropsBuilder> build);
     Task<string> Get(object target, string propName);
     Task<double> Get(object target, string propName, string cssUnit);
     Task<int> Random(int minValue, int maxValue);

@@ -134,8 +134,8 @@ public sealed class Animation: IAsyncDisposable
     /// </summary>
     /// <param name="targets"></param>
     /// <param name="props"></param>
-    public async Task Set(string targets, IEnumerable<Prop> props) =>
-        await AnimationJsRef.InvokeVoidAsync("set", targets, props.ToObject());
+    public async Task Set(string targets, Func<PropsBuilder, PropsBuilder> build) =>
+        await AnimationJsRef.InvokeVoidAsync("set", targets, build(new PropsBuilder()).Build().ToObject());
 
     /// <summary>
     /// Returns a random integer within a specific range.
