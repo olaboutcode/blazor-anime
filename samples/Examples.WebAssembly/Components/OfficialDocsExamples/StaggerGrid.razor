@@ -158,21 +158,21 @@
         if (firstRender)
         {
             _animation ??= await Anime.Animate(
-                config => config
+                props => props
                 .Targets(".staggering-grid-demo .el")
                 .AutoPlay(true)
                 .Loop(3)
                 .Scale([
-                    p => p
+                    props => props
                         .Value(.1)
                         .Easing(Easing.EaseOutSine)
-                        .Duration(500),
-                    p => p
+                        .Duration(milliseconds: 500),
+                    props => props
                         .Value(1)
                         .Easing(Easing.EaseInOutQuad)
                         .Duration(1200)
                 ])
-                .Delay(Stagger.Create(200, s => s
+                .Delay(Stagger.Create(200, options => options
                     .Grid(14, 5)
                     .From(StaggerPosition.Center)
                 ))
