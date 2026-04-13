@@ -2,6 +2,32 @@ namespace BlazorAnime;
 
 internal static class PropsBuilderExtensions
 {
+    // callbacks
+    public static PropsBuilder Update(
+        this PropsBuilder builder,
+        Action<AnimationState> callback) => builder.Prop("update", callback);
+    public static PropsBuilder Complete(
+        this PropsBuilder builder,
+        Action<AnimationState> callback) => builder.Prop("complete", callback);
+    public static PropsBuilder Begin(
+        this PropsBuilder builder,
+        Action<AnimationState> callback) => builder.Prop("begin", callback);
+    public static PropsBuilder LoopBegin(
+        this PropsBuilder builder,
+        Action<AnimationState> callback) => builder.Prop("loopBegin", callback);
+    public static PropsBuilder LoopComplete(
+        this PropsBuilder builder,
+        Action<AnimationState> callback) => builder.Prop("loopComplete", callback);
+    public static PropsBuilder Change(
+        this PropsBuilder builder,
+        Action<AnimationState> callback) => builder.Prop("change", callback);
+    public static PropsBuilder ChangeBegin(
+        this PropsBuilder builder,
+        Action<AnimationState> callback) => builder.Prop("changeBegin", callback);
+    public static PropsBuilder ChangeComplete(
+        this PropsBuilder builder,
+        Action<AnimationState> callback) => builder.Prop("changeComplete", callback);
+    
     public static PropsBuilder EndDelay(
         this PropsBuilder builder,
         int milliseconds) => builder.Prop("endDelay", milliseconds);
@@ -41,29 +67,25 @@ internal static class PropsBuilderExtensions
     public static PropsBuilder Keyframes(
         this PropsBuilder builder,
         params Action<PropsBuilder>[] builders) => builder.Prop("keyframes", builders);
-    
-    public static PropsBuilder Update(
+    public static PropsBuilder Perspective(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("update", callback);
-    public static PropsBuilder Complete(
+        int value) => builder.Prop("perspective", value);
+    public static PropsBuilder TranslateX(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("complete", callback);
-    public static PropsBuilder Begin(
+        double value) => builder.Prop("translateX", value);
+    public static PropsBuilder TranslateY(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("begin", callback);
-    public static PropsBuilder LoopBegin(
+        double value) => builder.Prop("translateY", value);
+    public static PropsBuilder Rotate(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("loopBegin", callback);
-    public static PropsBuilder LoopComplete(
+        double value) => builder.Prop("rotate", value);
+    public static PropsBuilder Scale(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("loopComplete", callback);
-    public static PropsBuilder Change(
+        double value) => builder.Prop("scale", value);
+    public static PropsBuilder BackgroundColor(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("change", callback);
-    public static PropsBuilder ChangeBegin(
+        string value) => builder.Prop("backgroundColor", value);
+    public static PropsBuilder Opacity(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("changeBegin", callback);
-    public static PropsBuilder ChangeComplete(
-        this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("changeComplete", callback);
+        double value) => builder.Prop("opacity", value);
 }

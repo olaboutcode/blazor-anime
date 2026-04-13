@@ -35,6 +35,12 @@ internal class PropsBuilder
             _props.Add(new GenProp<double>(property, value));
         return this;
     }
+    public PropsBuilder Prop(string property, string value)
+    {
+        if(!string.IsNullOrWhiteSpace(property))
+            _props.Add(new GenProp<string>(property, value));
+        return this;
+    }
     public PropsBuilder Prop(string property, object from, object to)
     {
         if(!string.IsNullOrWhiteSpace(property))
