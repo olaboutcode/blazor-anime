@@ -27,6 +27,15 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
         return animation;
     }
 
+    public async Task<Animation> CreateAnimationAsync(
+        string id, 
+        Func<PropsBuilder, Task<PropsBuilder>> configure)
+    {
+        var animation = await Anime.Animate(configure);
+        _animations.Add(id, animation);
+        return animation;
+    }
+
     protected async Task<Timeline> CreateTimelineAsync(
         string id,
         Func<PropsBuilder, PropsBuilder> configure)
@@ -36,16 +45,11 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
         return timeline;
     }
 
-    protected async Task<Animation> CreateAnimationAsync(string id, params Prop[] props)
+    protected async Task<Timeline> CreateTimelineAsync(
+        string id,
+        Func<PropsBuilder, Task<PropsBuilder>> configure)
     {
-        var animation = await Anime.Animate(props);
-        _animations.Add(id, animation);
-        return animation;
-    }
-
-    protected async Task<Timeline> CreateTimelineAsync(string id, params Prop[] props)
-    {
-        var timeline = await Anime.Timeline(props);
+        var timeline = await Anime.Timeline(configure);
         _timelines.Add(id, timeline);
         return timeline;
     }
