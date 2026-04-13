@@ -32,7 +32,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
         return new Animation(animationJsRef);
     }
 
-/// <summary>
+    /// <summary>
     /// Create a timeline.
     /// </summary>
     /// <param name="configure"></param>

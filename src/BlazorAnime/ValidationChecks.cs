@@ -20,13 +20,11 @@ internal static class ValidationChecks
             throw new ArgumentException(
                 "Lambda expressions are not supported as callbacks. Please use a named method.");
         }
-
         if (callback.GetInvocationList().Length > 1)
         {
             throw new ArgumentException(
                 "Multicast delegates are not supported as callbacks. Please use a single method.");
         }
-
         if (callback.Target == null)
         {
             throw new ArgumentException(
