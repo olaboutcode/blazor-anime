@@ -131,30 +131,30 @@ public sealed class PropsBuilder
             || propsActions.Length == 0)
             return this;
     
-        var keyframesList = new List<object>();
+        var keyframes = new List<object>();
         foreach (var action in propsActions)
         {
             var builder = new PropsBuilder();
             action(builder);
-            keyframesList.Add(builder._props.ToObject());
+            keyframes.Add(builder._props.ToObject());
         }
-        _props.Add(new GenProp<object>(property, keyframesList));
+        _props.Add(new GenProp<object>(property, keyframes));
         return this;
     }
-    public PropsBuilder Prop(string property, params Func<PropsBuilder, PropsBuilder>[] propsActions)
+    public PropsBuilder Prop(string property, params Func<PropsBuilder, PropsBuilder>[] builders)
     {
         if (string.IsNullOrWhiteSpace(property)
-            || propsActions == null
-            || propsActions.Length == 0)
+            || builders == null
+            || builders.Length == 0)
             return this;
     
-        var keyframesList = new List<object>();
-        foreach (var action in propsActions)
+        var keyframes = new List<object>();
+        foreach (var builderFunc in builders)
         {
-            var builder = action(new PropsBuilder());
-            keyframesList.Add(builder._props.ToObject());
+            var builder = builderFunc(new PropsBuilder());
+            keyframes.Add(builder._props.ToObject());
         }
-        _props.Add(new GenProp<object>(property, keyframesList));
+        _props.Add(new GenProp<object>(property, keyframes));
         return this;
     }
 
