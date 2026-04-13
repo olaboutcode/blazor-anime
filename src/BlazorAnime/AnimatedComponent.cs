@@ -14,7 +14,7 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
         _animations.TryGetValue(id, out var anim) ? anim : null;
     
     protected IReadOnlyList<Timeline> GetTimelines() =>
-        [.. _timelines.Values];
+        [.._timelines.Values];
     protected Timeline? GetTimeline(string id) => 
         _timelines.TryGetValue(id, out var tl) ? tl : null;
 
