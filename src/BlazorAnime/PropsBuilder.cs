@@ -111,37 +111,37 @@ public sealed class PropsBuilder
             _props.Add(new StgProp(property, stagger.GetValue(), stagger.GetOptions().ToObject()));
         return this;
     }
-    public PropsBuilder Prop(string property, Action<PropsBuilder> propsAction)
+    public PropsBuilder Prop(string property, Action<PropsBuilder> build)
     {
-        if (string.IsNullOrWhiteSpace(property) || propsAction == null)
+        if (string.IsNullOrWhiteSpace(property) || build == null)
             return this;
     
         var builder = new PropsBuilder();
-        propsAction(builder);
+        build(builder);
         _props.Add(new GenProp<object>(property, builder._props.ToObject()));
         return this;
     }
-    public PropsBuilder Prop(string property, Func<PropsBuilder, PropsBuilder> propsAction)
+    public PropsBuilder Prop(string property, Func<PropsBuilder, PropsBuilder> build)
     {
-        if (string.IsNullOrWhiteSpace(property) || propsAction == null)
+        if (string.IsNullOrWhiteSpace(property) || build == null)
             return this;
     
-        var builder = propsAction(new PropsBuilder());
+        var builder = build(new PropsBuilder());
         _props.Add(new GenProp<object>(property, builder._props.ToObject()));
         return this;
     }
-    public PropsBuilder Prop(string property, params Action<PropsBuilder>[] propsActions)
+    public PropsBuilder Prop(string property, params Action<PropsBuilder>[] builders)
     {
         if (string.IsNullOrWhiteSpace(property)
-            || propsActions == null
-            || propsActions.Length == 0)
+            || builders == null
+            || builders.Length == 0)
             return this;
     
         var keyframes = new List<object>();
-        foreach (var action in propsActions)
+        foreach (var build in builders)
         {
             var builder = new PropsBuilder();
-            action(builder);
+            build(builder);
             keyframes.Add(builder._props.ToObject());
         }
         _props.Add(new GenProp<object>(property, keyframes));
