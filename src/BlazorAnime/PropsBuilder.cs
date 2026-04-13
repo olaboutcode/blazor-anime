@@ -106,7 +106,7 @@ internal class PropsBuilder
 
     private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, double> callback)
     {
-        Checks.EnsureAcceptableCallback(callback);
+        ValidationChecks.EnsureAcceptableCallback(callback);
         return new CallbackProp(
             propName,
             callback.Method.Name,
@@ -115,7 +115,7 @@ internal class PropsBuilder
     }
     private static CallbackProp CreateStateCallback(string propName, Action<AnimationState> callback)
     {
-        Checks.EnsureAcceptableCallback(callback);
+        ValidationChecks.EnsureAcceptableCallback(callback);
         return new CallbackProp(
             propName,
             callback.Method.Name,

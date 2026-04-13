@@ -506,7 +506,7 @@ public abstract partial class Prop
     /// Throws ArgumentException if the method is not found in the caller object
     private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, double> callback)
     {
-        Checks.EnsureAcceptableCallback(callback);
+        ValidationChecks.EnsureAcceptableCallback(callback);
         return new CallbackProp(
             propName,
             callback.Method.Name,
@@ -527,7 +527,7 @@ public abstract partial class Prop
     /// Throws ArgumentException if the method is not found in the caller object
     private static CallbackProp CreateStateCallback(string propName, Action<AnimationState> callback)
     {
-        Checks.EnsureAcceptableCallback(callback);
+        ValidationChecks.EnsureAcceptableCallback(callback);
         return new CallbackProp(
             propName,
             callback.Method.Name,

@@ -6,7 +6,7 @@ public abstract partial class Prop
 {
     public Prop(string name, object value)
     {
-        Checks.EnsureValidProp(name, value);
+        ValidationChecks.EnsureValidProp(name, value);
         Name = LowerFirstChar(name);
         _value = value;
     }
