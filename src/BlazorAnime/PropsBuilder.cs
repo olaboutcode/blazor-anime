@@ -22,6 +22,12 @@ public sealed class PropsBuilder
             _props.Add(new GenProp<string>("value", value.GetValue()));
         return this;
     }
+    public PropsBuilder Value(params string[] value)
+    {
+        if(value != null)
+            _props.Add(new GenProp<string[]>("value", value));
+        return this;
+    }
     public PropsBuilder Prop(string property, int value)
     {
         if(!string.IsNullOrWhiteSpace(property))

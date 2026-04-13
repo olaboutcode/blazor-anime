@@ -7,31 +7,8 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// <summary>
     /// Create an animation.
     /// </summary>
-    /// <param name="props"></param>
+    /// <param name="configure"></param>
     /// <returns>Animation</returns>
-    public async Task<Animation> Animate(params Prop[] props)
-    {
-        var animationJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
-            IdentifierCreateAnimation,
-            props.ToObject()
-        );
-        return new Animation(animationJsRef);
-    }
-    
-    /// <summary>
-    /// Create an animation timeline.
-    /// </summary>
-    /// <param name="defaultProps"></param>
-    /// <returns>Timeline</returns>
-    public async Task<Timeline> Timeline(params Prop[] defaultProps)
-    {
-        var timelineJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
-            IdentifierCreateTimeline,
-            defaultProps.ToObject()
-        );
-        return new Timeline(timelineJsRef);
-    }
-
     public async Task<Animation> Animate(Func<PropsBuilder, PropsBuilder> configure)
     {
         var animationJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
@@ -41,11 +18,44 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
         return new Animation(animationJsRef);
     }
 
-    public async Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> configureDefault)
+    /// <summary>
+    /// Create an animation.
+    /// </summary>
+    /// <param name="configure"></param>
+    /// <returns>Animation</returns>
+    public async Task<Animation> Animate(Func<PropsBuilder, Task<PropsBuilder>> configure)
+    {
+        var animationJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
+            IdentifierCreateAnimation,
+            (await configure(new PropsBuilder())).Build().ToObject()
+        );
+        return new Animation(animationJsRef);
+    }
+
+/// <summary>
+    /// Create a timeline.
+    /// </summary>
+    /// <param name="configure"></param>
+    /// <returns>Timeline</returns>
+    public async Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> configureDefaults)
     {
         var timelineJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateTimeline,
-            configureDefault(new PropsBuilder()).Build().ToObject()
+            configureDefaults(new PropsBuilder()).Build().ToObject()
+        );
+        return new Timeline(timelineJsRef);
+    }
+
+    /// <summary>
+    /// Create a timeline.
+    /// </summary>
+    /// <param name="configure"></param>
+    /// <returns>Timeline</returns>
+    public async Task<Timeline> Timeline(Func<PropsBuilder, Task<PropsBuilder>> configureDefaults)
+    {
+        var timelineJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
+            IdentifierCreateTimeline,
+            (await configureDefaults(new PropsBuilder())).Build().ToObject()
         );
         return new Timeline(timelineJsRef);
     }
@@ -174,26 +184,16 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
 
 public interface IAnime
 {
-    Task<Path> Path(string target);
-    
-    Task<Animation> Animate(params Prop[] props);
-    
-    Task<Timeline> Timeline(params Prop[] props);
-    
     Task<Animation> Animate(Func<PropsBuilder, PropsBuilder> configure);
+    Task<Animation> Animate(Func<PropsBuilder, Task<PropsBuilder>> configure);
     Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> configureDefault);
-
+    Task<Timeline> Timeline(Func<PropsBuilder, Task<PropsBuilder>> configureDefault);
+    Task<Path> Path(string target);
     Task Set(string[] targets, List<Prop> props);
-
     Task Set(object[] targets, List<Prop> props);
-
     Task<string> Get(object target, string propName);
-
     Task<double> Get(object target, string propName, string cssUnit);
-
     Task<int> Random(int minValue, int maxValue);
-    
     Task SuspendWhenDocumentHidden(bool value);
-
     Task<int> RunningLength();
 }

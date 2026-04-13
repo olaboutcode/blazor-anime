@@ -32,6 +32,12 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Targets(
         this PropsBuilder builder,
         params string[] targets) => builder.Prop("targets", targets);
+    public static PropsBuilder Points(
+        this PropsBuilder builder,
+        Action<PropsBuilder> configure) => builder.Prop("points", configure);
+    public static PropsBuilder Points(
+        this PropsBuilder builder,
+        params Action<PropsBuilder>[] configurations) => builder.Prop("points", configurations);
     public static PropsBuilder EndDelay(
         this PropsBuilder builder,
         int milliseconds) => builder.Prop("endDelay", milliseconds);

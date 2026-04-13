@@ -2,20 +2,21 @@
 @inject IAnime Anime;
 
 @code {
-    private Animation? _animation;
+    private Animation? _animation = null;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             _animation ??= await Anime.Animate(
-                Prop.Targets(".line-drawing-demo .lines path"),
-                Prop.StrokeDashoffset(0),
-                Prop.Easing.EaseInOutSine,
-                Prop.Duration(1500),
-                Prop.Delay(OnDelay),
-                Prop.Direction.Alternate,
-                Prop.Loop(true)
+                config => config
+                .Targets(".line-drawing-demo .lines path")
+                .StrokeDashoffset(0)
+                .Easing(Easing.EaseInOutSine)
+                .Duration(1500)
+                .Delay(OnDelay)
+                .Direction(Direction.Alternate)
+                .Loop(true)
             );
         }
     }
