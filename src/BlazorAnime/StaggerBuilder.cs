@@ -69,13 +69,8 @@ public sealed class StaggerOptionsBuilder
     }
 
     internal IReadOnlyList<StgOptionProp> Build() => _options.AsReadOnly();
-
-    internal StaggerOptionsBuilder()
-    {
-        _options = [];
-    }
-
     private readonly List<StgOptionProp> _options;
+    internal StaggerOptionsBuilder() => _options = [];
 }
 
 public sealed class StaggerAxis

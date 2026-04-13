@@ -123,7 +123,8 @@ public sealed class PropsBuilder
         return this;
     }
 
-    public IReadOnlyList<Prop> Build() => _props.AsReadOnly();
+    internal IReadOnlyList<Prop> Build() => _props.AsReadOnly();
+    private readonly List<Prop> _props = [];
 
     private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, double> callback)
     {
@@ -143,8 +144,6 @@ public sealed class PropsBuilder
             callback.Method.GetParameters().Length,
             DotNetObjectReference.Create(callback.Target!));
     }
-
-    private readonly List<Prop> _props = [];
 }
 
 public sealed class RelValue

@@ -28,6 +28,7 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Action<AnimationState> callback) => builder.Prop("changeComplete", callback);
     
+    // props
     public static PropsBuilder Targets(
         this PropsBuilder builder,
         params string[] targets) => builder.Prop("targets", targets);
