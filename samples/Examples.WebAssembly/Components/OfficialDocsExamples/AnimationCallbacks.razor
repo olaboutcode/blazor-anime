@@ -28,27 +28,29 @@
         {
             _animationA ??= await CreateAnimationAsync(
                 nameof(_animationA),
-                Prop.Targets(".animation-callbacks-demo .el.a"),
-                Prop.Create("translateX", 270),
-                Prop.Create("backgroundColor", "#FFA500"),
-                Prop.Delay(OnDelay),
-                Prop.Duration(500),
-                Prop.Direction.Alternate,
-                Prop.Easing.EaseInOutCirc,
-                Prop.AutoPlay(false),
-                Prop.Update(OnUpdate)
+                config => config
+                .Targets(".animation-callbacks-demo .el.a")
+                .TranslateX(270)
+                .BackgroundColor("#FFA500")
+                .Delay(OnDelay)
+                .Duration(500)
+                .Direction(Direction.Alternate)
+                .Easing(Easing.EaseInOutCirc)
+                .AutoPlay(false)
+                .Update(OnUpdate)
             );
             _animationB ??= await CreateAnimationAsync(
                 nameof(_animationB),
-                Prop.Targets(".animation-callbacks-demo .el.b"),
-                Prop.Create("translateY", 270),
-                Prop.Create("borderRadius", "50%"),
-                Prop.Delay(OnDelay),
-                Prop.Duration(1000),
-                Prop.Direction.Alternate,
-                Prop.Easing.EaseOutInBounce,
-                Prop.AutoPlay(false),
-                Prop.Update(OnUpdate)
+                config => config
+                .Targets(".animation-callbacks-demo .el.b")
+                .TranslateY(270)
+                .BorderRadius("50%")
+                .Delay(OnDelay)
+                .Duration(1000)
+                .Direction(Direction.Alternate)
+                .Easing(Easing.EaseOutInBounce)
+                .AutoPlay(false)
+                .Update(OnUpdate)
             );
         }
     }

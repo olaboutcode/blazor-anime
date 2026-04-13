@@ -179,6 +179,9 @@ public interface IAnime
     Task<Animation> Animate(params Prop[] props);
     
     Task<Timeline> Timeline(params Prop[] props);
+    
+    Task<Animation> Animate(Func<PropsBuilder, PropsBuilder> configure);
+    Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> configureDefault);
 
     Task Set(string[] targets, List<Prop> props);
 

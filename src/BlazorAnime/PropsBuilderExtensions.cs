@@ -1,6 +1,6 @@
 namespace BlazorAnime;
 
-internal static class PropsBuilderExtensions
+public static class PropsBuilderExtensions
 {
     // callbacks
     public static PropsBuilder Update(
@@ -91,4 +91,7 @@ internal static class PropsBuilderExtensions
     public static PropsBuilder Opacity(
         this PropsBuilder builder,
         double value) => builder.Prop("opacity", value);
+    public static PropsBuilder BorderRadius(
+        this PropsBuilder builder,
+        string value) => builder.Prop("borderRadius", value);
 }

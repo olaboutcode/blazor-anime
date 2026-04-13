@@ -18,6 +18,24 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
     protected Timeline? GetTimeline(string id) => 
         _timelines.TryGetValue(id, out var tl) ? tl : null;
 
+    public async Task<Animation> CreateAnimationAsync(
+        string id, 
+        Func<PropsBuilder, PropsBuilder> configure)
+    {
+        var animation = await Anime.Animate(configure);
+        _animations.Add(id, animation);
+        return animation;
+    }
+
+    protected async Task<Timeline> CreateTimelineAsync(
+        string id,
+        Func<PropsBuilder, PropsBuilder> configure)
+    {
+        var timeline = await Anime.Timeline(configure);
+        _timelines.Add(id, timeline);
+        return timeline;
+    }
+
     protected async Task<Animation> CreateAnimationAsync(string id, params Prop[] props)
     {
         var animation = await Anime.Animate(props);
