@@ -104,8 +104,6 @@ internal class PropsBuilder
         return this;
     }
 
-    protected List<Prop> _props = [];
-
     private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, double> callback)
     {
         Checks.EnsureAcceptableCallback(callback);
@@ -124,6 +122,8 @@ internal class PropsBuilder
             callback.Method.GetParameters().Length,
             DotNetObjectReference.Create(callback.Target!));
     }
+
+    protected List<Prop> _props = [];
 }
 
 public sealed class Offset
