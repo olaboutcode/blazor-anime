@@ -151,13 +151,13 @@
 </div>
 
 @code {
-    private Animation? _animation;
+    private Animation? _animation = null;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animate(
+            @* _animation ??= await Anime.Animate(
                 Prop.Targets(".staggering-grid-demo .el"),
                 Prop.AutoPlay(true),
                 Prop.Loop(3),
@@ -177,7 +177,7 @@
                     StaggerProp.Grid(14, 5),
                     StaggerProp.From.Center
                 ]))
-            );
+            ); *@
         }
     }
 
