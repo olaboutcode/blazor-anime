@@ -13,21 +13,18 @@
                 .Duration(750)
                 .Easing(Easing.EaseOutExpo)
                 .AutoPlay(true)
-            );
-
-            _timeline?.Add(
+            )
+            .AddAsync(
                 t => t
                 .Targets(".offsets-demo .el.square")
                 .TranslateX(250)
-            );
-            
-            _timeline?.Add(
+            )
+            .AddAsync(
                 t => t
                 .Targets(".offsets-demo .el.circle")
                 .TranslateX(250)
-            , OffSet.Before(600));
-            
-            _timeline?.Add(
+            , OffSet.Before(600))
+            .AddAsync(
                 t => t
                 .Targets(".offsets-demo .el.triangle")
                 .TranslateX(250)

@@ -13,9 +13,8 @@
                 .Duration(750)
                 .Easing(Easing.EaseOutExpo)
                 .AutoPlay(true)
-            );
-
-            _timeline?.Add(
+            )
+            .AddAsync(
                 t => t
                 .Targets(".offsets-demo .el.square")
                 .TranslateX(250)
