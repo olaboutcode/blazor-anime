@@ -17,17 +17,17 @@ public sealed class Stagger_
         return new Stagger_(new[] { from, to }, builder.Build());
     }
 
-    public object GetValue() => _value;
     public IReadOnlyList<StgOptionProp> GetOptions() => _options;
+    public object GetValue() => _value;
 
     private Stagger_(object value, IReadOnlyList<StgOptionProp> options)
     {
-        _value = value;
         _options = options;
+        _value = value;
     }
 
-    private readonly object _value;
     private readonly IReadOnlyList<StgOptionProp> _options;
+    private readonly object _value;
 }
 
 public sealed class StaggerOptionsBuilder
