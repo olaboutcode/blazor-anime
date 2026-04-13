@@ -17,8 +17,8 @@ public sealed class Stagger
         return new Stagger(new[] { from, to }, builder.Build());
     }
 
-    public IReadOnlyList<StgOptionProp> GetOptions() => _options;
-    public object GetValue() => _value;
+    internal IReadOnlyList<StgOptionProp> GetOptions() => _options;
+    internal object GetValue() => _value;
 
     private Stagger(object value, IReadOnlyList<StgOptionProp> options)
     {
@@ -77,7 +77,7 @@ public sealed class StaggerAxis
 {
     public static StaggerAxis X { get; } = new("x");
     public static StaggerAxis Y { get; } = new("y");
-    public string GetValue() => _name;
+    internal string GetValue() => _name;
     private StaggerAxis(string name) { _name = name; }
     private readonly string _name;
 }
@@ -88,7 +88,7 @@ public sealed class StaggerPosition
     public static StaggerPosition Last { get; } = new("last");
     public static StaggerPosition Center { get; } = new("center");
     public static StaggerPosition Index(int index) => new("index", index);
-    public object GetValue() => (object?)_index ?? _name;
+    internal object GetValue() => (object?)_index ?? _name;
 
     private StaggerPosition(string name, int? index = null)
     {

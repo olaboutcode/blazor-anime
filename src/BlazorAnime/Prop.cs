@@ -2,7 +2,7 @@ namespace BlazorAnime;
 
 using Microsoft.JSInterop;
 
-public abstract partial class Prop
+internal abstract partial class Prop
 {
     public Prop(string name, object value)
     {
@@ -23,7 +23,11 @@ public abstract partial class Prop
         return new
         {
             name = Name,
-            value = new { propType = "setter", value = _value }
+            value = new 
+            {
+                propType = "setter",
+                value = _value
+            }
         };
     }
 
@@ -33,9 +37,13 @@ public abstract partial class Prop
         : char.ToLower(input[0]) + input[1..];
 }
 
-public class GenProp<T>(string name, T value) : Prop(name, value) where T : notnull;
+internal class GenProp<T>(
+    string name, 
+    T value) : Prop(name, value) where T : notnull;
 
-public class SvgProp(string name, IJSObjectReference value) : Prop(name, value)
+internal class SvgProp(
+    string name, 
+    IJSObjectReference value) : Prop(name, value)
 {
     public override object GetValue()
     {
@@ -51,7 +59,10 @@ public class SvgProp(string name, IJSObjectReference value) : Prop(name, value)
     }
 }
 
-public class StgProp(string name, object value, object options) : Prop(name, value)
+internal class StgProp(
+    string name,
+    object value, 
+    object options) : Prop(name, value)
 {
     public override object GetValue()
     {
@@ -61,25 +72,38 @@ public class StgProp(string name, object value, object options) : Prop(name, val
             value = new
             {
                 propType = "stagger",
-                value = new { value = GetPrimValue(), options }
+                value = new { 
+                    value = GetPrimValue(),
+                    options
+                }
             }
         };
     }
 }
 
-public class StgOptionProp(string name, object value) : Prop(name, value)
+internal class StgOptionProp(
+    string name, 
+    object value) : Prop(name, value)
 {
     public override object GetValue()
     {
         return new
         {
             name = Name,
-            value = new { propType = "setter", value = GetPrimValue() }
+            value = new 
+            { 
+                propType = "setter",
+                value = GetPrimValue()
+            }
         };
     }
 }
 
-public class CallbackProp(string name, string callbackName, int paramCount, object dotNetRef) : Prop(name, callbackName)
+internal class CallbackProp(
+    string name,
+    string callbackName, 
+    int paramCount, 
+    object dotNetRef) : Prop(name, callbackName)
 {
     public override object GetValue()
     {
@@ -90,7 +114,11 @@ public class CallbackProp(string name, string callbackName, int paramCount, obje
             {
                 propType = "callback",
                 paramCount,
-                value = new { callback = GetPrimValue(), dotNetRef }
+                value = new 
+                {
+                    callback = GetPrimValue(),
+                    dotNetRef
+                }
             }
         };
     }

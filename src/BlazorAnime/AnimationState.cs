@@ -1,6 +1,6 @@
 namespace BlazorAnime;
 
-public class AnimationState
+public sealed class AnimationState
 {
     public float Value { get; init; }
     public float Progress { get; init; }
