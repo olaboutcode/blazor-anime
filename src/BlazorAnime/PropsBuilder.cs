@@ -107,7 +107,7 @@ public sealed class PropsBuilder
     }
     public PropsBuilder Prop(string property, Action<PropsBuilder> propsAction)
     {
-        if (!string.IsNullOrWhiteSpace(property) || propsAction == null)
+        if (string.IsNullOrWhiteSpace(property) || propsAction == null)
             return this;
     
         var builder = new PropsBuilder();
@@ -117,7 +117,7 @@ public sealed class PropsBuilder
     }
     public PropsBuilder Prop(string property, Func<PropsBuilder, PropsBuilder> propsAction)
     {
-        if (!string.IsNullOrWhiteSpace(property) || propsAction == null)
+        if (string.IsNullOrWhiteSpace(property) || propsAction == null)
             return this;
     
         var builder = propsAction(new PropsBuilder());
@@ -126,7 +126,7 @@ public sealed class PropsBuilder
     }
     public PropsBuilder Prop(string property, params Action<PropsBuilder>[] propsActions)
     {
-        if (!string.IsNullOrWhiteSpace(property)
+        if (string.IsNullOrWhiteSpace(property)
             || propsActions == null
             || propsActions.Length == 0)
             return this;
@@ -143,7 +143,7 @@ public sealed class PropsBuilder
     }
     public PropsBuilder Prop(string property, params Func<PropsBuilder, PropsBuilder>[] propsActions)
     {
-        if (!string.IsNullOrWhiteSpace(property)
+        if (string.IsNullOrWhiteSpace(property)
             || propsActions == null
             || propsActions.Length == 0)
             return this;
