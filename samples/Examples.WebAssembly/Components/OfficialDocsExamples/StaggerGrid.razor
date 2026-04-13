@@ -157,27 +157,26 @@
     {
         if (firstRender)
         {
-            @* _animation ??= await Anime.Animate(
-                Prop.Targets(".staggering-grid-demo .el"),
-                Prop.AutoPlay(true),
-                Prop.Loop(3),
-                Prop.Create("scale", [
-                    [
-                        Prop.Value(.1),
-                        Prop.Easing.EaseOutSine,
-                        Prop.Duration(500)
-                    ],
-                    [
-                        Prop.Value(1),
-                        Prop.Easing.EaseInOutQuad,
-                        Prop.Duration(1200)
-                    ]
-                ]),
-                Prop.Delay(Stagger.Create(200, [
-                    StaggerProp.Grid(14, 5),
-                    StaggerProp.From.Center
-                ]))
-            ); *@
+            _animation ??= await Anime.Animate(
+                config => config
+                .Targets(".staggering-grid-demo .el")
+                .AutoPlay(true)
+                .Loop(3)
+                .Prop("scale", [
+                    p => p
+                        .Value(.1)
+                        .Easing(Easing.EaseOutSine)
+                        .Duration(500),
+                    p => p
+                        .Value(1)
+                        .Easing(Easing.EaseInOutQuad)
+                        .Duration(1200)
+                ])
+                .Delay(Stagger.Create(200, s => s
+                    .Grid(14, 5)
+                    .From(StaggerPosition.Center)
+                ))
+            );
         }
     }
 

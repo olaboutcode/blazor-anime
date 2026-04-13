@@ -1,0 +1,4 @@
+{
+    "editor.inlineSuggest.edits.showLongDistanceHint": true,
+    "csharp.inlayHints.enableInlayHintsForTypes": false
+}
