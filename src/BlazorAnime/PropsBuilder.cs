@@ -7,13 +7,13 @@ internal class PropsBuilder
     public PropsBuilder Easing(Easing easing)
     {
         if(easing != null)
-            _props.Add(new GenProp<string>("easing", easing.GetPropertyValue()));
+            _props.Add(new GenProp<string>("easing", easing.GetValue()));
         return this;
     }
     public PropsBuilder Direction(Direction direction)
     {
         if(direction != null)
-            _props.Add(new GenProp<string>("direction", direction.GetPropertyValue()));
+            _props.Add(new GenProp<string>("direction", direction.GetValue()));
         return this;
     }
 
@@ -131,7 +131,7 @@ public sealed class Offset
     public static Offset Add(double value) => new($"+={value}");
     public static Offset Subtract(double value) => new($"-={value}");
     public static Offset Multiply(double value) => new($"*={value}");
-    public string GetPropertyValue() => _name;
+    public string GetValue() => _name;
     private Offset(string name) { _name = name; }
     private readonly string _name;
 }
@@ -141,7 +141,7 @@ public sealed class Direction
     public static Direction Normal { get; } = new("normal");
     public static Direction Reverse { get; } = new("reverse");
     public static Direction Alternate { get; } = new("alternate");
-    public string GetPropertyValue() => _name;
+    public string GetValue() => _name;
     private Direction(string name) { _name = name; }
     private readonly string _name;
 }
@@ -204,7 +204,7 @@ public sealed class Easing
     public static Easing EaseOutInBack { get; } = new("easeOutInBack");
     public static Easing EaseOutInBounce { get; } = new("easeOutInBounce");
 
-    public string GetPropertyValue() => _name;
+    public string GetValue() => _name;
     private Easing(string name) { _name = name; }
     private readonly string _name;
 }
