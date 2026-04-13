@@ -17,6 +17,15 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
         );
         return new Animation(animationJsRef);
     }
+
+    public async Task<Animation> Animate(Func<PropsBuilder, PropsBuilder> configure)
+    {
+        var animationJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
+            IdentifierCreateAnimation,
+            configure(new PropsBuilder()).Build().ToObject()
+        );
+        return new Animation(animationJsRef);
+    }
     
     /// <summary>
     /// Create an animation timeline.

@@ -2,7 +2,7 @@ using Microsoft.JSInterop;
 
 namespace BlazorAnime;
 
-internal class PropsBuilder
+public sealed class PropsBuilder
 {
     public PropsBuilder Easing(Easing easing)
     {
@@ -16,7 +16,12 @@ internal class PropsBuilder
             _props.Add(new GenProp<string>("direction", direction.GetValue()));
         return this;
     }
-
+    public PropsBuilder Value(RelValue value)
+    {
+        if(value != null)
+            _props.Add(new GenProp<string>("value", value.GetValue()));
+        return this;
+    }
     public PropsBuilder Prop(string property, int value)
     {
         if(!string.IsNullOrWhiteSpace(property))
@@ -39,6 +44,14 @@ internal class PropsBuilder
     {
         if(!string.IsNullOrWhiteSpace(property))
             _props.Add(new GenProp<string>(property, value));
+        return this;
+    }
+    public PropsBuilder Prop(string property, params string[] values)
+    {
+        if(!string.IsNullOrWhiteSpace(property)
+            && values != null
+            && values.Length > 0)
+            _props.Add(new GenProp<string[]>(property, values));
         return this;
     }
     public PropsBuilder Prop(string property, object from, object to)
@@ -110,6 +123,8 @@ internal class PropsBuilder
         return this;
     }
 
+    public IReadOnlyList<Prop> Build() => _props.AsReadOnly();
+
     private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, double> callback)
     {
         ValidationChecks.EnsureAcceptableCallback(callback);
@@ -129,16 +144,16 @@ internal class PropsBuilder
             DotNetObjectReference.Create(callback.Target!));
     }
 
-    protected List<Prop> _props = [];
+    private readonly List<Prop> _props = [];
 }
 
-public sealed class Offset
+public sealed class RelValue
 {
-    public static Offset Add(double value) => new($"+={value}");
-    public static Offset Subtract(double value) => new($"-={value}");
-    public static Offset Multiply(double value) => new($"*={value}");
+    public static RelValue Add(double value) => new($"+={value}");
+    public static RelValue Subtract(double value) => new($"-={value}");
+    public static RelValue Multiply(double value) => new($"*={value}");
     public string GetValue() => _name;
-    private Offset(string name) { _name = name; }
+    private RelValue(string name) { _name = name; }
     private readonly string _name;
 }
 

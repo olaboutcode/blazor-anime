@@ -28,6 +28,9 @@ internal static class PropsBuilderExtensions
         this PropsBuilder builder,
         Action<AnimationState> callback) => builder.Prop("changeComplete", callback);
     
+    public static PropsBuilder Targets(
+        this PropsBuilder builder,
+        params string[] targets) => builder.Prop("targets", targets);
     public static PropsBuilder EndDelay(
         this PropsBuilder builder,
         int milliseconds) => builder.Prop("endDelay", milliseconds);
