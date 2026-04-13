@@ -20,16 +20,16 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
 
     protected async Task<Animation> CreateAnimationAsync(string id, params Prop[] props)
     {
-         var animation = await Anime.Animate(props);
-         _animations.Add(id, animation);
-         return animation;
+        var animation = await Anime.Animate(props);
+        _animations.Add(id, animation);
+        return animation;
     }
 
     protected async Task<Timeline> CreateTimelineAsync(string id, params Prop[] props)
     {
-         var timeline = await Anime.Timeline(props);
-         _timelines.Add(id, timeline);
-         return timeline;
+        var timeline = await Anime.Timeline(props);
+        _timelines.Add(id, timeline);
+        return timeline;
     }
 
     public virtual void OnBegin(AnimationState state) => StateHasChanged();
