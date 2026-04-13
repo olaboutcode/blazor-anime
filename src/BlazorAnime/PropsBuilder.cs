@@ -99,6 +99,12 @@ public sealed class PropsBuilder
             _props.Add(CreateValueSetterCallback(property, callback));
         return this;
     }
+    public PropsBuilder Prop(string property, Func<int, int, string> callback)
+    {
+        if(!string.IsNullOrWhiteSpace(property))
+            _props.Add(CreateValueSetterCallback(property, callback));
+        return this;
+    }
     public PropsBuilder Prop(string property, Stagger stagger)
     {
         if(!string.IsNullOrWhiteSpace(property) && stagger != null)
@@ -162,6 +168,15 @@ public sealed class PropsBuilder
     private readonly List<Prop> _props = [];
 
     private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, double> callback)
+    {
+        ValidationChecks.EnsureAcceptableCallback(callback);
+        return new CallbackProp(
+            propName,
+            callback.Method.Name,
+            callback.Method.GetParameters().Length,
+            DotNetObjectReference.Create(callback.Target!));
+    }
+    private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, string> callback)
     {
         ValidationChecks.EnsureAcceptableCallback(callback);
         return new CallbackProp(

@@ -2,7 +2,8 @@ namespace BlazorAnime;
 
 public static class PropsBuilderExtensions
 {
-    // callbacks
+    // Animation Lifecycle Callbacks
+    // Hooks for animation events: update, begin, complete, loop, and change events
     public static PropsBuilder Update(
         this PropsBuilder builder,
         Action<AnimationState> callback) => builder.Prop("update", callback);
@@ -28,7 +29,8 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Action<AnimationState> callback) => builder.Prop("changeComplete", callback);
     
-    // anime props
+    // Animation Configuration
+    // Core animation settings: targets, timing, delays, loops, keyframes, and SVG properties
     public static PropsBuilder Targets(
         this PropsBuilder builder,
         params string[] targets) => builder.Prop("targets", targets);
@@ -78,10 +80,14 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         params Action<PropsBuilder>[] build) => builder.Prop("keyframes", build);
     
+    // Transform Properties
+    // CSS transform functions: translate, rotate, scale, skew, and perspective
+    // Available with static values, stagger configurations, and function-based callbacks
     public static PropsBuilder Perspective(
         this PropsBuilder builder,
         int value) => builder.Prop("perspective", value);
-    // Transform properties
+    
+    // Translation: Move elements along X, Y, and Z axes
     public static PropsBuilder TranslateX(
         this PropsBuilder builder,
         double value) => builder.Prop("translateX", value);
@@ -112,6 +118,7 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("translateZ", callback);
     
+    // Rotation: Rotate elements on X, Y, and Z axes (in degrees)
     public static PropsBuilder Rotate(
         this PropsBuilder builder,
         double value) => builder.Prop("rotate", value);
@@ -152,6 +159,7 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("rotateZ", callback);
 
+    // Scale: Resize elements uniformly or on individual axes
     public static PropsBuilder Scale(
         this PropsBuilder builder,
         double value) => builder.Prop("scale", value);
@@ -195,6 +203,7 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("scaleZ", callback);
     
+    // Skew: Slant elements along X and Y axes (in degrees)
     public static PropsBuilder SkewX(
         this PropsBuilder builder,
         double value) => builder.Prop("skewX", value);
@@ -215,7 +224,9 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("skewY", callback);
 
-    // Color properties
+    // Color Properties
+    // Animatable color values: background, text, and border colors
+    // Accepts CSS color values (hex, rgb, rgba, hsl, named colors)
     public static PropsBuilder BackgroundColor(
         this PropsBuilder builder,
         string value) => builder.Prop("backgroundColor", value);
@@ -237,7 +248,8 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("borderColor", callback);
     
-    // Visual properties
+    // Opacity
+    // Element transparency from 0 (transparent) to 1 (opaque)
     public static PropsBuilder Opacity(
         this PropsBuilder builder,
         double value) => builder.Prop("opacity", value);
@@ -248,7 +260,8 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("opacity", callback);
     
-    // Border properties
+    // Border Properties
+    // Border styling: radius (rounded corners) and width
     public static PropsBuilder BorderRadius(
         this PropsBuilder builder,
         string value) => builder.Prop("borderRadius", value);
@@ -269,7 +282,8 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("borderWidth", callback);
     
-    // Dimensions
+    // Dimension Properties
+    // Element size: width and height
     public static PropsBuilder Width(
         this PropsBuilder builder,
         double value) => builder.Prop("width", value);
@@ -290,7 +304,8 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("height", callback);
     
-    // Position properties
+    // Position Properties
+    // CSS positioning values for positioned elements (absolute, relative, fixed)
     public static PropsBuilder Top(
         this PropsBuilder builder,
         double value) => builder.Prop("top", value);
@@ -331,7 +346,8 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("bottom", callback);
     
-    // Margin properties
+    // Margin Properties
+    // Outer spacing around elements (top, left, right, bottom)
     public static PropsBuilder MarginTop(
         this PropsBuilder builder,
         double value) => builder.Prop("marginTop", value);
@@ -372,7 +388,8 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("marginBottom", callback);
     
-    // Padding properties
+    // Padding Properties
+    // Inner spacing inside elements (top, left, right, bottom)
     public static PropsBuilder PaddingTop(
         this PropsBuilder builder,
         double value) => builder.Prop("paddingTop", value);
@@ -413,7 +430,8 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("paddingBottom", callback);
     
-    // Typography properties
+    // Typography Properties
+    // Text styling: size, spacing, and line height
     public static PropsBuilder FontSize(
         this PropsBuilder builder,
         double value) => builder.Prop("fontSize", value);
