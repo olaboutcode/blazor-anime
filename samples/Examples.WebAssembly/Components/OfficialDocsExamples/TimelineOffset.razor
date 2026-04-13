@@ -9,25 +9,29 @@
         if (firstRender)
         {
             _timeline ??= await Anime.Timeline(
-                Prop.Duration(750),
-                Prop.Easing.EaseOutExpo,
-                Prop.AutoPlay(true)
+                df => df
+                .Duration(750)
+                .Easing(Easing.EaseOutExpo)
+                .AutoPlay(true)
             );
 
             _timeline?.Add(
-                Prop.Targets(".offsets-demo .el.square"),
-                Prop.Create("translateX", 250)
+                t => t
+                .Targets(".offsets-demo .el.square")
+                .TranslateX(250)
             );
             
-            _timeline?.Add([
-                Prop.Targets(".offsets-demo .el.circle"),
-                Prop.Create("translateX", 250)
-            ], OffSet.Before(600));
+            _timeline?.Add(
+                t => t
+                .Targets(".offsets-demo .el.circle")
+                .TranslateX(250)
+            , OffSet.Before(600));
             
-            _timeline?.Add([
-                Prop.Targets(".offsets-demo .el.triangle"),
-                Prop.Create("translateX", 250)
-            ], 400);
+            _timeline?.Add(
+                t => t
+                .Targets(".offsets-demo .el.triangle")
+                .TranslateX(250)
+            , 400);
         }
     }
     
