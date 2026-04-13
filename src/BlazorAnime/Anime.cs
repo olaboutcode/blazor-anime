@@ -61,15 +61,15 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     }
 
     /// <summary>
-    /// Returns a new Path that returns the specified property.
+    /// Returns a Path for an SVG element.
     /// </summary>
-    /// <param name="target"></param>
+    /// <param name="svgTarget"></param>
     /// <returns></returns>
-    public async Task<Path> Path(string target)
+    public async Task<Path> GetPath(string svgTarget)
     {
         var pathJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierGetPath,
-            target
+            svgTarget
         );
         return new Path(pathJsRef);
     }
@@ -186,9 +186,9 @@ public interface IAnime
 {
     Task<Animation> Animate(Func<PropsBuilder, PropsBuilder> configure);
     Task<Animation> Animate(Func<PropsBuilder, Task<PropsBuilder>> configure);
-    Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> configureDefault);
-    Task<Timeline> Timeline(Func<PropsBuilder, Task<PropsBuilder>> configureDefault);
-    Task<Path> Path(string target);
+    Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> configureDefaults);
+    Task<Timeline> Timeline(Func<PropsBuilder, Task<PropsBuilder>> configureDefaults);
+    Task<Path> GetPath(string svgTarget);
     Task Set(string[] targets, List<Prop> props);
     Task Set(object[] targets, List<Prop> props);
     Task<string> Get(object target, string propName);

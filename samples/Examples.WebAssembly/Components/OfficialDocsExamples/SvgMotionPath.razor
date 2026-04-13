@@ -22,7 +22,7 @@
     {
         if (firstRender)
         {
-            var path = await Anime.Path(".somePath");
+            var path = await Anime.GetPath(".somePath");
             
             _animation ??= await Anime.Animate(
                 async config => config
