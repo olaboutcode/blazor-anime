@@ -2,7 +2,7 @@ using Microsoft.JSInterop;
 
 namespace BlazorAnime;
 
-public sealed class Timeline(IJSObjectReference timelineJsRef): IAsyncDisposable
+public sealed class Timeline: IAsyncDisposable
 {
     /// <summary>
     /// Add Timeline animation props
@@ -119,8 +119,8 @@ public sealed class Timeline(IJSObjectReference timelineJsRef): IAsyncDisposable
         await TimelineJsRef.DisposeAsync();
     }
 
-    private IJSObjectReference TimelineJsRef { get; } = timelineJsRef;
-
+    internal Timeline(IJSObjectReference timelineJsRef) => TimelineJsRef = timelineJsRef;
+    private IJSObjectReference TimelineJsRef { get; init; }
     private static bool ToBool(int val) => val == 1;
 }
 

@@ -2,16 +2,16 @@ using System.Runtime.CompilerServices;
 
 namespace BlazorAnime;
 
-public static class ValidationChecks
+internal static class ValidationChecks
 {
-    public static void EnsureValidProp(string name, object value)
+    internal static void EnsureValidProp(string name, object value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
         ArgumentNullException.ThrowIfNull(value, nameof(value));
     }
 
 
-    public static void EnsureAcceptableCallback(Delegate callback)
+    internal static void EnsureAcceptableCallback(Delegate callback)
     {
         ArgumentNullException.ThrowIfNull(callback);
         bool isLambda = callback.Method.IsDefined(typeof(CompilerGeneratedAttribute), false);

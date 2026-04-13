@@ -2,7 +2,7 @@ namespace BlazorAnime;
 
 using Microsoft.JSInterop;
 
-public sealed class Animation(IJSObjectReference animationJsRef): IAsyncDisposable
+public sealed class Animation: IAsyncDisposable
 {
     /// <summary>
     /// Plays a paused animation, or starts the animation if the autoplay parameters is set to false.
@@ -180,7 +180,7 @@ public sealed class Animation(IJSObjectReference animationJsRef): IAsyncDisposab
         await AnimationJsRef.DisposeAsync();
     }
 
-    private IJSObjectReference AnimationJsRef { get; } = animationJsRef;
-
+    internal Animation(IJSObjectReference animationJsRef) => AnimationJsRef = animationJsRef;
+    private IJSObjectReference AnimationJsRef { get; init; }
     private static bool ToBool(int val) => val == 1;
 }

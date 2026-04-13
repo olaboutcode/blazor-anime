@@ -98,3 +98,21 @@ public sealed class StaggerPosition
     private readonly string _name;
     private readonly int? _index;
 }
+
+internal static class StaggerExtensions
+{
+    internal static System.Dynamic.ExpandoObject ToObject(this IEnumerable<StgOptionProp> props)
+    {
+        Dictionary<string, StgOptionProp> properties = [];
+        foreach (var prop in props)
+        {
+            properties[prop.GetName()] = prop;
+        }
+        dynamic propsObject = new System.Dynamic.ExpandoObject();
+        foreach (var property in properties.Values)
+        {
+            ((IDictionary<string, object>)propsObject).Add(property.GetName(), property.GetValue());
+        }
+        return propsObject;
+    }
+}
