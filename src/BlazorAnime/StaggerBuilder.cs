@@ -1,6 +1,36 @@
 namespace BlazorAnime;
 
-internal class StaggerOptionsBuilder
+public sealed class Stagger_
+{
+    public static Stagger_ Create(double delay) => new(delay, []);
+    public static Stagger_ Create(double from, double to) => new(new[] { from, to }, []);
+    public static Stagger_ Create(double value, Action<StaggerOptionsBuilder> configure)
+    {
+        var builder = new StaggerOptionsBuilder();
+        configure(builder);
+        return new Stagger_(value, builder.Build());
+    }
+    public static Stagger_ Create(double from, double to, Action<StaggerOptionsBuilder> configure)
+    {
+        var builder = new StaggerOptionsBuilder();
+        configure(builder);
+        return new Stagger_(new[] { from, to }, builder.Build());
+    }
+
+    public object GetValue() => _value;
+    public IReadOnlyList<StgOptionProp> GetOptions() => _options;
+
+    private Stagger_(object value, IReadOnlyList<StgOptionProp> options)
+    {
+        _value = value;
+        _options = options;
+    }
+
+    private readonly object _value;
+    private readonly IReadOnlyList<StgOptionProp> _options;
+}
+
+public sealed class StaggerOptionsBuilder
 {
     public StaggerOptionsBuilder Start(double value)
     {
@@ -38,7 +68,14 @@ internal class StaggerOptionsBuilder
         return this;
     }
 
-    protected List<StgOptionProp> _options = [];
+    public IReadOnlyList<StgOptionProp> Build() => _options;
+
+    internal StaggerOptionsBuilder()
+    {
+        _options = [];
+    }
+
+    private readonly List<StgOptionProp> _options;
 }
 
 public sealed class StaggerAxis
