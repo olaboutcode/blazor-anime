@@ -25,7 +25,7 @@
             var path = await Anime.GetPath(".somePath");
             
             _animation ??= await Anime.Animate(
-                async config => config
+                async props => props
                 .Targets(".motion-path-demo .el")
                 .Prop("translateX", await path.Get("x"))
                 .Prop("translateY", await path.Get("y"))

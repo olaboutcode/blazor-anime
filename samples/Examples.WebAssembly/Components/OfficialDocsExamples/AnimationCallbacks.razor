@@ -28,7 +28,7 @@
         {
             _animationA ??= await CreateAnimationAsync(
                 nameof(_animationA),
-                config => config
+                props => props
                 .Targets(".animation-callbacks-demo .el.a")
                 .TranslateX(270)
                 .BackgroundColor("#FFA500")
@@ -41,7 +41,7 @@
             );
             _animationB ??= await CreateAnimationAsync(
                 nameof(_animationB),
-                config => config
+                props => props
                 .Targets(".animation-callbacks-demo .el.b")
                 .TranslateY(270)
                 .BorderRadius("50%")

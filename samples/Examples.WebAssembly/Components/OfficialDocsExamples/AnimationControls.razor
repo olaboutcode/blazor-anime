@@ -9,7 +9,7 @@
         if (firstRender)
         {
             _animation ??= await Anime.Animate(
-                config => config
+                props => props
                 .Targets(".animation-controls-demo .el")
                 .Prop("translateX", 250)
             );

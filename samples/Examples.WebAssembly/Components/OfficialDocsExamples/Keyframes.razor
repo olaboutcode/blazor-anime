@@ -9,7 +9,7 @@
         if (firstRender)
         {
             _animation ??= await Anime.Animate(
-                config => config
+                props => props
                 .Targets(".keyframes-demo .el")
                 .Duration(750)
                 .AutoPlay(true)

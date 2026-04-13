@@ -160,7 +160,7 @@
         if (firstRender)
         {
             _animation ??= await Anime.Animate(
-                config => config
+                props => props
                 .Targets(".staggering-axis-grid-demo .el")
                 .Loop(3)
                 .AutoPlay(true)

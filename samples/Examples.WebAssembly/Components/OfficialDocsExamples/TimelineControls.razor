@@ -9,13 +9,13 @@
         if (firstRender)
         {
             _timeline ??= await Anime.Timeline(
-                df => df
+                props => props
                 .Duration(750)
                 .Easing(Easing.EaseOutExpo)
                 .AutoPlay(true)
             )
             .AddAsync(
-                t => t
+                props => props
                 .Targets(".offsets-demo .el.square")
                 .TranslateX(250)
             );

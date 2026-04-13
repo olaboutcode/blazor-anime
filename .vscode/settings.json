@@ -1,4 +1,5 @@
 {
     "editor.inlineSuggest.edits.showLongDistanceHint": true,
-    "csharp.inlayHints.enableInlayHintsForTypes": false
+    "csharp.inlayHints.enableInlayHintsForTypes": false,
+    "editor.fontSize": 13
 }
