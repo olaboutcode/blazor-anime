@@ -159,31 +159,32 @@
     {
         if (firstRender)
         {
-            @* _animation ??= await Anime.Animate(
-                Prop.Targets(".staggering-axis-grid-demo .el"),
-                Prop.AutoPlay(true),
-                Prop.Loop(3),
-                Prop.Create("translateX", Stagger.Create(10, [
-                    StaggerProp.Grid(14, 5),
-                    StaggerProp.From.Center,
-                    StaggerProp.Axis.X
-                ])),
-                Prop.Create("translateY", Stagger.Create(10, [
-                    StaggerProp.Grid(14, 5),
-                    StaggerProp.From.Center,
-                    StaggerProp.Axis.Y
-                ])),
-                Prop.Create("rotateZ", Stagger.Create(0, 90, [
-                    StaggerProp.Grid(14, 5),
-                    StaggerProp.From.Center,
-                    StaggerProp.Axis.X
-                ])),
-                Prop.Delay(Stagger.Create(200, [
-                    StaggerProp.Grid(14, 5),
-                    StaggerProp.From.Center
-                ])),
-                Prop.Easing.EaseInOutQuad
-            ); *@
+            _animation ??= await Anime.Animate(
+                config => config
+                .Targets(".staggering-axis-grid-demo .el")
+                .Loop(3)
+                .AutoPlay(true)
+                .TranslateX(Stagger.Create(10, s => s
+                    .Grid(14,5)
+                    .From(StaggerPosition.Center)
+                    .Axis(StaggerAxis.X)
+                ))
+                .TranslateY(Stagger.Create(10, s => s
+                    .Grid(14,5)
+                    .From(StaggerPosition.Center)
+                    .Axis(StaggerAxis.Y)
+                ))
+                .RotateZ(Stagger.Create(0, 90, s => s
+                    .Grid(14,5)
+                    .From(StaggerPosition.Center)
+                    .Axis(StaggerAxis.X)
+                ))
+                .Delay(Stagger.Create(200, s => s
+                    .Grid(14,5)
+                    .From(StaggerPosition.Center)
+                ))
+                .Easing(Easing.EaseInOutQuad)
+            );
         }
     } 
     

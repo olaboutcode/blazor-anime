@@ -9,8 +9,9 @@
         if (firstRender)
         {
             _animation ??= await Anime.Animate(
-                Prop.Duration(750),
-                Prop.AutoPlay(true)
+                config => config
+                .Duration(750)
+                .AutoPlay(true)
             );
         }
     }

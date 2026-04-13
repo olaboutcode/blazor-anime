@@ -111,6 +111,15 @@ public sealed class PropsBuilder
         _props.Add(new GenProp<object>(property, builder._props.ToObject()));
         return this;
     }
+    public PropsBuilder Prop(string property, Func<PropsBuilder, PropsBuilder> propsAction)
+    {
+        if (!string.IsNullOrWhiteSpace(property) || propsAction == null)
+            return this;
+    
+        var builder = propsAction(new PropsBuilder());
+        _props.Add(new GenProp<object>(property, builder._props.ToObject()));
+        return this;
+    }
     public PropsBuilder Prop(string property, params Action<PropsBuilder>[] propsActions)
     {
         if (!string.IsNullOrWhiteSpace(property)
@@ -123,6 +132,22 @@ public sealed class PropsBuilder
         {
             var builder = new PropsBuilder();
             action(builder);
+            keyframesList.Add(builder._props.ToObject());
+        }
+        _props.Add(new GenProp<object>(property, keyframesList));
+        return this;
+    }
+    public PropsBuilder Prop(string property, params Func<PropsBuilder, PropsBuilder>[] propsActions)
+    {
+        if (!string.IsNullOrWhiteSpace(property)
+            || propsActions == null
+            || propsActions.Length == 0)
+            return this;
+    
+        var keyframesList = new List<object>();
+        foreach (var action in propsActions)
+        {
+            var builder = action(new PropsBuilder());
             keyframesList.Add(builder._props.ToObject());
         }
         _props.Add(new GenProp<object>(property, keyframesList));

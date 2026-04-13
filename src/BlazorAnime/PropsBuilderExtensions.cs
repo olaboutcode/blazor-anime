@@ -83,12 +83,24 @@ public static class PropsBuilderExtensions
     public static PropsBuilder TranslateX(
         this PropsBuilder builder,
         double value) => builder.Prop("translateX", value);
+    public static PropsBuilder TranslateX(
+        this PropsBuilder builder,
+        Stagger value) => builder.Prop("translateX", value);
     public static PropsBuilder TranslateY(
         this PropsBuilder builder,
         double value) => builder.Prop("translateY", value);
+    public static PropsBuilder TranslateY(
+        this PropsBuilder builder,
+        Stagger value) => builder.Prop("translateY", value);
     public static PropsBuilder Rotate(
         this PropsBuilder builder,
         double value) => builder.Prop("rotate", value);
+    public static PropsBuilder RotateZ(
+        this PropsBuilder builder,
+        double value) => builder.Prop("rotateZ", value);
+    public static PropsBuilder RotateZ(
+        this PropsBuilder builder,
+        Stagger value) => builder.Prop("rotateZ", value);
     public static PropsBuilder Scale(
         this PropsBuilder builder,
         double value) => builder.Prop("scale", value);

@@ -58,7 +58,7 @@ public sealed class StaggerOptionsBuilder
 
     public StaggerOptionsBuilder Axis(StaggerAxis value)
     {
-        _options.Add(new StgOptionProp("axis", value));
+        _options.Add(new StgOptionProp("axis", value.GetValue()));
         return this;
     }
 
