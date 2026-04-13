@@ -68,7 +68,7 @@ public sealed class StaggerOptionsBuilder
         return this;
     }
 
-    public IReadOnlyList<StgOptionProp> Build() => _options;
+    internal IReadOnlyList<StgOptionProp> Build() => _options;
 
     internal StaggerOptionsBuilder()
     {
