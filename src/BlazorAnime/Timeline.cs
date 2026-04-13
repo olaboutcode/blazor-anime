@@ -28,6 +28,37 @@ public sealed class Timeline(IJSObjectReference timelineJsRef): IAsyncDisposable
         await TimelineJsRef.InvokeVoidAsync("add", props.ToObject(), offSet.GetValue());
 
     /// <summary>
+    /// Add Timeline animation props
+    /// </summary>
+    /// <param name="configure"></param>
+    public async Task Add(Func<PropsBuilder, PropsBuilder> configure) =>
+        await TimelineJsRef.InvokeVoidAsync(
+            "add",
+            configure(new PropsBuilder()).Build().ToObject());
+    
+    /// <summary>
+    /// Add Timeline animation props with relative offSet 
+    /// </summary>
+    /// <param name="configure"></param>
+    /// <param name="offSet"></param>
+    public async Task Add(Func<PropsBuilder, PropsBuilder> configure, double offSet) =>
+        await TimelineJsRef.InvokeVoidAsync(
+            "add",
+            configure(new PropsBuilder()).Build().ToObject(),
+            offSet);
+
+    /// <summary>
+    /// Add Timeline animation props with relative offSet 
+    /// </summary>
+    /// <param name="configure"></param>
+    /// <param name="offSet"></param>
+    public async Task Add(Func<PropsBuilder, PropsBuilder> configure, OffSet offSet) =>
+        await TimelineJsRef.InvokeVoidAsync(
+            "add", 
+            configure(new PropsBuilder()).Build().ToObject(), 
+            offSet.GetValue());
+
+    /// <summary>
     /// Play Timeline animation
     /// </summary>
     public async Task Play() =>

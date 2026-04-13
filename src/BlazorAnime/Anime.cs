@@ -17,15 +17,6 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
         );
         return new Animation(animationJsRef);
     }
-
-    public async Task<Animation> Animate(Func<PropsBuilder, PropsBuilder> configure)
-    {
-        var animationJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
-            IdentifierCreateAnimation,
-            configure(new PropsBuilder()).Build().ToObject()
-        );
-        return new Animation(animationJsRef);
-    }
     
     /// <summary>
     /// Create an animation timeline.
@@ -37,6 +28,24 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
         var timelineJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateTimeline,
             defaultProps.ToObject()
+        );
+        return new Timeline(timelineJsRef);
+    }
+
+    public async Task<Animation> Animate(Func<PropsBuilder, PropsBuilder> configure)
+    {
+        var animationJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
+            IdentifierCreateAnimation,
+            configure(new PropsBuilder()).Build().ToObject()
+        );
+        return new Animation(animationJsRef);
+    }
+
+    public async Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> configureDefault)
+    {
+        var timelineJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
+            IdentifierCreateTimeline,
+            configureDefault(new PropsBuilder()).Build().ToObject()
         );
         return new Timeline(timelineJsRef);
     }
