@@ -27,9 +27,9 @@
             _animation ??= await Anime.Animate(
                 async props => props
                 .Targets(".motion-path-demo .el")
-                .Prop("translateX", await path.Get("x"))
-                .Prop("translateY", await path.Get("y"))
-                .Prop("rotate", await path.Get("angle"))
+                .TranslateX(await path.Get("x"))
+                .TranslateY(await path.Get("y"))
+                .Rotate(await path.Get("angle"))
                 .Easing(Easing.Linear)
                 .Duration(2000)
                 .Loop(true)

@@ -69,10 +69,10 @@ public static class PropsBuilderExtensions
         int value) => builder.Prop("round", value);
     public static PropsBuilder Loop(
         this PropsBuilder builder,
-        bool loop) => builder.Prop("loop", loop);
+        bool shouldLoop) => builder.Prop("loop", shouldLoop);
     public static PropsBuilder Loop(
         this PropsBuilder builder,
-        int count) => builder.Prop("loop", count);
+        int loopCount) => builder.Prop("loop", loopCount);
     public static PropsBuilder StrokeDashoffset(
         this PropsBuilder builder,
         int value) => builder.Prop("strokeDashoffset", value);
@@ -97,6 +97,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder TranslateX(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("translateX", callback);
+    public static PropsBuilder TranslateX(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("translateX", path);
     
     public static PropsBuilder TranslateY(
         this PropsBuilder builder,
@@ -107,6 +110,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder TranslateY(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("translateY", callback);
+    public static PropsBuilder TranslateY(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("translateY", path);
     
     public static PropsBuilder TranslateZ(
         this PropsBuilder builder,
@@ -117,6 +123,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder TranslateZ(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("translateZ", callback);
+    public static PropsBuilder TranslateZ(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("translateZ", path);
     
     // Rotation: Rotate elements on X, Y, and Z axes (in degrees)
     public static PropsBuilder Rotate(
@@ -128,6 +137,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Rotate(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("rotate", callback);
+    public static PropsBuilder Rotate(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("rotate", path);
     
     public static PropsBuilder RotateX(
         this PropsBuilder builder,
@@ -138,6 +150,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder RotateX(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("rotateX", callback);
+    public static PropsBuilder RotateX(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("rotateX", path);
     
     public static PropsBuilder RotateY(
         this PropsBuilder builder,
@@ -148,6 +163,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder RotateY(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("rotateY", callback);
+    public static PropsBuilder RotateY(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("rotateY", path);
     
     public static PropsBuilder RotateZ(
         this PropsBuilder builder,
@@ -158,6 +176,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder RotateZ(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("rotateZ", callback);
+    public static PropsBuilder RotateZ(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("rotateZ", path);
 
     // Scale: Resize elements uniformly or on individual axes
     public static PropsBuilder Scale(
@@ -171,6 +192,9 @@ public static class PropsBuilderExtensions
         Func<int, int, double> callback) => builder.Prop("scale", callback);
     public static PropsBuilder Scale(
         this PropsBuilder builder,
+        PathParam path) => builder.Prop("scale", path);
+    public static PropsBuilder Scale(
+        this PropsBuilder builder,
         params Func<PropsBuilder, PropsBuilder>[] build) => builder.Prop("scale", build);
     
     public static PropsBuilder ScaleX(
@@ -182,6 +206,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder ScaleX(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("scaleX", callback);
+    public static PropsBuilder ScaleX(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("scaleX", path);
     
     public static PropsBuilder ScaleY(
         this PropsBuilder builder,
@@ -192,6 +219,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder ScaleY(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("scaleY", callback);
+    public static PropsBuilder ScaleY(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("scaleY", path);
     
     public static PropsBuilder ScaleZ(
         this PropsBuilder builder,
@@ -202,6 +232,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder ScaleZ(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("scaleZ", callback);
+    public static PropsBuilder ScaleZ(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("scaleZ", path);
     
     // Skew: Slant elements along X and Y axes (in degrees)
     public static PropsBuilder SkewX(
@@ -213,6 +246,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder SkewX(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("skewX", callback);
+    public static PropsBuilder SkewX(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("skewX", path);
     
     public static PropsBuilder SkewY(
         this PropsBuilder builder,
@@ -223,6 +259,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder SkewY(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("skewY", callback);
+    public static PropsBuilder SkewY(
+        this PropsBuilder builder,
+        PathParam path) => builder.Prop("skewY", path);
 
     // Color Properties
     // Animatable color values: background, text, and border colors

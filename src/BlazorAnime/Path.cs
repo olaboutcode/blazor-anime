@@ -12,11 +12,11 @@ public class Path(IJSObjectReference jsRef)
     /// <summary>
     /// Returns the current value of the SVG property
     /// </summary>
-    /// <param name="svgPropName"></param>
+    /// <param name="svgPropertyName"></param>
     /// <returns>PathParam</returns>
-    public async Task<PathParam> Get(string svgPropName)
+    public async Task<PathParam> Get(string svgPropertyName)
     {
-        var paramRef = await PathRef.InvokeAsync<IJSObjectReference>("path", svgPropName);
+        var paramRef = await PathRef.InvokeAsync<IJSObjectReference>("path", svgPropertyName);
         return new PathParam(paramRef);
     }
 
