@@ -16,7 +16,7 @@ public sealed class PropsBuilder
             _props.Add(new GenProp<string>("direction", direction.GetValue()));
         return this;
     }
-    public PropsBuilder Value(RelValue value)
+    public PropsBuilder Value(Relative value)
     {
         if(value != null)
             _props.Add(new GenProp<string>("value", value.GetValue()));
@@ -196,13 +196,13 @@ public sealed class PropsBuilder
     }
 }
 
-public sealed class RelValue
+public sealed class Relative
 {
-    public static RelValue Add(double value) => new($"+={value}");
-    public static RelValue Subtract(double value) => new($"-={value}");
-    public static RelValue Multiply(double value) => new($"*={value}");
+    public static Relative Add(double value) => new($"+={value}");
+    public static Relative Subtract(double value) => new($"-={value}");
+    public static Relative Multiply(double value) => new($"*={value}");
     public string GetValue() => _name;
-    private RelValue(string name) { _name = name; }
+    private Relative(string name) { _name = name; }
     private readonly string _name;
 }
 
