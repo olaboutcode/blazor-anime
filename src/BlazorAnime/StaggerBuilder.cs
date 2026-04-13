@@ -1,26 +1,26 @@
 namespace BlazorAnime;
 
-public sealed class Stagger_
+public sealed class Stagger
 {
-    public static Stagger_ Create(double delay) => new(delay, []);
-    public static Stagger_ Create(double from, double to) => new(new[] { from, to }, []);
-    public static Stagger_ Create(double value, Action<StaggerOptionsBuilder> configure)
+    public static Stagger Create(double delay) => new(delay, []);
+    public static Stagger Create(double from, double to) => new(new[] { from, to }, []);
+    public static Stagger Create(double value, Action<StaggerOptionsBuilder> configure)
     {
         var builder = new StaggerOptionsBuilder();
         configure(builder);
-        return new Stagger_(value, builder.Build());
+        return new Stagger(value, builder.Build());
     }
-    public static Stagger_ Create(double from, double to, Action<StaggerOptionsBuilder> configure)
+    public static Stagger Create(double from, double to, Action<StaggerOptionsBuilder> configure)
     {
         var builder = new StaggerOptionsBuilder();
         configure(builder);
-        return new Stagger_(new[] { from, to }, builder.Build());
+        return new Stagger(new[] { from, to }, builder.Build());
     }
 
     public IReadOnlyList<StgOptionProp> GetOptions() => _options;
     public object GetValue() => _value;
 
-    private Stagger_(object value, IReadOnlyList<StgOptionProp> options)
+    private Stagger(object value, IReadOnlyList<StgOptionProp> options)
     {
         _options = options;
         _value = value;
