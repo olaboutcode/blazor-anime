@@ -162,28 +162,28 @@
             _animation ??= await Anime.Animate(
                 props => props
                 .Targets(".staggering-axis-grid-demo .el")
-                .Loop(3)
-                .AutoPlay(true)
-                .TranslateX(Stagger.Create(10, s => s
+                .TranslateX(Stagger.Create(10, stg => stg
                     .Grid(14,5)
                     .From(StaggerPosition.Center)
                     .Axis(StaggerAxis.X)
                 ))
-                .TranslateY(Stagger.Create(10, s => s
+                .TranslateY(Stagger.Create(10, stg => stg
                     .Grid(14,5)
                     .From(StaggerPosition.Center)
                     .Axis(StaggerAxis.Y)
                 ))
-                .RotateZ(Stagger.Create(0, 90, s => s
+                .RotateZ(Stagger.Create(0, 90, stg => stg
                     .Grid(14,5)
                     .From(StaggerPosition.Center)
                     .Axis(StaggerAxis.X)
                 ))
-                .Delay(Stagger.Create(200, s => s
+                .Delay(Stagger.Create(200, stg => stg
                     .Grid(14,5)
                     .From(StaggerPosition.Center)
                 ))
                 .Easing(Easing.EaseInOutQuad)
+                .Loop(3)
+                .AutoPlay(true)
             );
         }
     } 
