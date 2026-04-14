@@ -82,7 +82,7 @@ public sealed class PropsBuilder
             _props.Add(new GenProp<object>(property, new[] { from, to }));
         return this;
     }
-    public PropsBuilder Prop(string property, PathParam path)
+    public PropsBuilder Prop(string property, SvgPathParam path)
     {
         if(!string.IsNullOrWhiteSpace(property) && path != null)
             _props.Add(new SvgProp(property, path.ParamRef));
@@ -214,85 +214,4 @@ public sealed class Direction
     public string GetValue() => _name;
     private Direction(string name) { _name = name; }
     private readonly string _name;
-}
-
-public sealed class Easing
-{
-    public static Easing Spring() => new("spring");
-    public static Easing Steps(int steps) => new($"steps({steps})");
-    public static Easing EaseInElastic(double amplitude, double period)
-        => new($"easeInElastic({amplitude}, {period})");
-    public static Easing EaseOutElastic(double amplitude, double period)
-        => new($"easeOutElastic({amplitude}, {period})");
-    public static Easing EaseInOutElastic(double amplitude, double period)
-        => new($"easeInOutElastic({amplitude}, {period})");
-    public static Easing EaseOutInElastic(double amplitude, double period)
-        => new($"easeOutInElastic({amplitude}, {period})");
-    public static Easing CubicBezier(double x1, double y1, double x2, double y2) =>
-        new($"cubicBezier({x1}, {y1}, {x2}, {y2})");
-    public static Easing Spring(double mass, double stiffness, double damping, double velocity)
-        => new($"spring({mass}, {stiffness}, {damping}, {velocity})");
-
-    public static Easing Linear { get; } = new("linear");
-    public static Easing EaseInQuad { get; } = new("easeInQuad");
-    public static Easing EaseInCubic { get; } = new("easeInCubic");
-    public static Easing EaseInQuart { get; } = new("easeInQuart");
-    public static Easing EaseInQuint { get; } = new("easeInQuint");
-    public static Easing EaseInSine { get; } = new("easeInSine");
-    public static Easing EaseInExpo { get; } = new("easeInExpo");
-    public static Easing EaseInCirc { get; } = new("easeInCirc");
-    public static Easing EaseInBack { get; } = new("easeInBack");
-    public static Easing EaseInBounce { get; } = new("easeInBounce");
-
-    public static Easing EaseOutQuad { get; } = new("easeOutQuad");
-    public static Easing EaseOutCubic { get; } = new("easeOutCubic");
-    public static Easing EaseOutQuart { get; } = new("easeOutQuart");
-    public static Easing EaseOutQuint { get; } = new("easeOutQuint");
-    public static Easing EaseOutSine { get; } = new("easeOutSine");
-    public static Easing EaseOutExpo { get; } = new("easeOutExpo");
-    public static Easing EaseOutCirc { get; } = new("easeOutCirc");
-    public static Easing EaseOutBack { get; } = new("easeOutBack");
-    public static Easing EaseOutBounce { get; } = new("easeOutBounce");
-
-    public static Easing EaseInOutQuad { get; } = new("easeInOutQuad");
-    public static Easing EaseInOutCubic { get; } = new("easeInOutCubic");
-    public static Easing EaseInOutQuart { get; } = new("easeInOutQuart");
-    public static Easing EaseInOutQuint { get; } = new("easeInOutQuint");
-    public static Easing EaseInOutSine { get; } = new("easeInOutSine");
-    public static Easing EaseInOutExpo { get; } = new("easeInOutExpo");
-    public static Easing EaseInOutCirc { get; } = new("easeInOutCirc");
-    public static Easing EaseInOutBack { get; } = new("easeInOutBack");
-    public static Easing EaseInOutBounce { get; } = new("easeInOutBounce");
-
-    public static Easing EaseOutInQuad { get; } = new("easeOutInQuad");
-    public static Easing EaseOutInCubic { get; } = new("easeOutInCubic");
-    public static Easing EaseOutInQuart { get; } = new("easeOutInQuart");
-    public static Easing EaseOutInQuint { get; } = new("easeOutInQuint");
-    public static Easing EaseOutInSine { get; } = new("easeOutInSine");
-    public static Easing EaseOutInExpo { get; } = new("easeOutInExpo");
-    public static Easing EaseOutInCirc { get; } = new("easeOutInCirc");
-    public static Easing EaseOutInBack { get; } = new("easeOutInBack");
-    public static Easing EaseOutInBounce { get; } = new("easeOutInBounce");
-
-    public string GetValue() => _name;
-    private Easing(string name) { _name = name; }
-    private readonly string _name;
-}
-
-public static class PropsExtensions
-{
-    internal static System.Dynamic.ExpandoObject ToObject(this IEnumerable<Prop> props)
-    {
-        Dictionary<string, Prop> properties = [];
-        foreach (var prop in props)
-        {
-            properties[prop.GetName()] = prop;
-        }
-        dynamic propsObject = new System.Dynamic.ExpandoObject();
-        foreach (var property in properties.Values)
-        {
-            ((IDictionary<string, object>)propsObject).Add(property.GetName(), property.GetValue());
-        }
-        return propsObject;
-    }
 }

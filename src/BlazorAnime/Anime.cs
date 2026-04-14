@@ -63,15 +63,15 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// <summary>
     /// Returns a Path for an SVG element.
     /// </summary>
-    /// <param name="svgTarget"></param>
+    /// <param name="svgSelector"></param>
     /// <returns></returns>
-    public async Task<Path> GetPath(string svgTarget)
+    public async Task<SvgPath> GetSvgPath(string svgSelector)
     {
         var pathJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
-            IdentifierGetPath,
-            svgTarget
+            IdentifierGetSvgPath,
+            svgSelector
         );
-        return new Path(pathJsRef);
+        return new SvgPath(pathJsRef);
     }
 
     /// <summary>
@@ -184,7 +184,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     private const string IdentifierGetElementValue = "AnimeJs.get";
     private const string IdentifierGetRandomValue = "AnimeJs.random";
     private const string IdentifierGetRunningLength = "AnimeJs.runningLength";
-    private const string IdentifierGetPath = "AnimeJs.path";
+    private const string IdentifierGetSvgPath = "AnimeJs.path";
     private const string IdentifierSuspendWhenDocHidden = "AnimeJs.suspendWhenDocumentHidden";
 }
 
@@ -194,7 +194,7 @@ public interface IAnime
     Task<Animation> Animate(Func<PropsBuilder, Task<PropsBuilder>> configure);
     Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> configureDefaults);
     Task<Timeline> Timeline(Func<PropsBuilder, Task<PropsBuilder>> configureDefaults);
-    Task<Path> GetPath(string svgTarget);
+    Task<SvgPath> GetSvgPath(string svgSelector);
     Task Set(string[] targets, Func<PropsBuilder, PropsBuilder> build);
     Task Set(object[] targets, Func<PropsBuilder, PropsBuilder> build);
     Task<string> Get(object target, string propName);

@@ -2,14 +2,14 @@ using Microsoft.JSInterop;
 
 namespace BlazorAnime;
 
-public sealed class PathParam(IJSObjectReference paramRef)
+public sealed class SvgPathParam(IJSObjectReference paramRef)
 {
     internal IJSObjectReference ParamRef { get; } = paramRef;
 }
 
-public sealed class Path
+public sealed class SvgPath
 {
-    internal Path(IJSObjectReference jsRef)
+    internal SvgPath(IJSObjectReference jsRef)
     {
         PathRef = jsRef;
     }
@@ -19,10 +19,10 @@ public sealed class Path
     /// </summary>
     /// <param name="svgPropertyName"></param>
     /// <returns>PathParam</returns>
-    public async Task<PathParam> Get(string svgPropertyName)
+    public async Task<SvgPathParam> Get(string svgPropertyName)
     {
         var paramRef = await PathRef.InvokeAsync<IJSObjectReference>("path", svgPropertyName);
-        return new PathParam(paramRef);
+        return new SvgPathParam(paramRef);
     }
 
     private IJSObjectReference PathRef { get; init; }

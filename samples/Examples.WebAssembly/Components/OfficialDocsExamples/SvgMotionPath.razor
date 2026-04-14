@@ -20,14 +20,14 @@
     {
         if (firstRender)
         {
-            var path = await Anime.GetPath(".somePath");
+            var svgPath = await Anime.GetSvgPath(".somePath");
             
             _animation ??= await Anime.Animate(
                 async props => props
                 .Targets(".motion-path-demo .el")
-                .TranslateX(await path.Get("x"))
-                .TranslateY(await path.Get("y"))
-                .Rotate(await path.Get("angle"))
+                .TranslateX(await svgPath.Get("x"))
+                .TranslateY(await svgPath.Get("y"))
+                .Rotate(await svgPath.Get("angle"))
                 .Easing(Easing.Linear)
                 .Duration(2000)
                 .Loop(true)
