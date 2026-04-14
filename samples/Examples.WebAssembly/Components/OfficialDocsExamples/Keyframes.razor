@@ -4,11 +4,11 @@
 <div class="demo-content" style="padding: 100px;">
     <div class="animation-keyframes-demo">
         <div class="circle shadow"></div>
-        <div class="circle el"></div>
+        <div class="circle el" style="background-color: green"></div>
     </div>
     <div class="property-keyframes-demo">
         <div class="circle shadow"></div>
-        <div class="circle el"></div>
+        <div class="circle el" style="background-color: orangered;"></div>
     </div>
 </div>
 
@@ -45,7 +45,7 @@
                 .TranslateY([
                     kf => kf.Value(-40).Duration(500),
                     kf => kf.Value(40).Duration(500).Delay(1000),
-                    kf => kf.Value(0).Duration(500).Delay(1500)
+                    kf => kf.Value(0).Duration(500).Delay(1000)
                 ])
                 .ScaleX([
                     kf => kf.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
