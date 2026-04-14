@@ -119,7 +119,7 @@ public sealed class Timeline: IAsyncDisposable
         await TimelineJsRef.DisposeAsync();
     }
 
-    internal Timeline(IJSObjectReference timelineJsRef) => TimelineJsRef = timelineJsRef;
+    internal Timeline(IJSObjectReference jsRef) => TimelineJsRef = jsRef;
     private IJSObjectReference TimelineJsRef { get; init; }
     private static bool ToBool(int val) => val == 1;
 }

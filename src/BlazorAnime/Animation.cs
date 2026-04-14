@@ -180,7 +180,7 @@ public sealed class Animation: IAsyncDisposable
         await AnimationJsRef.DisposeAsync();
     }
 
-    internal Animation(IJSObjectReference animationJsRef) => AnimationJsRef = animationJsRef;
+    internal Animation(IJSObjectReference jsRef) => AnimationJsRef = jsRef;
     private IJSObjectReference AnimationJsRef { get; init; }
     private static bool ToBool(int val) => val == 1;
 }
