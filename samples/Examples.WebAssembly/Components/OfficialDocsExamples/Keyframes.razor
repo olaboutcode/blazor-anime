@@ -1,13 +1,15 @@
 @implements IAsyncDisposable;
 @inject IAnime Anime;
 
-<div class="demo-content animation-keyframes-demo">
-    <div class="circle shadow"></div>
-    <div class="circle el"></div>
-</div>
-<div class="demo-content property-keyframes-demo">
-    <div class="circle shadow"></div>
-    <div class="circle el"></div>
+<div class="demo-content" style="padding: 100px;">
+    <div class="animation-keyframes-demo">
+        <div class="circle shadow"></div>
+        <div class="circle el"></div>
+    </div>
+    <div class="property-keyframes-demo">
+        <div class="circle shadow"></div>
+        <div class="circle el"></div>
+    </div>
 </div>
 
 @code {
@@ -22,47 +24,46 @@
                 props => props
                 .Targets(".animation-keyframes-demo .el")
                 .Keyframes([
-                kf => kf
-                    .TranslateY(-40)
-                    .TranslateX(250)
-                    .TranslateY(40)
-                    .TranslateX(0)
-                    .TranslateY(0)
+                kf => kf.TranslateY(-40),
+                kf => kf.TranslateX(250),
+                kf => kf.TranslateY(40),
+                kf => kf.TranslateX(0),
+                kf => kf.TranslateY(0)
                 ])
-                .Duration(2000)
+                .Duration(4000)
                 .Easing(Easing.EaseOutElastic(1, .8))
                 .Loop(true)
                 .AutoPlay(true)
             );
-            @* _propertyKeyframeAnimation ??= await Anime.Animate(
+            _propertyKeyframeAnimation ??= await Anime.Animate(
                 props => props
                 .Targets(".property-keyframes-demo .el")
                 .TranslateX([
-                    p => p.Value(250).Duration(1000).Delay(500),
-                    p => p.Value(0).Duration(1000).Delay(500)
+                    kf => kf.Value(250).Duration(1000).Delay(500),
+                    kf => kf.Value(0).Duration(1000).Delay(500)
                 ])
                 .TranslateY([
-                    p => p.Value(-40).Duration(500),
-                    p => p.Value(40).Duration(500).Delay(1000),
-                    p => p.Value(0).Duration(500).Delay(1500)
+                    kf => kf.Value(-40).Duration(500),
+                    kf => kf.Value(40).Duration(500).Delay(1000),
+                    kf => kf.Value(0).Duration(500).Delay(1500)
                 ])
                 .ScaleX([
-                    p => p.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
-                    p => p.Value(1).Duration(900),
-                    p => p.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
-                    p => p.Value(1).Duration(900)
+                    kf => kf.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
+                    kf => kf.Value(1).Duration(900),
+                    kf => kf.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
+                    kf => kf.Value(1).Duration(900)
                 ])
                 .ScaleY([
-                    p => p.Value(1.75, 1).Duration(500),
-                    p => p.Value(2).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
-                    p => p.Value(1).Duration(450),
-                    p => p.Value(1.75).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
-                    p => p.Value(1).Duration(450)
+                    kf => kf.Value(1.75, 1).Duration(500),
+                    kf => kf.Value(2).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
+                    kf => kf.Value(1).Duration(450),
+                    kf => kf.Value(1.75).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
+                    kf => kf.Value(1).Duration(450)
                 ])
                 .Easing(Easing.EaseOutElastic(1, .8))
                 .Loop(true)
                 .AutoPlay(true)
-            ); *@
+            );
         }
     }
 
