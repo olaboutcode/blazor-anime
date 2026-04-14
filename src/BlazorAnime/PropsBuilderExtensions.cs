@@ -33,7 +33,7 @@ public static class PropsBuilderExtensions
     // Core animation settings: targets, timing, delays, loops, keyframes, and SVG properties
     public static PropsBuilder Targets(
         this PropsBuilder builder,
-        params string[] targets) => builder.Prop("targets", targets);
+        params string[] selectors) => builder.Prop("targets", selectors);
     public static PropsBuilder Points(
         this PropsBuilder builder,
         Action<PropsBuilder> configure) => builder.Prop("points", configure);
