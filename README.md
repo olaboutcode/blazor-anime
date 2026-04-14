@@ -40,7 +40,7 @@ Add Blazor Anime reference in your `_Imports.razor`
 @inject IAnime Anime;
 
 <div @ref="element">Animate me!</div>
-<button @click="OnClick">Play Animation</button>
+<button @click="OnPlayButtonClicked">Play Animation</button>
 
 @code {
     ElementReference element;
