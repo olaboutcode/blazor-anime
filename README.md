@@ -209,14 +209,522 @@ public double SetEndDelay(int i, int l) => (l - i) * 100;
 ```
 
 ### Animation Parameters
+Control how your animation plays with these parameters.
+Official docs: https://animejs.com/v3/documentation/#direction
+#### Direction
+Set the animation direction.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(100)
+    .Direction(Direction.Alternate) // Plays forward, then backward
+    .Loop(true)
+    .AutoPlay(true));
+```
+Available directions: `Normal`, `Reverse`, `Alternate`
+
+#### Loop
+Make animations repeat.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(100)
+    .Loop(true) // Loop infinitely
+    .AutoPlay(true));
+
+// Or specify a number
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(100)
+    .Loop(3) // Loop 3 times
+    .AutoPlay(true));
+```
+
+#### Autoplay
+Control whether animation plays automatically.
+```csharp
+var animation = await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(250)
+    .AutoPlay(false)); // Don't play automatically
+
+// Play it later
+animation.Play();
+```
+
 ### Values
+Different ways to specify values for your animations.
+Official docs: https://animejs.com/v3/documentation/#unitlessValue
+#### From → To
+Animate from a specific value to another.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(0, 250) // From 0 to 250
+    .AutoPlay(true));
+```
+
+#### Relative Values
+Use `+=` or `-=` for relative values.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX("+=100") // Move 100px from current position
+    .AutoPlay(true));
+```
+
+#### Specific Property Values
+Pass values with specific units.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .Width("100%")
+    .TranslateX("250px")
+    .Rotate("1turn")
+    .AutoPlay(true));
+```
+
+#### Unit-less Values
+Colors and properties without units.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .BackgroundColor("#FFF", "#000")
+    .Opacity(0, 1)
+    .AutoPlay(true));
+```
+
 ### Keyframes
+Create complex animations with keyframes.
+Official docs: https://animejs.com/v3/documentation/#animationKeyframes
+#### Property Keyframes
+Animate a single property through multiple values.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(props => props
+        .Keys(new[] { 
+            new { Value = 250 },
+            new { Value = 0 }
+        })
+    )
+    .Duration(4000)
+    .AutoPlay(true));
+```
+
+#### Animation Keyframes
+Animate multiple properties at specific keyframes.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .Keyframes(new[] {
+        new { TranslateY = -40, Duration = 1000 },
+        new { TranslateX = 250, Duration = 800 },
+        new { TranslateY = 0, Duration = 700 },
+        new { TranslateX = 0, Duration = 600 }
+    })
+    .Easing(Easing.EaseOutElastic)
+    .Duration(4000)
+    .Loop(true)
+    .AutoPlay(true));
+```
+
 ### Staggering
+Animate multiple elements with incremental delays.
+Official docs: https://animejs.com/v3/documentation/#staggeringBasics
+#### Basic Stagger
+Start each animation with a delay.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(270)
+    .Delay(stagger => stagger
+        .Value(100) // Increase delay by 100ms for each element
+    )
+    .AutoPlay(true));
+```
+
+#### Stagger Start Value
+Start from a specific delay.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(270)
+    .Delay(stagger => stagger
+        .Value(100)
+        .Start(500) // Start at 500ms
+    )
+    .AutoPlay(true));
+```
+
+#### Stagger From
+Control where stagger starts from.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .Scale(2)
+    .Delay(stagger => stagger
+        .Value(100)
+        .From(StaggerFrom.Center) // Start from center
+    )
+    .AutoPlay(true));
+```
+Available from values: `First`, `Last`, `Center`, or an index number
+
+#### Stagger Direction
+Change stagger direction.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(270)
+    .Delay(stagger => stagger
+        .Value(100)
+        .Direction(true) // Reverse direction
+    )
+    .AutoPlay(true));
+```
+
+#### Stagger Easing
+Apply easing to stagger values.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(270)
+    .Delay(stagger => stagger
+        .Value(100)
+        .Easing(Easing.EaseOutQuad)
+    )
+    .AutoPlay(true));
+```
+
+#### Stagger Grid
+For elements arranged in a grid.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .Scale(2)
+    .Delay(stagger => stagger
+        .Value(100)
+        .Grid(new[] { 14, 7 }) // 14 columns, 7 rows
+        .From(StaggerFrom.Center)
+    )
+    .AutoPlay(true));
+```
+
+#### Stagger Grid Axis
+Control grid animation direction.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(270)
+    .Delay(stagger => stagger
+        .Value(100)
+        .Grid(new[] { 14, 7 })
+        .Axis(StaggerAxis.X) // Animate along X axis
+    )
+    .AutoPlay(true));
+```
+
 ### Timeline
+Create complex sequences of animations.
+Official docs: https://animejs.com/v3/documentation/#timelineBasics
+#### Creating a Timeline
+```csharp
+var timeline = await Anime.Timeline(props => props
+    .Duration(750)
+    .Easing(Easing.EaseOutExpo)
+    .AutoPlay(false));
+```
+
+#### Adding Animations to Timeline
+```csharp
+var timeline = await Anime.Timeline(props => props
+    .Easing(Easing.EaseOutExpo)
+    .AutoPlay(false));
+
+await timeline.AddAsync(t => t
+    .Targets(".element-1")
+    .TranslateX(250));
+
+await timeline.AddAsync(t => t
+    .Targets(".element-2")
+    .TranslateX(250));
+
+await timeline.AddAsync(t => t
+    .Targets(".element-3")
+    .TranslateX(250));
+
+timeline.Play();
+```
+
+#### Timeline Offsets
+Control when each animation starts.
+```csharp
+var timeline = await Anime.Timeline(props => props
+    .AutoPlay(false));
+
+// Default: start after previous animation ends
+await timeline.AddAsync(t => t
+    .Targets(".el1")
+    .TranslateX(250));
+
+// Relative offset: start 1000ms after previous
+await timeline.AddAsync(t => t
+    .Targets(".el2")
+    .TranslateX(250), 
+    "+=1000");
+
+// Absolute offset: start at 2000ms
+await timeline.AddAsync(t => t
+    .Targets(".el3")
+    .TranslateX(250), 
+    "2000");
+
+timeline.Play();
+```
+
+#### Timeline Controls
+```csharp
+timeline.Play();
+timeline.Pause();
+timeline.Restart();
+timeline.Reverse();
+timeline.Seek(1500); // Go to specific time
+```
+
 ### Controls
+Control your animations programmatically.
+Official docs: https://animejs.com/v3/documentation/#playPause
+#### Play / Pause
+```csharp
+var animation = await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(250)
+    .AutoPlay(false));
+
+animation.Play();
+animation.Pause();
+```
+
+#### Restart
+Restart animation from the beginning.
+```csharp
+animation.Restart();
+```
+
+#### Reverse
+Play animation in reverse.
+```csharp
+animation.Reverse();
+```
+
+#### Seek
+Jump to a specific time (in milliseconds).
+```csharp
+animation.Seek(1500); // Go to 1500ms
+```
+
+#### Complete
+Jump to the end of the animation.
+```csharp
+await animation.Complete();
+```
+
 ### Callbacks
+Execute code during animation lifecycle.
+Official docs: https://animejs.com/v3/documentation/#update
+#### Begin
+Callback when animation begins.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(250)
+    .Begin(OnBegin)
+    .AutoPlay(true));
+
+[JSInvokable]
+public void OnBegin(AnimationState state)
+{
+    Console.WriteLine("Animation started!");
+}
+```
+
+#### Update
+Callback on every frame.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(250)
+    .Update(OnUpdate)
+    .AutoPlay(true));
+
+[JSInvokable]
+public void OnUpdate(AnimationState state)
+{
+    Console.WriteLine($"Progress: {state.Progress}%");
+}
+```
+
+#### Complete
+Callback when animation completes.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(250)
+    .Complete(OnComplete)
+    .AutoPlay(true));
+
+[JSInvokable]
+public void OnComplete(AnimationState state)
+{
+    Console.WriteLine("Animation completed!");
+}
+```
+
+#### Loop Begin
+Callback when a loop starts.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(250)
+    .Loop(true)
+    .LoopBegin(OnLoopBegin)
+    .AutoPlay(true));
+
+[JSInvokable]
+public void OnLoopBegin(AnimationState state)
+{
+    Console.WriteLine($"Loop {state.CurrentLoop} started");
+}
+```
+
 ### SVG
+Animate SVG elements with special properties.
+Official docs: https://animejs.com/v3/documentation/#motionPath
+#### Line Drawing
+Animate SVG path strokes.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".line-drawing path")
+    .StrokeDashoffset(0)
+    .Easing(Easing.EaseInOutSine)
+    .Duration(1500)
+    .Direction(Direction.Alternate)
+    .Loop(true)
+    .AutoPlay(true));
+```
+
+#### SVG Morphing
+Morph between different SVG shapes.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".morphing path")
+    .D("M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80") // Target path
+    .Duration(2000)
+    .Easing(Easing.EaseInOutQuad)
+    .AutoPlay(true));
+```
+
+#### SVG Motion Path
+Animate element along an SVG path.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".motion-path-demo .el")
+    .MotionPath(new MotionPathOptions
+    {
+        Path = ".motion-path-demo path",
+        AlignAngle = true // Rotate element based on path direction
+    })
+    .Duration(2000)
+    .Easing(Easing.EaseInOutSine)
+    .Loop(true)
+    .AutoPlay(true));
+```
+
 ### Easings
+Timing functions control animation acceleration.
+Official docs: https://animejs.com/v3/documentation/#penner
+#### Built-in Easing Functions
+BlazorAnime includes all anime.js easing functions:
+- `Linear`
+- `EaseInSine`, `EaseOutSine`, `EaseInOutSine`, `EaseOutInSine`
+- `EaseInQuad`, `EaseOutQuad`, `EaseInOutQuad`, `EaseOutInQuad`
+- `EaseInCubic`, `EaseOutCubic`, `EaseInOutCubic`, `EaseOutInCubic`
+- `EaseInQuart`, `EaseOutQuart`, `EaseInOutQuart`, `EaseOutInQuart`
+- `EaseInQuint`, `EaseOutQuint`, `EaseInOutQuint`, `EaseOutInQuint`
+- `EaseInExpo`, `EaseOutExpo`, `EaseInOutExpo`, `EaseOutInExpo`
+- `EaseInCirc`, `EaseOutCirc`, `EaseInOutCirc`, `EaseOutInCirc`
+- `EaseInBack`, `EaseOutBack`, `EaseInOutBack`, `EaseOutInBack`
+- `EaseInElastic`, `EaseOutElastic`, `EaseInOutElastic`, `EaseOutInElastic`
+- `EaseInBounce`, `EaseOutBounce`, `EaseInOutBounce`, `EaseOutInBounce`
+
+#### Cubic Bezier
+Define custom cubic-bezier curves.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(250)
+    .Easing("cubicBezier(.5, .05, .1, .3)")
+    .Duration(1000)
+    .AutoPlay(true));
+```
+
+#### Spring
+Physics-based spring easing.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(250)
+    .Easing("spring(1, 80, 10, 0)") // mass, stiffness, damping, velocity
+    .AutoPlay(true));
+```
+
+#### Elastic
+Create elastic easing with custom amplitude and period.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .Scale(2)
+    .Easing("easeOutElastic(1, .6)") // amplitude, period
+    .Duration(1000)
+    .AutoPlay(true));
+```
+
 ### Helpers
+Utility methods for common tasks.
+Official docs: https://animejs.com/v3/documentation/#remove
+#### Random
+Generate random values for animations.
+```csharp
+// Random number between two values
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateX(Anime.Random(0, 250))
+    .AutoPlay(true));
+```
 
+#### Stagger Helper
+Use the stagger helper for delays and property values.
+```csharp
+await Anime.Animate(props => props
+    .Targets(".element")
+    .TranslateY(-30)
+    .Delay(stagger => stagger.Value(100))
+    .AutoPlay(true));
+```
 
+#### Get / Set
+Get or set animatable values.
+```csharp
+// Get current value
+var value = await Anime.Get(".element", "translateX");
+
+// Set value
+await Anime.Set(".element", "translateX", 250);
+```
+
+#### Remove
+Remove elements from the DOM.
+```csharp
+await Anime.Remove(".element");
+```
