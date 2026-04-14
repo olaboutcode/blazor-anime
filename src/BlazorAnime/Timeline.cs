@@ -124,7 +124,7 @@ public sealed class Timeline: IAsyncDisposable
     private static bool ToBool(int val) => val == 1;
 }
 
-public class OffSet
+public sealed class OffSet
 {
     /// <summary>
     /// Start animation before `value` milliseconds before the previous animation ends

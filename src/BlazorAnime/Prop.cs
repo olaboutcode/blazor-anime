@@ -37,9 +37,7 @@ internal abstract partial class Prop
         : char.ToLower(input[0]) + input[1..];
 }
 
-internal class GenProp<T>(
-    string name, 
-    T value) : Prop(name, value) where T : notnull;
+internal class GenProp<T>(string name, T value) : Prop(name, value) where T : notnull;
 
 internal class SvgProp(
     string name, 

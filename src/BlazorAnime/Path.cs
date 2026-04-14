@@ -2,13 +2,18 @@ using Microsoft.JSInterop;
 
 namespace BlazorAnime;
 
-public class PathParam(IJSObjectReference paramRef)
+public sealed class PathParam(IJSObjectReference paramRef)
 {
-    public IJSObjectReference ParamRef { get; } = paramRef;
+    internal IJSObjectReference ParamRef { get; } = paramRef;
 }
 
-public class Path(IJSObjectReference jsRef)
+public sealed class Path
 {
+    internal Path(IJSObjectReference jsRef)
+    {
+        PathRef = jsRef;
+    }
+
     /// <summary>
     /// Returns the current value of the SVG property
     /// </summary>
@@ -20,5 +25,5 @@ public class Path(IJSObjectReference jsRef)
         return new PathParam(paramRef);
     }
 
-    private IJSObjectReference PathRef { get; } = jsRef;
+    private IJSObjectReference PathRef { get; init; }
 }
