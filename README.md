@@ -13,6 +13,10 @@ A powerful and easy-to-use Blazor wrapper for [anime.js v3](https://animejs.com)
 - **Function-Based Parameters** - Dynamic animations with callback functions
 - **Animation Controls** - Play, pause, seek, and control animations programmatically
 
+## Table Of Content
+- [Installation](#installation)
+- [Documentation Examples](#https://github.com/olaboutcode/blazor-animeblob/master/DOCUMENTATION.md)
+
 ## Installation
 
 Install Blazor Anime package
