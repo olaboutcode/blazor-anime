@@ -1,27 +1,80 @@
 @implements IAsyncDisposable;
 @inject IAnime Anime;
 
+<div class="demo-content animation-keyframes-demo">
+    <div class="circle shadow"></div>
+    <div class="circle el"></div>
+</div>
+<div class="demo-content property-keyframes-demo">
+    <div class="circle shadow"></div>
+    <div class="circle el"></div>
+</div>
+
 @code {
-    private Animation? _animation;
+    private Animation? _keyframeAnimation;
+    private Animation? _propertyKeyframeAnimation;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animate(
+            _keyframeAnimation ??= await Anime.Animate(
                 props => props
-                .Targets(".keyframes-demo .el")
-                .Duration(750)
+                .Targets(".animation-keyframes-demo .el")
+                .Keyframes([
+                kf => kf
+                    .TranslateY(-40)
+                    .TranslateX(250)
+                    .TranslateY(40)
+                    .TranslateX(0)
+                    .TranslateY(0)
+                ])
+                .Duration(2000)
+                .Easing(Easing.EaseOutElastic(1, .8))
+                .Loop(true)
                 .AutoPlay(true)
             );
+            @* _propertyKeyframeAnimation ??= await Anime.Animate(
+                props => props
+                .Targets(".property-keyframes-demo .el")
+                .TranslateX([
+                    p => p.Value(250).Duration(1000).Delay(500),
+                    p => p.Value(0).Duration(1000).Delay(500)
+                ])
+                .TranslateY([
+                    p => p.Value(-40).Duration(500),
+                    p => p.Value(40).Duration(500).Delay(1000),
+                    p => p.Value(0).Duration(500).Delay(1500)
+                ])
+                .ScaleX([
+                    p => p.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
+                    p => p.Value(1).Duration(900),
+                    p => p.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
+                    p => p.Value(1).Duration(900)
+                ])
+                .ScaleY([
+                    p => p.Value(1.75, 1).Duration(500),
+                    p => p.Value(2).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
+                    p => p.Value(1).Duration(450),
+                    p => p.Value(1.75).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
+                    p => p.Value(1).Duration(450)
+                ])
+                .Easing(Easing.EaseOutElastic(1, .8))
+                .Loop(true)
+                .AutoPlay(true)
+            ); *@
         }
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
-        if (_animation is not null)
+        if (_keyframeAnimation is not null)
         {
-            await _animation.DisposeAsync();
+            await _keyframeAnimation.DisposeAsync();
+        }
+        if (_propertyKeyframeAnimation is not null)
+        {
+            await _propertyKeyframeAnimation.DisposeAsync();
         }
     }
 }

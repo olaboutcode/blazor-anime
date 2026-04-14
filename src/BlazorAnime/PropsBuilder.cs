@@ -26,6 +26,10 @@ public sealed class PropsBuilder
     {
         return Prop("value", value);
     }
+    public PropsBuilder Value(double from, double to)
+    {
+        return Prop("value", from, to);
+    }
     public PropsBuilder Value(params string[] value)
     {
         if(value != null)
