@@ -1,6 +1,33 @@
 @implements IAsyncDisposable;
 @inject IAnime Anime;
 
+<div class="demo-content staggering-direction-demo">
+    <div class="line">
+        <div class="small square shadow"></div>
+        <div class="small square el" style="background-color: green"></div>
+    </div>
+    <div class="line">
+        <div class="small square shadow"></div>
+        <div class="small square el" style="background-color: green"></div>
+    </div>
+    <div class="line">
+        <div class="small square shadow"></div>
+        <div class="small square el" style="background-color: green"></div>
+    </div>
+    <div class="line">
+        <div class="small square shadow"></div>
+        <div class="small square el" style="background-color: green"></div>
+    </div>
+    <div class="line">
+        <div class="small square shadow"></div>
+        <div class="small square el" style="background-color: green"></div>
+    </div>
+    <div class="line">
+        <div class="small square shadow"></div>
+        <div class="small square el" style="background-color: green"></div>
+    </div>
+</div>
+
 @code {
     private Animation? _animation;
 
@@ -10,7 +37,13 @@
         {
             _animation ??= await Anime.Animate(
                 props => props
-                .Duration(750)
+                .Targets(".staggering-direction-demo .el")
+                .TranslateX(300)
+                .Delay(Stagger.Create(300, stg => stg
+                    .Direction(Direction.Reverse)
+                    .Easing(Easing.EaseOutQuad)))
+                .Duration(1000)
+                .Loop(true)
                 .AutoPlay(true)
             );
         }
