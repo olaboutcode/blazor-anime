@@ -10,7 +10,6 @@ internal static class ValidationChecks
         ArgumentNullException.ThrowIfNull(value, nameof(value));
     }
 
-
     internal static void EnsureAcceptableCallback(Delegate callback)
     {
         ArgumentNullException.ThrowIfNull(callback);
