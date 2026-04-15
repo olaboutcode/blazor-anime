@@ -35,7 +35,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// <summary>
     /// Create a timeline.
     /// </summary>
-    /// <param name="configure"></param>
+    /// <param name="setDefaults"></param>
     /// <returns>Timeline</returns>
     public async Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> setDefaults)
     {
@@ -49,7 +49,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// <summary>
     /// Create a timeline.
     /// </summary>
-    /// <param name="configure"></param>
+    /// <param name="setDefaults"></param>
     /// <returns>Timeline</returns>
     public async Task<Timeline> Timeline(Func<PropsBuilder, Task<PropsBuilder>> setDefaults)
     {
@@ -78,7 +78,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// Immediately sets values to the specified targets.
     /// </summary>
     /// <param name="targets"></param>
-    /// <param name="props"></param>
+    /// <param name="build"></param>
     public async Task Set(string[] targets, Func<PropsBuilder, PropsBuilder> build)
     {
         await JsRuntime.InvokeVoidAsync(
@@ -91,7 +91,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// Immediately sets values to the specified targets.
     /// </summary>
     /// <param name="targets"></param>
-    /// <param name="props"></param>
+    /// <param name="build"></param>
     public async Task Set(object[] targets, Func<PropsBuilder, PropsBuilder> build)
     {
         await JsRuntime.InvokeVoidAsync(
@@ -202,4 +202,12 @@ public interface IAnime
     Task<int> Random(int minValue, int maxValue);
     Task SuspendWhenDocumentHidden(bool value);
     Task<int> RunningLength();
+}
+
+public static class PropExtensions
+{
+    internal static Dictionary<string, object> ToObject(this IEnumerable<Prop> props)
+    {
+        return props.ToDictionary(p => p.GetName(), p => p.GetValue());
+    }
 }
