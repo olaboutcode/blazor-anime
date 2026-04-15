@@ -6,15 +6,10 @@
         <div class="circle shadow"></div>
         <div class="circle el" style="background-color: green"></div>
     </div>
-    <div class="property-keyframes-demo">
-        <div class="circle shadow"></div>
-        <div class="circle el" style="background-color: orange;"></div>
-    </div>
 </div>
 
 @code {
     private Animation? _keyframeAnimation;
-    private Animation? _propertyKeyframeAnimation;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -35,35 +30,6 @@
                 .Loop(true)
                 .AutoPlay(true)
             );
-            _propertyKeyframeAnimation ??= await Anime.Animate(
-                props => props
-                .Targets(".property-keyframes-demo .el")
-                .TranslateX([
-                    kf => kf.Value(250).Duration(1000).Delay(500),
-                    kf => kf.Value(0).Duration(1000).Delay(500)
-                ])
-                .TranslateY([
-                    kf => kf.Value(-40).Duration(500),
-                    kf => kf.Value(40).Duration(500).Delay(1000),
-                    kf => kf.Value(0).Duration(500).Delay(1000)
-                ])
-                .ScaleX([
-                    kf => kf.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
-                    kf => kf.Value(1).Duration(900),
-                    kf => kf.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
-                    kf => kf.Value(1).Duration(900)
-                ])
-                .ScaleY([
-                    kf => kf.Value(1.75, 1).Duration(500),
-                    kf => kf.Value(2).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
-                    kf => kf.Value(1).Duration(450),
-                    kf => kf.Value(1.75).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
-                    kf => kf.Value(1).Duration(450)
-                ])
-                .Easing(Easing.EaseOutElastic(1, .8))
-                .Loop(true)
-                .AutoPlay(true)
-            );
         }
     }
 
@@ -72,10 +38,6 @@
         if (_keyframeAnimation is not null)
         {
             await _keyframeAnimation.DisposeAsync();
-        }
-        if (_propertyKeyframeAnimation is not null)
-        {
-            await _propertyKeyframeAnimation.DisposeAsync();
         }
     }
 }
