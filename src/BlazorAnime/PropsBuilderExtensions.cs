@@ -102,6 +102,12 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("translateX", value);
     public static PropsBuilder TranslateX(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("translateX", from, to);
+    public static PropsBuilder TranslateX(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("translateX", from, to);
+    public static PropsBuilder TranslateX(
+        this PropsBuilder builder,
         Stagger value) => builder.Prop("translateX", value);
     public static PropsBuilder TranslateX(
         this PropsBuilder builder,
@@ -121,6 +127,12 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("translateY", value);
     public static PropsBuilder TranslateY(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("translateY", from, to);
+    public static PropsBuilder TranslateY(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("translateY", from, to);
+    public static PropsBuilder TranslateY(
+        this PropsBuilder builder,
         Stagger value) => builder.Prop("translateY", value);
     public static PropsBuilder TranslateY(
         this PropsBuilder builder,
@@ -138,6 +150,12 @@ public static class PropsBuilderExtensions
     public static PropsBuilder TranslateZ(
         this PropsBuilder builder,
         double value) => builder.Prop("translateZ", value);
+    public static PropsBuilder TranslateZ(
+        this PropsBuilder builder,
+        double from, double to) => builder.Prop("translateZ", from, to);
+    public static PropsBuilder TranslateZ(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("translateZ", from, to);
     public static PropsBuilder TranslateZ(
         this PropsBuilder builder,
         Stagger value) => builder.Prop("translateZ", value);
@@ -160,6 +178,12 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("rotate", value);
     public static PropsBuilder Rotate(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("rotate", from, to);
+    public static PropsBuilder Rotate(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("rotate", from, to);
+    public static PropsBuilder Rotate(
+        this PropsBuilder builder,
         Stagger value) => builder.Prop("rotate", value);
     public static PropsBuilder Rotate(
         this PropsBuilder builder,
@@ -177,6 +201,12 @@ public static class PropsBuilderExtensions
     public static PropsBuilder RotateX(
         this PropsBuilder builder,
         double value) => builder.Prop("rotateX", value);
+    public static PropsBuilder RotateX(
+        this PropsBuilder builder,
+        double from, double to) => builder.Prop("rotateX", from, to);
+    public static PropsBuilder RotateX(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("rotateX", from, to);
     public static PropsBuilder RotateX(
         this PropsBuilder builder,
         Stagger value) => builder.Prop("rotateX", value);
@@ -198,6 +228,12 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("rotateY", value);
     public static PropsBuilder RotateY(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("rotateY", from, to);
+    public static PropsBuilder RotateY(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("rotateY", from, to);
+    public static PropsBuilder RotateY(
+        this PropsBuilder builder,
         Stagger value) => builder.Prop("rotateY", value);
     public static PropsBuilder RotateY(
         this PropsBuilder builder,
@@ -215,6 +251,12 @@ public static class PropsBuilderExtensions
     public static PropsBuilder RotateZ(
         this PropsBuilder builder,
         double value) => builder.Prop("rotateZ", value);
+    public static PropsBuilder RotateZ(
+        this PropsBuilder builder,
+        double from, double to) => builder.Prop("rotateZ", from, to);
+    public static PropsBuilder RotateZ(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("rotateZ", from, to);
     public static PropsBuilder RotateZ(
         this PropsBuilder builder,
         Stagger value) => builder.Prop("rotateZ", value);
@@ -235,6 +277,12 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Scale(
         this PropsBuilder builder,
         double value) => builder.Prop("scale", value);
+    public static PropsBuilder Scale(
+        this PropsBuilder builder,
+        double from, double to) => builder.Prop("scale", from, to);
+    public static PropsBuilder Scale(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("scale", from, to);
     public static PropsBuilder Scale(
         this PropsBuilder builder,
         Stagger value) => builder.Prop("scale", value);
@@ -259,6 +307,12 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("scaleX", value);
     public static PropsBuilder ScaleX(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("scaleX", from, to);
+    public static PropsBuilder ScaleX(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("scaleX", from, to);
+    public static PropsBuilder ScaleX(
+        this PropsBuilder builder,
         Stagger value) => builder.Prop("scaleX", value);
     public static PropsBuilder ScaleX(
         this PropsBuilder builder,
@@ -278,6 +332,12 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("scaleY", value);
     public static PropsBuilder ScaleY(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("scaleY", from, to);
+    public static PropsBuilder ScaleY(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("scaleY", from, to);
+    public static PropsBuilder ScaleY(
+        this PropsBuilder builder,
         Stagger value) => builder.Prop("scaleY", value);
     public static PropsBuilder ScaleY(
         this PropsBuilder builder,
@@ -295,6 +355,12 @@ public static class PropsBuilderExtensions
     public static PropsBuilder ScaleZ(
         this PropsBuilder builder,
         double value) => builder.Prop("scaleZ", value);
+    public static PropsBuilder ScaleZ(
+        this PropsBuilder builder,
+        double from, double to) => builder.Prop("scaleZ", from, to);
+    public static PropsBuilder ScaleZ(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("scaleZ", from, to);
     public static PropsBuilder ScaleZ(
         this PropsBuilder builder,
         Stagger value) => builder.Prop("scaleZ", value);
@@ -317,6 +383,12 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("skewX", value);
     public static PropsBuilder SkewX(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("skewX", from, to);
+    public static PropsBuilder SkewX(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("skewX", from, to);
+    public static PropsBuilder SkewX(
+        this PropsBuilder builder,
         Stagger value) => builder.Prop("skewX", value);
     public static PropsBuilder SkewX(
         this PropsBuilder builder,
@@ -334,6 +406,12 @@ public static class PropsBuilderExtensions
     public static PropsBuilder SkewY(
         this PropsBuilder builder,
         double value) => builder.Prop("skewY", value);
+    public static PropsBuilder SkewY(
+        this PropsBuilder builder,
+        double from, double to) => builder.Prop("skewY", from, to);
+    public static PropsBuilder SkewY(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("skewY", from, to);
     public static PropsBuilder SkewY(
         this PropsBuilder builder,
         Stagger value) => builder.Prop("skewY", value);
@@ -358,6 +436,9 @@ public static class PropsBuilderExtensions
         string value) => builder.Prop("backgroundColor", value);
     public static PropsBuilder BackgroundColor(
         this PropsBuilder builder,
+        string from, string to) => builder.Prop("backgroundColor", from, to);
+    public static PropsBuilder BackgroundColor(
+        this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("backgroundColor", build);
     public static PropsBuilder BackgroundColor(
         this PropsBuilder builder,
@@ -369,6 +450,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Color(
         this PropsBuilder builder,
         string value) => builder.Prop("color", value);
+    public static PropsBuilder Color(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("color", from, to);
     public static PropsBuilder Color(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("color", build);
@@ -384,6 +468,9 @@ public static class PropsBuilderExtensions
         string value) => builder.Prop("borderColor", value);
     public static PropsBuilder BorderColor(
         this PropsBuilder builder,
+        string from, string to) => builder.Prop("borderColor", from, to);
+    public static PropsBuilder BorderColor(
+        this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("borderColor", build);
     public static PropsBuilder BorderColor(
         this PropsBuilder builder,
@@ -397,6 +484,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Opacity(
         this PropsBuilder builder,
         double value) => builder.Prop("opacity", value);
+    public static PropsBuilder Opacity(
+        this PropsBuilder builder,
+        double from, double to) => builder.Prop("opacity", from, to);
     public static PropsBuilder Opacity(
         this PropsBuilder builder,
         Stagger value) => builder.Prop("opacity", value);
@@ -439,7 +529,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("borderWidth", value);
     public static PropsBuilder BorderWidth(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("borderWidth", from, to);
+    public static PropsBuilder BorderWidth(
+        this PropsBuilder builder,
         string value) => builder.Prop("borderWidth", value);
+    public static PropsBuilder BorderWidth(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("borderWidth", from, to);
     public static PropsBuilder BorderWidth(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("borderWidth", build);
@@ -457,7 +553,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("width", value);
     public static PropsBuilder Width(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("width", from, to);
+    public static PropsBuilder Width(
+        this PropsBuilder builder,
         string value) => builder.Prop("width", value);
+    public static PropsBuilder Width(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("width", from, to);
     public static PropsBuilder Width(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("width", build);
@@ -473,7 +575,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("height", value);
     public static PropsBuilder Height(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("height", from, to);
+    public static PropsBuilder Height(
+        this PropsBuilder builder,
         string value) => builder.Prop("height", value);
+    public static PropsBuilder Height(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("height", from, to);
     public static PropsBuilder Height(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("height", build);
@@ -491,7 +599,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("top", value);
     public static PropsBuilder Top(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("top", from, to);
+    public static PropsBuilder Top(
+        this PropsBuilder builder,
         string value) => builder.Prop("top", value);
+    public static PropsBuilder Top(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("top", from, to);
     public static PropsBuilder Top(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("top", build);
@@ -507,7 +621,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("left", value);
     public static PropsBuilder Left(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("left", from, to);
+    public static PropsBuilder Left(
+        this PropsBuilder builder,
         string value) => builder.Prop("left", value);
+    public static PropsBuilder Left(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("left", from, to);
     public static PropsBuilder Left(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("left", build);
@@ -523,7 +643,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("right", value);
     public static PropsBuilder Right(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("right", from, to);
+    public static PropsBuilder Right(
+        this PropsBuilder builder,
         string value) => builder.Prop("right", value);
+    public static PropsBuilder Right(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("right", from, to);
     public static PropsBuilder Right(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("right", build);
@@ -539,7 +665,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("bottom", value);
     public static PropsBuilder Bottom(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("bottom", from, to);
+    public static PropsBuilder Bottom(
+        this PropsBuilder builder,
         string value) => builder.Prop("bottom", value);
+    public static PropsBuilder Bottom(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("bottom", from, to);
     public static PropsBuilder Bottom(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("bottom", build);
@@ -557,7 +689,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("marginTop", value);
     public static PropsBuilder MarginTop(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("marginTop", from, to);
+    public static PropsBuilder MarginTop(
+        this PropsBuilder builder,
         string value) => builder.Prop("marginTop", value);
+    public static PropsBuilder MarginTop(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("marginTop", from, to);
     public static PropsBuilder MarginTop(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("marginTop", build);
@@ -573,7 +711,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("marginLeft", value);
     public static PropsBuilder MarginLeft(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("marginLeft", from, to);
+    public static PropsBuilder MarginLeft(
+        this PropsBuilder builder,
         string value) => builder.Prop("marginLeft", value);
+    public static PropsBuilder MarginLeft(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("marginLeft", from, to);
     public static PropsBuilder MarginLeft(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("marginLeft", build);
@@ -589,7 +733,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("marginRight", value);
     public static PropsBuilder MarginRight(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("marginRight", from, to);
+    public static PropsBuilder MarginRight(
+        this PropsBuilder builder,
         string value) => builder.Prop("marginRight", value);
+    public static PropsBuilder MarginRight(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("marginRight", from, to);
     public static PropsBuilder MarginRight(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("marginRight", build);
@@ -605,7 +755,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("marginBottom", value);
     public static PropsBuilder MarginBottom(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("marginBottom", from, to);
+    public static PropsBuilder MarginBottom(
+        this PropsBuilder builder,
         string value) => builder.Prop("marginBottom", value);
+    public static PropsBuilder MarginBottom(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("marginBottom", from, to);
     public static PropsBuilder MarginBottom(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("marginBottom", build);
@@ -623,7 +779,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("paddingTop", value);
     public static PropsBuilder PaddingTop(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("paddingTop", from, to);
+    public static PropsBuilder PaddingTop(
+        this PropsBuilder builder,
         string value) => builder.Prop("paddingTop", value);
+    public static PropsBuilder PaddingTop(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("paddingTop", from, to);
     public static PropsBuilder PaddingTop(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("paddingTop", build);
@@ -639,7 +801,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("paddingLeft", value);
     public static PropsBuilder PaddingLeft(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("paddingLeft", from, to);
+    public static PropsBuilder PaddingLeft(
+        this PropsBuilder builder,
         string value) => builder.Prop("paddingLeft", value);
+    public static PropsBuilder PaddingLeft(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("paddingLeft", from, to);
     public static PropsBuilder PaddingLeft(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("paddingLeft", build);
@@ -655,7 +823,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("paddingRight", value);
     public static PropsBuilder PaddingRight(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("paddingRight", from, to);
+    public static PropsBuilder PaddingRight(
+        this PropsBuilder builder,
         string value) => builder.Prop("paddingRight", value);
+    public static PropsBuilder PaddingRight(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("paddingRight", from, to);
     public static PropsBuilder PaddingRight(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("paddingRight", build);
@@ -671,7 +845,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("paddingBottom", value);
     public static PropsBuilder PaddingBottom(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("paddingBottom", from, to);
+    public static PropsBuilder PaddingBottom(
+        this PropsBuilder builder,
         string value) => builder.Prop("paddingBottom", value);
+    public static PropsBuilder PaddingBottom(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("paddingBottom", from, to);
     public static PropsBuilder PaddingBottom(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("paddingBottom", build);
@@ -689,7 +869,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("fontSize", value);
     public static PropsBuilder FontSize(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("fontSize", from, to);
+    public static PropsBuilder FontSize(
+        this PropsBuilder builder,
         string value) => builder.Prop("fontSize", value);
+    public static PropsBuilder FontSize(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("fontSize", from, to);
     public static PropsBuilder FontSize(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("fontSize", build);
@@ -705,7 +891,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("letterSpacing", value);
     public static PropsBuilder LetterSpacing(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("letterSpacing", from, to);
+    public static PropsBuilder LetterSpacing(
+        this PropsBuilder builder,
         string value) => builder.Prop("letterSpacing", value);
+    public static PropsBuilder LetterSpacing(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("letterSpacing", from, to);
     public static PropsBuilder LetterSpacing(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("letterSpacing", build);
@@ -721,7 +913,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("lineHeight", value);
     public static PropsBuilder LineHeight(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("lineHeight", from, to);
+    public static PropsBuilder LineHeight(
+        this PropsBuilder builder,
         string value) => builder.Prop("lineHeight", value);
+    public static PropsBuilder LineHeight(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("lineHeight", from, to);
     public static PropsBuilder LineHeight(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("lineHeight", build);
@@ -737,7 +935,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("fontWeight", value);
     public static PropsBuilder FontWeight(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("fontWeight", from, to);
+    public static PropsBuilder FontWeight(
+        this PropsBuilder builder,
         string value) => builder.Prop("fontWeight", value);
+    public static PropsBuilder FontWeight(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("fontWeight", from, to);
     public static PropsBuilder FontWeight(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("fontWeight", build);
@@ -753,7 +957,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("wordSpacing", value);
     public static PropsBuilder WordSpacing(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("wordSpacing", from, to);
+    public static PropsBuilder WordSpacing(
+        this PropsBuilder builder,
         string value) => builder.Prop("wordSpacing", value);
+    public static PropsBuilder WordSpacing(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("wordSpacing", from, to);
     public static PropsBuilder WordSpacing(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("wordSpacing", build);
@@ -769,7 +979,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("textIndent", value);
     public static PropsBuilder TextIndent(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("textIndent", from, to);
+    public static PropsBuilder TextIndent(
+        this PropsBuilder builder,
         string value) => builder.Prop("textIndent", value);
+    public static PropsBuilder TextIndent(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("textIndent", from, to);
     public static PropsBuilder TextIndent(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("textIndent", build);
@@ -787,6 +1003,9 @@ public static class PropsBuilderExtensions
         string value) => builder.Prop("boxShadow", value);
     public static PropsBuilder BoxShadow(
         this PropsBuilder builder,
+        string from, string to) => builder.Prop("boxShadow", from, to);
+    public static PropsBuilder BoxShadow(
+        this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("boxShadow", build);
     public static PropsBuilder BoxShadow(
         this PropsBuilder builder,
@@ -800,6 +1019,9 @@ public static class PropsBuilderExtensions
         string value) => builder.Prop("textShadow", value);
     public static PropsBuilder TextShadow(
         this PropsBuilder builder,
+        string from, string to) => builder.Prop("textShadow", from, to);
+    public static PropsBuilder TextShadow(
+        this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("textShadow", build);
     public static PropsBuilder TextShadow(
         this PropsBuilder builder,
@@ -811,6 +1033,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Filter(
         this PropsBuilder builder,
         string value) => builder.Prop("filter", value);
+    public static PropsBuilder Filter(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("filter", from, to);
     public static PropsBuilder Filter(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("filter", build);
@@ -828,7 +1053,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("minWidth", value);
     public static PropsBuilder MinWidth(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("minWidth", from, to);
+    public static PropsBuilder MinWidth(
+        this PropsBuilder builder,
         string value) => builder.Prop("minWidth", value);
+    public static PropsBuilder MinWidth(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("minWidth", from, to);
     public static PropsBuilder MinWidth(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("minWidth", build);
@@ -844,7 +1075,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("maxWidth", value);
     public static PropsBuilder MaxWidth(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("maxWidth", from, to);
+    public static PropsBuilder MaxWidth(
+        this PropsBuilder builder,
         string value) => builder.Prop("maxWidth", value);
+    public static PropsBuilder MaxWidth(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("maxWidth", from, to);
     public static PropsBuilder MaxWidth(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("maxWidth", build);
@@ -860,7 +1097,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("minHeight", value);
     public static PropsBuilder MinHeight(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("minHeight", from, to);
+    public static PropsBuilder MinHeight(
+        this PropsBuilder builder,
         string value) => builder.Prop("minHeight", value);
+    public static PropsBuilder MinHeight(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("minHeight", from, to);
     public static PropsBuilder MinHeight(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("minHeight", build);
@@ -876,7 +1119,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("maxHeight", value);
     public static PropsBuilder MaxHeight(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("maxHeight", from, to);
+    public static PropsBuilder MaxHeight(
+        this PropsBuilder builder,
         string value) => builder.Prop("maxHeight", value);
+    public static PropsBuilder MaxHeight(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("maxHeight", from, to);
     public static PropsBuilder MaxHeight(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("maxHeight", build);
@@ -909,7 +1158,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("outlineWidth", value);
     public static PropsBuilder OutlineWidth(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("outlineWidth", from, to);
+    public static PropsBuilder OutlineWidth(
+        this PropsBuilder builder,
         string value) => builder.Prop("outlineWidth", value);
+    public static PropsBuilder OutlineWidth(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("outlineWidth", from, to);
     public static PropsBuilder OutlineWidth(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("outlineWidth", build);
@@ -925,6 +1180,9 @@ public static class PropsBuilderExtensions
         string value) => builder.Prop("outlineColor", value);
     public static PropsBuilder OutlineColor(
         this PropsBuilder builder,
+        string from, string to) => builder.Prop("outlineColor", from, to);
+    public static PropsBuilder OutlineColor(
+        this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("outlineColor", build);
     public static PropsBuilder OutlineColor(
         this PropsBuilder builder,
@@ -938,7 +1196,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("outlineOffset", value);
     public static PropsBuilder OutlineOffset(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("outlineOffset", from, to);
+    public static PropsBuilder OutlineOffset(
+        this PropsBuilder builder,
         string value) => builder.Prop("outlineOffset", value);
+    public static PropsBuilder OutlineOffset(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("outlineOffset", from, to);
     public static PropsBuilder OutlineOffset(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("outlineOffset", build);
@@ -956,6 +1220,9 @@ public static class PropsBuilderExtensions
         string value) => builder.Prop("transformOrigin", value);
     public static PropsBuilder TransformOrigin(
         this PropsBuilder builder,
+        string from, string to) => builder.Prop("transformOrigin", from, to);
+    public static PropsBuilder TransformOrigin(
+        this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("transformOrigin", build);
     public static PropsBuilder TransformOrigin(
         this PropsBuilder builder,
@@ -971,6 +1238,9 @@ public static class PropsBuilderExtensions
         string value) => builder.Prop("backgroundPosition", value);
     public static PropsBuilder BackgroundPosition(
         this PropsBuilder builder,
+        string from, string to) => builder.Prop("backgroundPosition", from, to);
+    public static PropsBuilder BackgroundPosition(
+        this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("backgroundPosition", build);
     public static PropsBuilder BackgroundPosition(
         this PropsBuilder builder,
@@ -982,6 +1252,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder BackgroundSize(
         this PropsBuilder builder,
         string value) => builder.Prop("backgroundSize", value);
+    public static PropsBuilder BackgroundSize(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("backgroundSize", from, to);
     public static PropsBuilder BackgroundSize(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("backgroundSize", build);
@@ -999,6 +1272,9 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("flexGrow", value);
     public static PropsBuilder FlexGrow(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("flexGrow", from, to);
+    public static PropsBuilder FlexGrow(
+        this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("flexGrow", build);
     public static PropsBuilder FlexGrow(
         this PropsBuilder builder,
@@ -1010,6 +1286,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder FlexShrink(
         this PropsBuilder builder,
         double value) => builder.Prop("flexShrink", value);
+    public static PropsBuilder FlexShrink(
+        this PropsBuilder builder,
+        double from, double to) => builder.Prop("flexShrink", from, to);
     public static PropsBuilder FlexShrink(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("flexShrink", build);
@@ -1025,7 +1304,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("flexBasis", value);
     public static PropsBuilder FlexBasis(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("flexBasis", from, to);
+    public static PropsBuilder FlexBasis(
+        this PropsBuilder builder,
         string value) => builder.Prop("flexBasis", value);
+    public static PropsBuilder FlexBasis(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("flexBasis", from, to);
     public static PropsBuilder FlexBasis(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("flexBasis", build);
@@ -1056,7 +1341,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("gap", value);
     public static PropsBuilder Gap(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("gap", from, to);
+    public static PropsBuilder Gap(
+        this PropsBuilder builder,
         string value) => builder.Prop("gap", value);
+    public static PropsBuilder Gap(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("gap", from, to);
     public static PropsBuilder Gap(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("gap", build);
@@ -1072,7 +1363,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("rowGap", value);
     public static PropsBuilder RowGap(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("rowGap", from, to);
+    public static PropsBuilder RowGap(
+        this PropsBuilder builder,
         string value) => builder.Prop("rowGap", value);
+    public static PropsBuilder RowGap(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("rowGap", from, to);
     public static PropsBuilder RowGap(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("rowGap", build);
@@ -1088,7 +1385,13 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("columnGap", value);
     public static PropsBuilder ColumnGap(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("columnGap", from, to);
+    public static PropsBuilder ColumnGap(
+        this PropsBuilder builder,
         string value) => builder.Prop("columnGap", value);
+    public static PropsBuilder ColumnGap(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("columnGap", from, to);
     public static PropsBuilder ColumnGap(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("columnGap", build);
@@ -1104,6 +1407,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder ClipPath(
         this PropsBuilder builder,
         string value) => builder.Prop("clipPath", value);
+    public static PropsBuilder ClipPath(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("clipPath", from, to);
     public static PropsBuilder ClipPath(
         this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("clipPath", build);
