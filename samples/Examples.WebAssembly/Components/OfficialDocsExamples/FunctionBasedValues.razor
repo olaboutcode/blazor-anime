@@ -28,13 +28,13 @@
         {
             _animation ??= await Anime.Animate(props => props
                 .Targets(".function-based-values-demo .el")
-                .TranslateX(OnTranslateX)
-                .TranslateY(OnTranslateY)
-                .Scale(OnScale)
-                .Rotate(OnRotate)
-                .Prop("borderRadius", OnBorderRadius)
-                .Duration(OnDuration)
-                .Delay(OnDelay)
+                .TranslateX(TranslationXSetter)
+                .TranslateY(TranslationYSetter)
+                .Scale(ScaleSetter)
+                .Rotate(RotationSetter)
+                .Prop("borderRadius", BorderRadiusSetter)
+                .Duration(DurationSetter)
+                .Delay(DelaySetter)
                 .Direction(Direction.Alternate)
                 .Loop(true)
                 .AutoPlay(true)
@@ -43,7 +43,7 @@
     }
 
     [JSInvokable]
-    public double OnTranslateX(int index, int targetsCount) => index switch
+    public double TranslationXSetter(int index, int targetsCount) => index switch
     {
         0 => 170,
         1 => 80,
@@ -52,22 +52,22 @@
     };
 
     [JSInvokable]
-    public double OnTranslateY(int index, int targetsCount) => 50 + (-50 * index);
+    public double TranslationYSetter(int index, int targetsCount) => 50 + (-50 * index);
 
     [JSInvokable]
-    public double OnScale(int index, int targetsCount) => (targetsCount - index) + .25;
+    public double ScaleSetter(int index, int targetsCount) => (targetsCount - index) + .25;
 
     [JSInvokable]
-    public double OnRotate(int index, int targetsCount) => _rnd.Next(-360, 360);
+    public double RotationSetter(int index, int targetsCount) => _rnd.Next(-360, 360);
 
     [JSInvokable]
-    public object OnBorderRadius(int index, int targetsCount) => new string[2]{"50%", _rnd.Next(10, 35)+"%"};
+    public object BorderRadiusSetter(int index, int targetsCount) => new string[2]{"50%", _rnd.Next(10, 35)+"%"};
 
     [JSInvokable]
-    public double OnDuration(int index, int targetsCount) => _rnd.Next(1200, 1800);
+    public double DurationSetter(int index, int targetsCount) => _rnd.Next(1200, 1800);
 
     [JSInvokable]
-    public double OnDelay(int index, int targetsCount) => _rnd.Next(0, 400);
+    public double DelaySetter(int index, int targetsCount) => _rnd.Next(0, 400);
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
