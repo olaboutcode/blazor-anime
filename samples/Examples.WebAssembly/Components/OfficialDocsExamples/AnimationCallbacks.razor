@@ -1,33 +1,30 @@
-@inherits AnimatedComponent;
+@inject IAnime Anime;
 
 <div class="demo-content animation-callbacks-demo">
     <p>Progress: @_progress</p>
-    <div class="el a large square" style="background-color: #00ffdd;"></div>
-    <p>@(_progress)</p>
+    <div class="el large square" style="background-color: #00ffdd;"></div>
+    <div class="el large square" style="background-color: hsl(44, 100%, 50%);"></div>
 </div>
 
 @code {
     private Animation? _animationA;
     private float _progress;
-    private bool _completed;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _animationA ??= await CreateAnimationAsync(
-                nameof(_animationA),
-                props => props
-                .Targets(".animation-callbacks-demo .el.a")
+            _animationA ??= await Anime.Animate(props => props
+                .Targets(".animation-callbacks-demo .el ")
                 .TranslateX(270)
                 .BackgroundColor("#FFA500")
+                .BorderRadius("10%", "50%")
                 .Delay(SetDelay)
                 .Duration(500)
                 .Direction(Direction.Alternate)
                 .Easing(Easing.EaseInOutCirc)
                 .Update(OnUpdate)
-                .Complete(OnComplete)
-                .Loop(true)
+                .Loop(2)
                 .AutoPlay(true)
             );
         }
@@ -40,16 +37,9 @@
     }
 
     [JSInvokable]
-    public override void OnUpdate(AnimationState state)
+    public void OnUpdate(AnimationState state)
     {
         _progress = state.Progress;
-        base.OnUpdate(state);
-    }
-
-    [JSInvokable]
-    public override void OnComplete(AnimationState state)
-    {
-        _completed = state.Completed;
-        base.OnComplete(state);
+        StateHasChanged();
     }
 }

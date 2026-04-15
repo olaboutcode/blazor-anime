@@ -9,7 +9,6 @@ public sealed class AnimationState
     public bool Completed { get; init; }
     public bool ChangeBegan { get; init; }
     public bool ChangeCompleted { get; init; }
-    public int Loop { get; init; }
     public bool LoopBegan { get; init; }
     public bool Paused { get; init; }
     public bool Reversed { get; init; }

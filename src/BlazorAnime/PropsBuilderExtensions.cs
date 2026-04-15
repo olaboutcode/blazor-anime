@@ -420,6 +420,12 @@ public static class PropsBuilderExtensions
         double value) => builder.Prop("borderRadius", value);
     public static PropsBuilder BorderRadius(
         this PropsBuilder builder,
+        double from, double to) => builder.Prop("borderRadius", from, to);
+    public static PropsBuilder BorderRadius(
+        this PropsBuilder builder,
+        string from, string to) => builder.Prop("borderRadius", from, to);
+    public static PropsBuilder BorderRadius(
+        this PropsBuilder builder,
         Action<PropsBuilder> build) => builder.Prop("borderRadius", build);
     public static PropsBuilder BorderRadius(
         this PropsBuilder builder,
