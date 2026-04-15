@@ -37,11 +37,11 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="configure"></param>
     /// <returns>Timeline</returns>
-    public async Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> configureDefaults)
+    public async Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> setDefaults)
     {
         var timelineJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateTimeline,
-            configureDefaults(new PropsBuilder()).Build().ToObject()
+            setDefaults(new PropsBuilder()).Build().ToObject()
         );
         return new Timeline(timelineJsRef);
     }
@@ -51,11 +51,11 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="configure"></param>
     /// <returns>Timeline</returns>
-    public async Task<Timeline> Timeline(Func<PropsBuilder, Task<PropsBuilder>> configureDefaults)
+    public async Task<Timeline> Timeline(Func<PropsBuilder, Task<PropsBuilder>> setDefaults)
     {
         var timelineJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
             IdentifierCreateTimeline,
-            (await configureDefaults(new PropsBuilder())).Build().ToObject()
+            (await setDefaults(new PropsBuilder())).Build().ToObject()
         );
         return new Timeline(timelineJsRef);
     }
