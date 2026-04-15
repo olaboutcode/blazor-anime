@@ -52,6 +52,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Duration(
         this PropsBuilder builder,
         int milliseconds) => builder.Prop("duration", milliseconds);
+    public static PropsBuilder Duration(
+        this PropsBuilder builder,
+        Func<int, int, double> callback) => builder.Prop("duration", callback);
     public static PropsBuilder AutoPlay(
         this PropsBuilder builder,
         bool autoPlay) => builder.Prop("autoplay", autoPlay);

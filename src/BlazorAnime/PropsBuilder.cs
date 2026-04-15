@@ -103,6 +103,12 @@ public sealed class PropsBuilder
             _props.Add(CreateValueSetterCallback(property, callback));
         return this;
     }
+    public PropsBuilder Prop(string property, Func<int, int, object> callback)
+    {
+        if(!string.IsNullOrWhiteSpace(property))
+            _props.Add(CreateValueSetterCallback(property, callback));
+        return this;
+    }
     public PropsBuilder Prop(string property, Func<int, int, string> callback)
     {
         if(!string.IsNullOrWhiteSpace(property))
@@ -189,6 +195,15 @@ public sealed class PropsBuilder
             callback.Method.GetParameters().Length,
             DotNetObjectReference.Create(callback.Target!));
     }
+    private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, object> callback)
+    {
+        ValidationChecks.EnsureAcceptableCallback(callback);
+        return new CallbackProp(
+            propName,
+            callback.Method.Name,
+            callback.Method.GetParameters().Length,
+            DotNetObjectReference.Create(callback.Target!));
+    }
     private static CallbackProp CreateStateCallback(string propName, Action<AnimationState> callback)
     {
         ValidationChecks.EnsureAcceptableCallback(callback);
@@ -205,6 +220,9 @@ public sealed class Relative
     public static Relative Add(double value) => new($"+={value}");
     public static Relative Subtract(double value) => new($"-={value}");
     public static Relative Multiply(double value) => new($"*={value}");
+    public static Relative Add(string value) => new($"+={value}");
+    public static Relative Subtract(string value) => new($"-={value}");
+    public static Relative Multiply(string value) => new($"*={value}");
     public string GetValue() => _name;
     private Relative(string name) { _name = name; }
     private readonly string _name;

@@ -1,22 +1,33 @@
 @implements IAsyncDisposable;
 @inject IAnime Anime;
 
+<div style="padding: 100px;">
+    <div class="demo-relative-values">
+        <div class="circle shadow"></div>
+        <div class="circle el relative-values" style="transform: translateX(100px);"></div>
+    </div>
+</div>
+
 @code {
     private Animation? _animation;
+    private Random _rnd = new Random();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animate(
-                props => props
-                .Targets(".relative-values-demo .el")
-                .Duration(750)
+            _animation ??= await Anime.Animate(props => props
+                .Targets(".demo-relative-values .el")
+                .TranslateX(t => t.Value(Relative.Multiply(2.5)).Duration(1000))
+                .Width(t => t.Value(Relative.Subtract(20)).Duration(1800).Easing(Easing.EaseInOutSine))
+                .Rotate(t => t.Value(Relative.Add("2turn")).Duration(1800).Easing(Easing.EaseInOutSine))
+                .Direction(Direction.Alternate)
+                .Loop(true)
                 .AutoPlay(true)
             );
         }
     }
-    
+
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
         if (_animation is not null)
