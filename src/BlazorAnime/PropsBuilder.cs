@@ -164,7 +164,7 @@ public sealed class PropsBuilder
             var builder = builderFunc(new PropsBuilder());
             keyframes.Add(builder._props.ToObject());
         }
-        _props.Add(new GenProp<object[]>(property, keyframes.ToArray()));
+        _props.Add(new GenProp<object[]>(property, [..keyframes]));
         return this;
     }
 
