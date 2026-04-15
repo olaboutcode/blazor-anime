@@ -18,14 +18,14 @@
         {
             _animation ??= await Anime.Animate(props => props
                 .Targets(".demo-relative-values .el")
-                .TranslateX(t => t
+                .TranslateX(kf => kf
                     .Value(Relative.Multiply(2.5))
                     .Duration(1000))
-                .Width(t => t
+                .Width(kf => kf
                     .Value(Relative.Subtract(20))
                     .Duration(1800)
                     .Easing(Easing.EaseInOutSine))
-                .Rotate(t => t
+                .Rotate(kf => kf
                     .Value(Relative.Add("2turn"))
                     .Duration(1800)
                     .Easing(Easing.EaseInOutSine))

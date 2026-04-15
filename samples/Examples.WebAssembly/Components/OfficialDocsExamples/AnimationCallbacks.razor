@@ -1,26 +1,15 @@
 @inherits AnimatedComponent;
 
-<div class="demo">
-    <div class="demo-content animation-callbacks-demo">
-        <p>Progress: @_progress</p>
-        <div class="el a large square"></div>
-        <div class="el b large square" style="background-color: red;"></div>
-        <button
-            style="background-color: lightblue; color: black;"
-            @onclick="OnPlayButtonClicked">Play</button>
-    </div>
+<div class="demo-content animation-callbacks-demo">
+    <p>Progress: @_progress</p>
+    <div class="el a large square" style="background-color: #00ffdd;"></div>
+    <p>@(_progress)</p>
 </div>
 
 @code {
     private Animation? _animationA;
-    private Animation? _animationB;
     private float _progress;
-
-    public void OnPlayButtonClicked()
-    {
-        _animationA?.Play();
-        _animationB?.Play();
-    }
+    private bool _completed;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -36,21 +25,10 @@
                 .Duration(500)
                 .Direction(Direction.Alternate)
                 .Easing(Easing.EaseInOutCirc)
-                .AutoPlay(false)
                 .Update(OnUpdate)
-            );
-            _animationB ??= await CreateAnimationAsync(
-                nameof(_animationB),
-                props => props
-                .Targets(".animation-callbacks-demo .el.b")
-                .TranslateY(270)
-                .BorderRadius("50%")
-                .Delay(SetDelay)
-                .Duration(1000)
-                .Direction(Direction.Alternate)
-                .Easing(Easing.EaseOutInBounce)
-                .AutoPlay(false)
-                .Update(OnUpdate)
+                .Complete(OnComplete)
+                .Loop(true)
+                .AutoPlay(true)
             );
         }
     }
@@ -66,5 +44,12 @@
     {
         _progress = state.Progress;
         base.OnUpdate(state);
+    }
+
+    [JSInvokable]
+    public override void OnComplete(AnimationState state)
+    {
+        _completed = state.Completed;
+        base.OnComplete(state);
     }
 }
