@@ -165,22 +165,18 @@
                 .TranslateX(Stagger.Create(10, stg => stg
                     .Grid(14,5)
                     .From(StaggerPosition.Center)
-                    .Axis(StaggerAxis.X)
-                ))
+                    .Axis(StaggerAxis.X)))
                 .TranslateY(Stagger.Create(10, stg => stg
                     .Grid(14,5)
                     .From(StaggerPosition.Center)
-                    .Axis(StaggerAxis.Y)
-                ))
+                    .Axis(StaggerAxis.Y)))
                 .RotateZ(Stagger.Create(0, 90, stg => stg
                     .Grid(14,5)
                     .From(StaggerPosition.Center)
-                    .Axis(StaggerAxis.X)
-                ))
+                    .Axis(StaggerAxis.X)))
                 .Delay(Stagger.Create(200, stg => stg
                     .Grid(14,5)
-                    .From(StaggerPosition.Center)
-                ))
+                    .From(StaggerPosition.Center)))
                 .Easing(Easing.EaseInOutQuad)
                 .Loop(3)
                 .AutoPlay(true)

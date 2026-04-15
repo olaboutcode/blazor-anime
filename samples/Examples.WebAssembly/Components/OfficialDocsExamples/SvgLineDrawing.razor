@@ -27,7 +27,7 @@
                 .StrokeDashoffset(0)
                 .Easing(Easing.EaseInOutSine)
                 .Duration(1500)
-                .Delay(OnDelay)
+                .Delay(DelaySetter)
                 .Direction(Direction.Alternate)
                 .Loop(true)
                 .AutoPlay(true)
@@ -36,10 +36,7 @@
     }
 
     [JSInvokable]
-    public double OnDelay(int index, int targetsCount)
-    {
-        return index * 250;
-    }
+    public double DelaySetter(int i, int l) => i * 250;
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
