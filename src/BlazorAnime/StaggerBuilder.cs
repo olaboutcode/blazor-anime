@@ -4,13 +4,27 @@ public sealed class Stagger
 {
     public static Stagger Create(double delay) => new(delay, []);
     public static Stagger Create(double from, double to) => new(new[] { from, to }, []);
+    public static Stagger Create(string from, string to) => new(new[] { from, to }, []);
     public static Stagger Create(double value, Action<StaggerOptionsBuilder> configure)
     {
         var builder = new StaggerOptionsBuilder();
         configure(builder);
         return new Stagger(value, builder.Build());
     }
+    public static Stagger Create(string value, Action<StaggerOptionsBuilder> configure)
+    {
+        var builder = new StaggerOptionsBuilder();
+        configure(builder);
+        return new Stagger(value, builder.Build());
+    }
+
     public static Stagger Create(double from, double to, Action<StaggerOptionsBuilder> configure)
+    {
+        var builder = new StaggerOptionsBuilder();
+        configure(builder);
+        return new Stagger(new[] { from, to }, builder.Build());
+    }
+    public static Stagger Create(string from, string to, Action<StaggerOptionsBuilder> configure)
     {
         var builder = new StaggerOptionsBuilder();
         configure(builder);
