@@ -313,7 +313,7 @@ await Anime.Animate(props => props
 #### Animation Keyframes
 Animate multiple properties at specific keyframes.
 ```csharp
-await await Anime.Animate(props => props
+await Anime.Animate(props => props
     .Targets(".element")
     .TranslateX([
         kf => kf.Value(250).Duration(1000).Delay(500),
