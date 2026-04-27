@@ -352,9 +352,7 @@ Start each animation with a delay.
 await Anime.Animate(props => props
     .Targets(".element")
     .TranslateX(270)
-    .Delay(stagger => stagger
-        .Value(100) // Increase delay by 100ms for each element
-    )
+    .Delay(stagger => stagger.Value(100)) // Increase delay by 100ms for each element
     .AutoPlay(true));
 ```
 
