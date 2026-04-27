@@ -302,12 +302,10 @@ Animate a single property through multiple values.
 ```csharp
 await Anime.Animate(props => props
     .Targets(".element")
-    .TranslateX(props => props
-        .Keys(new[] { 
-            new { Value = 250 },
-            new { Value = 0 }
-        })
-    )
+    .TranslateX([
+        kf => kf.Value(250).Duration(1000),
+        kf => kf.Value(0).Duration(500)
+    ])
     .Duration(4000)
     .AutoPlay(true));
 ```
@@ -315,18 +313,34 @@ await Anime.Animate(props => props
 #### Animation Keyframes
 Animate multiple properties at specific keyframes.
 ```csharp
-await Anime.Animate(props => props
+await await Anime.Animate(props => props
     .Targets(".element")
-    .Keyframes(new[] {
-        new { TranslateY = -40, Duration = 1000 },
-        new { TranslateX = 250, Duration = 800 },
-        new { TranslateY = 0, Duration = 700 },
-        new { TranslateX = 0, Duration = 600 }
-    })
-    .Easing(Easing.EaseOutElastic)
-    .Duration(4000)
+    .TranslateX([
+        kf => kf.Value(250).Duration(1000).Delay(500),
+        kf => kf.Value(0).Duration(1000).Delay(500)
+    ])
+    .TranslateY([
+        kf => kf.Value(-40).Duration(500),
+        kf => kf.Value(40).Duration(500).Delay(1000),
+        kf => kf.Value(0).Duration(500).Delay(1000)
+    ])
+    .ScaleX([
+        kf => kf.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
+        kf => kf.Value(1).Duration(900),
+        kf => kf.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
+        kf => kf.Value(1).Duration(900)
+    ])
+    .ScaleY([
+        kf => kf.Value(1.75, 1).Duration(500),
+        kf => kf.Value(2).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
+        kf => kf.Value(1).Duration(450),
+        kf => kf.Value(1.75).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
+        kf => kf.Value(1).Duration(450)
+    ])
+    .Easing(Easing.EaseOutElastic(1, .8))
     .Loop(true)
-    .AutoPlay(true));
+    .AutoPlay(true)
+);
 ```
 
 ### Staggering
