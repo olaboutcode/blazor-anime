@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet restore BlazorAnime.sln
+      - run: dotnet build BlazorAnime.sln --no-restore --configuration Release
+      - run: dotnet test test/BlazorAnime.Tests/BlazorAnime.Tests.csproj --no-build --configuration Release
+
+  interop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test test/interop/anime-interop.test.cjs
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet restore test/BlazorAnime.UiTests/BlazorAnime.UiTests.csproj
+      - run: dotnet build test/BlazorAnime.UiTests/BlazorAnime.UiTests.csproj --no-restore --configuration Release
+      - name: Install Chromium
+        run: |
+          driver="test/BlazorAnime.UiTests/bin/Release/net10.0/.playwright"
+          node="$(find "$driver/node" -type f -name node | head -n 1)"
+          "$node" "$driver/package/cli.js" install --with-deps chromium
+      - run: dotnet test test/BlazorAnime.UiTests/BlazorAnime.UiTests.csproj --no-build --configuration Release
