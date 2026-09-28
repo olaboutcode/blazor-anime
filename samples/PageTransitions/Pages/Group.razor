@@ -1,0 +1,25 @@
+@page "/group"
+@inject TravelState Trip
+
+<PageTitle>@Trip.Selected.FirstName's Group Trips</PageTitle>
+
+<main>
+    <div class="places">
+        <p class="top">Group Activities</p>
+        <h1>4 Person Trip to Hawaii</h1>
+        <hr />
+        <div class="photo-grid">
+            @for (var index = 1; index <= 5; index++)
+            {
+                <div class="photo photo-@index" style="background-image: url('images/hawaii@(index).jpg')"></div>
+            }
+        </div>
+    </div>
+    <aside class="sidebar">
+        <h3>Schedule</h3>
+        <p class="top">Sunday</p>
+        <p>Arrival: we settled in and went snorkeling. Spotted dolphins, whales, and plenty of sea turtles. The crew was terrific, and we would do it again.</p>
+        <p class="top">Monday</p>
+        <p>A slower day around Ala Moana, sampling local food. Every stop had something new, and nothing disappointed.</p>
+    </aside>
+</main>

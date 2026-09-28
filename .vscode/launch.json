@@ -10,6 +10,14 @@
             "browser": "chrome"
         },
         {
+            "name": "Launch PageTransitions",
+            "type": "blazorwasm",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/samples/PageTransitions",
+            "url": "http://localhost:5175",
+            "browser": "chrome"
+        },
+        {
             "name": "Launch Examples.WebAssembly (https)",
             "type": "blazorwasm",
             "request": "launch",

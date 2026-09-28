@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorAnime.Tests", "test\B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorAnime.UiTests", "test\BlazorAnime.UiTests\BlazorAnime.UiTests.csproj", "{3EBDA007-3D05-429F-8B3C-523124F66675}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PageTransitions", "samples\PageTransitions\PageTransitions.csproj", "{20D3467B-B3B2-4A06-A09A-D054141A4B3F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,18 @@ Global
 		{3EBDA007-3D05-429F-8B3C-523124F66675}.Release|x64.Build.0 = Release|Any CPU
 		{3EBDA007-3D05-429F-8B3C-523124F66675}.Release|x86.ActiveCfg = Release|Any CPU
 		{3EBDA007-3D05-429F-8B3C-523124F66675}.Release|x86.Build.0 = Release|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Debug|x64.Build.0 = Debug|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Debug|x86.Build.0 = Debug|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Release|x64.ActiveCfg = Release|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Release|x64.Build.0 = Release|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Release|x86.ActiveCfg = Release|Any CPU
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,5 +95,6 @@ Global
 		{A9508984-40C5-4C67-AD80-6A4018D57883} = {A4C08268-A245-465E-B41A-02F8684748B2}
 		{C08477C0-8DD3-4934-99DE-98935A242719} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
 		{3EBDA007-3D05-429F-8B3C-523124F66675} = {0C88DD14-F956-CE84-757C-A364CCF449FC}
+		{20D3467B-B3B2-4A06-A09A-D054141A4B3F} = {A4C08268-A245-465E-B41A-02F8684748B2}
 	EndGlobalSection
 EndGlobal

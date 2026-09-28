@@ -1,0 +1,23 @@
+@page "/"
+@inject TravelState Trip
+
+<PageTitle>@Trip.Selected.FirstName's Home</PageTitle>
+
+<main>
+    <div class="places">
+        @foreach (var place in Trip.Places)
+        {
+            <article class="location">
+                <img src="@place.Image" alt="@place.Name" />
+                <h2>@place.Name</h2>
+                <p><strong>Rating: @place.Rating</strong></p>
+                <p>@place.Description</p>
+                <hr />
+            </article>
+        }
+    </div>
+    <div class="mapcontain">
+        <p>Checked in at Honolulu location</p>
+        <img src="images/map.png" alt="Map of Honolulu" />
+    </div>
+</main>

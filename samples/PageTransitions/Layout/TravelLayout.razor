@@ -1,0 +1,71 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject IAnime Anime
+@inject NavigationManager Navigation
+@inject TravelState Trip
+
+<div class="travel-app">
+    @{
+        Trip.SetPage(TravelState.PageFromUri(Navigation.Uri));
+    }
+    <TravelHeader Page="@Trip.Page" />
+    <div id="travel-page">
+        @Body
+    </div>
+    <footer>
+        Made by <a href="https://github.com/sdras/page-transitions-travelapp">Sarah Drasner</a>.
+        Rebuilt with Blazor and anime.js.
+    </footer>
+</div>
+
+@code {
+    private IDisposable? _locationChanging;
+    private bool _playedLeave;
+
+    protected override void OnInitialized()
+    {
+        _locationChanging = Navigation.RegisterLocationChangingHandler(OnLocationChanging);
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private async ValueTask OnLocationChanging(LocationChangingContext context)
+    {
+        if (TravelState.PageFromUri(context.TargetLocation) == Trip.Page)
+            return;
+
+        _playedLeave = true;
+        await Fade(1, 0);
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs args)
+    {
+        if (!_playedLeave)
+            return;
+
+        _ = EnterPage();
+    }
+
+    private async Task EnterPage()
+    {
+        await InvokeAsync(StateHasChanged);
+        await Fade(0, 1);
+        _playedLeave = false;
+    }
+
+    private async Task Fade(double from, double to)
+    {
+        var animation = await Anime.Animate(props => props
+            .Targets("#travel-page")
+            .Opacity(from, to)
+            .Duration(250)
+            .Easing(Easing.EaseOutSine));
+        await animation.Finished();
+        await animation.DisposeAsync();
+    }
+
+    public void Dispose()
+    {
+        _locationChanging?.Dispose();
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}

@@ -1,0 +1,31 @@
+@page "/place"
+@inject TravelState Trip
+
+<PageTitle>@Trip.Selected.FirstName's Places</PageTitle>
+
+<main>
+    <div class="places">
+        <p class="top">@Trip.Selected.Name's Places</p>
+        <h1>@Trip.Places[0].Name</h1>
+        <p><strong>Rating: @Trip.Places[0].Rating</strong></p>
+        <p class="stars">@Stars(Trip.Places[0].Stars)</p>
+        <div class="main-img"></div>
+        <p>@Trip.Places[0].Description</p>
+    </div>
+    <aside class="sidebar">
+        <h3>Other Trips</h3>
+        @foreach (var place in Trip.Places)
+        {
+            <div class="location">
+                <img src="@place.Image" alt="@place.Name" />
+                <p class="top"><strong>@place.Name</strong></p>
+                <p>@place.Description</p>
+                <hr />
+            </div>
+        }
+    </aside>
+</main>
+
+@code {
+    private static string Stars(int count) => new string('★', count) + new string('☆', 5 - count);
+}

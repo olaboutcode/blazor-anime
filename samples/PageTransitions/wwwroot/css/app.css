@@ -1,0 +1,468 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    background: white;
+    color: #333;
+    font-family: "Josefin Sans", sans-serif;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+a,
+a:visited {
+    color: orangered;
+    text-decoration: none;
+}
+
+button {
+    font: inherit;
+}
+
+h1,
+h2,
+h3 {
+    font-family: "Playfair Display", serif;
+    font-weight: normal;
+}
+
+#blazor-error-ui {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 0.6rem 1.2rem;
+    background: lightyellow;
+}
+
+.travel-app header {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+.travel-app header::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 36%, rgba(0, 0, 0, 0.65) 100%);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.bk-img,
+.header-img {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.header-img {
+    background-position: center;
+    background-size: cover;
+    opacity: 0;
+}
+
+.header-index { background-image: url("../images/header1.jpg"); }
+.header-place { background-image: url("../images/header2.jpg"); }
+.header-group { background-image: url("../images/header3.jpg"); }
+
+.nav-wrapper {
+    position: relative;
+    z-index: 5;
+    background: rgba(4, 67, 98, 0.25);
+}
+
+nav {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+nav ul {
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 15px 0;
+    list-style: none;
+}
+
+nav a,
+nav a:visited {
+    color: white;
+}
+
+nav a.active {
+    font-weight: bold;
+}
+
+.menu {
+    position: absolute;
+    top: 8px;
+    right: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.menu svg {
+    display: block;
+    fill: white;
+}
+
+.menudrawer {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    z-index: 6;
+    padding: 20px;
+    line-height: 1.8;
+    text-align: right;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+}
+
+.menudrawer a,
+.menudrawer a:visited {
+    display: block;
+    color: white;
+}
+
+.profile,
+.follow,
+.profile-name,
+.side-icon {
+    position: absolute;
+    z-index: 4;
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out, background-color 0.4s ease-out, color 0.4s ease-out;
+}
+
+.profile {
+    top: 150px;
+    left: 0;
+    width: 200px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    backface-visibility: hidden;
+}
+
+.profile-photo {
+    z-index: 5;
+}
+
+.profile img {
+    display: block;
+    width: 100%;
+    border-radius: 4px;
+    transition: border-radius 0.4s ease;
+}
+
+.profile-photo-secondary {
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+}
+
+.profile-photo-secondary img {
+    border-radius: 50%;
+}
+
+.profile-1 { transform: translate3d(-15px, -70px, 0) scale(0.25); }
+.profile-2 { transform: translate3d(40px, -70px, 0) scale(0.25); }
+.profile-3 { transform: translate3d(95px, -70px, 0) scale(0.25); }
+
+.online {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 40px;
+    height: 40px;
+    background: #07dc3c;
+    border: 2px solid black;
+    border-radius: 50%;
+    opacity: 0;
+}
+
+.follow {
+    top: 320px;
+    left: 220px;
+    width: 150px;
+    padding: 6px 8px;
+    color: white;
+    font-weight: bold;
+    background: orangered;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.follow.active-follow {
+    background: rgb(5, 134, 106);
+}
+
+.profile-name {
+    top: 355px;
+    left: 0;
+    margin: 0;
+    font-size: 35px;
+}
+
+.side-icon {
+    top: 220px;
+    right: 0;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.plus,
+.line1,
+.line2 {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+}
+
+.saveinfo {
+    position: absolute;
+    top: 194px;
+    right: 56px;
+    z-index: 4;
+    color: white;
+    font-size: 20px;
+    opacity: 0;
+}
+
+.traveler-meta p {
+    position: absolute;
+    top: 250px;
+    right: 0;
+    z-index: 4;
+    margin: 0;
+    color: white;
+    text-align: right;
+    opacity: 0;
+    transition: opacity 0.4s ease-out;
+}
+
+.calendar {
+    top: 280px;
+}
+
+header.index .profile-photo,
+header.index .profile-photo.profile-0 {
+    transform: translate3d(0, 0, 0) scale(1);
+}
+
+header.place .follow {
+    transform: translate3d(-215px, -80px, 0);
+}
+
+header.place .profile-photo {
+    transform: translate3d(-20px, -100px, 0) scale(0.75);
+}
+
+header.place .profile-name {
+    color: white;
+    transform: translate3d(140px, -125px, 0) scale(0.75);
+}
+
+header.place .side-icon,
+header.group .side-icon {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translate3d(0, -40px, 0);
+}
+
+header.place .calendar,
+header.group .map-pin,
+header.group .online,
+header.group .profile-photo-secondary {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+header.group .follow {
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+}
+
+header.group .profile-0 {
+    transform: translate3d(-70px, -70px, 0) scale(0.25);
+}
+
+header.group .profile-photo {
+    transform: translate3d(-70px, -70px, 0) scale(0.25);
+}
+
+header.group .profile-0,
+header.group .profile-1,
+header.group .profile-2,
+header.group .profile-3 {
+    opacity: 1;
+    pointer-events: auto;
+    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+}
+
+header.group .profile-photo img,
+header.group .profile-photo-secondary img {
+    border-radius: 50%;
+}
+
+header.group .profile-name {
+    color: white;
+    transform: translate3d(0, -125px, 0);
+}
+
+#travel-page main {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1000px;
+    margin: 120px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.places {
+    width: 60%;
+}
+
+.places img {
+    float: left;
+    margin: 0 15px 15px 0;
+}
+
+.places p,
+.stars {
+    margin: 10px 0;
+}
+
+.top {
+    margin: 30px 0 0;
+    color: #666;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.mapcontain,
+aside.sidebar {
+    width: 35%;
+}
+
+.mapcontain img,
+.main-img {
+    width: 100%;
+}
+
+.main-img {
+    height: 240px;
+    background: url("../images/header1.jpg") center center / cover no-repeat;
+}
+
+aside.sidebar {
+    margin: 40px 0 0 20px;
+    padding: 20px;
+    background: #eee;
+}
+
+.location img {
+    width: 70px;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 120px 120px 120px;
+    gap: 10px;
+    margin: 10px 0 20px;
+}
+
+.photo {
+    background-position: center;
+    background-size: cover;
+    border-radius: 3px;
+}
+
+.photo-1 { grid-column: 1 / 5; }
+.photo-2 { grid-column: 1 / 3; grid-row: 2 / 4; }
+.photo-3 { grid-column: 3 / 5; }
+
+.stats {
+    position: absolute;
+    top: 330px;
+    right: 0;
+    z-index: 4;
+    display: flex;
+    justify-content: space-between;
+    width: min(560px, 55%);
+    font-family: "Playfair Display", serif;
+}
+
+.stats .bio {
+    width: 58%;
+    line-height: 1.4;
+}
+
+.stats .lg {
+    font-size: 40px;
+}
+
+.stats .desc {
+    font-family: "Josefin Sans", sans-serif;
+    font-size: 13px;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    padding: 10px;
+    color: white;
+    background: black;
+}
+
+footer a,
+footer a:visited {
+    color: white;
+    font-weight: bold;
+}
+
+@media (max-width: 1030px) {
+    .nav-wrapper {
+        padding: 0 20px;
+    }
+
+    #travel-page main {
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    nav ul,
+    .stats,
+    .traveler-meta {
+        display: none;
+    }
+
+    #travel-page main {
+        flex-direction: column;
+    }
+
+    .places,
+    .mapcontain,
+    aside.sidebar {
+        width: 100%;
+        margin-left: 0;
+    }
+}
