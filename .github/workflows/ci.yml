@@ -17,8 +17,8 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
-      - run: dotnet restore BlazorAnime.sln
-      - run: dotnet build BlazorAnime.sln --no-restore --configuration Release
+      - run: dotnet restore BlazorAnime.slnx
+      - run: dotnet build BlazorAnime.slnx --no-restore --configuration Release
       - run: dotnet test test/BlazorAnime.Tests/BlazorAnime.Tests.csproj --no-build --configuration Release
 
   interop:

@@ -88,12 +88,12 @@ public sealed class SampleServer : IAsyncLifetime
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null)
         {
-            if (File.Exists(Path.Combine(directory.FullName, "BlazorAnime.sln")))
+            if (File.Exists(Path.Combine(directory.FullName, "BlazorAnime.slnx")))
                 return directory.FullName;
             directory = directory.Parent;
         }
 
-        throw new InvalidOperationException("Could not find BlazorAnime.sln above the test assembly.");
+        throw new InvalidOperationException("Could not find BlazorAnime.slnx above the test assembly.");
     }
 }
 
