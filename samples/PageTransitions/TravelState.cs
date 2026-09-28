@@ -130,8 +130,17 @@ public sealed class TravelState
         var path = Uri.TryCreate(location, UriKind.Absolute, out var absolute)
             ? absolute.AbsolutePath
             : location;
-        path = path.Trim('/');
-        return path switch
+        var cut = path.IndexOfAny(['?', '#']);
+        if (cut >= 0)
+            path = path[..cut];
+
+        // The route is the last segment, so a GitHub Pages prefix such as
+        // /blazor-anime/travel/place still resolves to "place".
+        var segment = "";
+        foreach (var part in path.Split('/', StringSplitOptions.RemoveEmptyEntries))
+            segment = part;
+
+        return segment switch
         {
             "place" => "place",
             "group" => "group",

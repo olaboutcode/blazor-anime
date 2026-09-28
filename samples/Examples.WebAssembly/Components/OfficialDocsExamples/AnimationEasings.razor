@@ -1,6 +1,12 @@
 @implements IAsyncDisposable;
 @inject IAnime Anime;
 
+<div class="demo">
+    <div class="demo-content animation-easings-demo">
+        <div class="el large square"></div>
+    </div>
+</div>
+
 @code {
     private Animation? _animation;
 
@@ -11,7 +17,11 @@
             _animation ??= await Anime.Animate(
                 props => props
                 .Targets(".animation-easings-demo .el")
-                .Duration(750)
+                .TranslateX(220)
+                .Duration(900)
+                .Easing(Easing.EaseInOutExpo)
+                .Direction(Direction.Alternate)
+                .Loop(true)
                 .AutoPlay(true)
             );
         }

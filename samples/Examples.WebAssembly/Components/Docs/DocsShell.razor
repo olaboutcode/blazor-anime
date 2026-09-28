@@ -1,0 +1,226 @@
+@inject IJSRuntime Js
+@inject NavigationManager Navigation
+
+<div class="docs-shell tw:flex tw:h-full tw:min-h-0 tw:flex-col tw:bg-[#141414] tw:text-[#eceae6]">
+    <header class="tw:flex tw:h-14 tw:shrink-0 tw:items-center tw:border-b tw:border-white/10">
+        <div class="tw:flex tw:w-full tw:items-center tw:gap-3 tw:px-4 tw:lg:w-[232px] tw:lg:shrink-0 tw:lg:px-5">
+            <button type="button"
+                    class="tw:rounded tw:border tw:border-white/15 tw:px-2 tw:py-1 tw:text-xs tw:uppercase tw:tracking-wider tw:lg:hidden"
+                    @onclick="() => _navOpen = !_navOpen">
+                Menu
+            </button>
+            <a href="@DemoCatalog.Default.Slug" class="tw:flex tw:items-baseline tw:gap-2 tw:no-underline">
+                <span class="tw:text-[1.35rem] tw:font-semibold tw:tracking-tight">blazor<span class="tw:text-[#e6c35c]">.</span>anime</span>
+                <span class="tw:text-xs tw:text-white/45">3.2.2</span>
+            </a>
+        </div>
+        <div class="tw:hidden tw:min-w-0 tw:flex-1 tw:items-center tw:px-4 tw:lg:flex tw:lg:border-l tw:lg:border-white/10 @(IsShowcase ? "" : "tw:lg:max-w-[580px]")">
+            <label class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:text-white/40">
+                <span class="tw:text-[11px] tw:uppercase tw:tracking-[0.14em]">Search</span>
+                <input class="tw:w-full tw:bg-transparent tw:text-sm tw:text-[#eceae6] tw:outline-none tw:placeholder:text-white/30"
+                       placeholder="Sections"
+                       value="@_query"
+                       @oninput="OnSearch" />
+            </label>
+        </div>
+        <nav class="tw:ml-auto tw:flex tw:items-center tw:gap-5 tw:px-4 tw:text-[11px] tw:uppercase tw:tracking-[0.16em] tw:text-white/70 tw:lg:flex-1 tw:lg:border-l tw:lg:border-white/10">
+            <span class="tw:text-[#e6c35c]">Docs</span>
+            <a class="tw:hover:text-white tw:no-underline" href="https://github.com/olaboutcode/blazor-anime">GitHub</a>
+        </nav>
+    </header>
+
+    <div class="tw:relative tw:flex tw:min-h-0 tw:flex-1 tw:flex-col tw:lg:flex-row">
+        <aside class="@(_navOpen ? "tw:absolute tw:inset-0 tw:z-20 tw:flex" : "tw:hidden") tw:lg:static tw:lg:z-0 tw:lg:flex tw:w-full tw:shrink-0 tw:flex-col tw:overflow-y-auto tw:border-white/10 tw:bg-[#161616] tw:px-4 tw:py-4 tw:lg:w-[232px] tw:lg:border-r tw:lg:px-0">
+            <label class="tw:mb-4 tw:flex tw:items-center tw:gap-2 tw:border-b tw:border-white/10 tw:px-1 tw:pb-3 tw:text-white/40 tw:lg:hidden">
+                <span class="tw:text-[11px] tw:uppercase tw:tracking-[0.14em]">Search</span>
+                <input class="tw:w-full tw:bg-transparent tw:text-sm tw:text-[#eceae6] tw:outline-none"
+                       placeholder="Sections"
+                       value="@_query"
+                       @oninput="OnSearch" />
+            </label>
+            @if (!VisibleSections.Any())
+            {
+                <p class="tw:px-5 tw:text-sm tw:text-white/45">No sections match.</p>
+            }
+            @foreach (var section in VisibleSections)
+            {
+                <div class="tw:mb-4">
+                    <p class="tw:px-5 tw:text-[11px] tw:uppercase tw:tracking-[0.16em] @(SectionActive(section) ? "tw:text-[#e6c35c]" : "tw:text-white/55")">
+                        @section.Title
+                    </p>
+                    <ul class="tw:mt-1 tw:border-l tw:border-white/15 tw:ml-5">
+                        @foreach (var entry in section.Entries)
+                        {
+                            <li>
+                                <a href="@entry.Slug"
+                                   class="tw:block tw:py-1 tw:pl-3 tw:text-sm tw:no-underline @(IsActive(entry) ? "tw:text-[#e6c35c]" : "tw:text-white/75 tw:hover:text-white")"
+                                   @onclick="() => _navOpen = false">
+                                    @entry.Title
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </aside>
+
+        @if (!IsShowcase)
+        {
+            <section class="docs-stage-scroll tw:flex tw:h-[42vh] tw:shrink-0 tw:flex-col tw:gap-3 tw:overflow-y-auto tw:border-b tw:border-white/10 tw:bg-[#1c1a14] tw:p-3 tw:lg:h-auto tw:lg:w-[580px] tw:lg:shrink-0 tw:lg:border-b-0 tw:lg:border-r">
+                @foreach (var item in ActiveSectionEntries)
+                {
+                    var active = IsActive(item);
+                    <div id="stage-@item.Slug"
+                         role="button"
+                         tabindex="0"
+                         class="docs-preview tw:relative tw:flex tw:h-[350px] tw:shrink-0 tw:cursor-pointer tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-lg tw:border tw:scroll-mt-3 @(active ? "tw:border-[#e6c35c] tw:opacity-100" : "tw:border-white/10 tw:opacity-40 tw:hover:opacity-70")"
+                         @onclick="() => Select(item)"
+                         @onkeydown="e => OnStageKey(e, item)">
+                        <span class="tw:pointer-events-none tw:absolute tw:left-3 tw:top-3 tw:z-10 tw:text-[11px] tw:uppercase tw:tracking-[0.14em] @(active ? "tw:text-[#e6c35c]" : "tw:text-white/50")">@item.Title</span>
+                        <div class="tw:w-full">
+                            <DemoView Slug="@item.Slug" />
+                        </div>
+                    </div>
+                }
+            </section>
+        }
+
+        <article class="tw:min-h-0 tw:flex-1 tw:overflow-y-auto tw:px-6 tw:py-8 tw:lg:px-10">
+            @if (Entry is null)
+            {
+                <h1 class="tw:text-4xl tw:font-semibold tw:text-[#e6c35c]">Not in this sample</h1>
+                <p class="tw:mt-4 tw:max-w-xl tw:text-white/70">That address is not one of the bundled examples.</p>
+            }
+            else if (IsShowcase)
+            {
+                <p class="tw:text-[11px] tw:uppercase tw:tracking-[0.16em] tw:text-white/40">Examples</p>
+                <h1 class="tw:mt-2 tw:text-4xl tw:font-semibold tw:tracking-tight tw:text-[#e6c35c] tw:lg:text-5xl">@Entry.Title</h1>
+                <p class="tw:mt-4 tw:max-w-3xl tw:text-xl tw:leading-snug tw:text-white/80">@Entry.Summary</p>
+                <p class="tw:mt-4 tw:max-w-3xl tw:text-[15px] tw:leading-7 tw:text-[#c9c3b8]">@Entry.Details</p>
+                <p class="tw:mt-4">
+                    <a class="tw:text-sm tw:text-[#e6c35c] tw:underline tw:underline-offset-4 tw:hover:text-white"
+                       href="@SourceUrl(Entry)">View the sample code</a>
+                </p>
+                <div class="docs-preview docs-preview-large tw:mt-8 tw:flex tw:min-h-[840px] tw:items-center tw:justify-center tw:overflow-auto tw:rounded-lg tw:border tw:border-white/10 tw:bg-[#1c1a14] tw:p-6">
+                    <div @key="Entry.Slug" class="tw:m-auto tw:w-full">
+                        <DemoView Slug="@Entry.Slug" />
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p class="tw:text-[11px] tw:uppercase tw:tracking-[0.16em] tw:text-white/40">@SectionTitle(Entry)</p>
+                <h1 class="tw:mt-2 tw:text-4xl tw:font-semibold tw:tracking-tight tw:text-[#e6c35c] tw:lg:text-5xl">@Entry.Title</h1>
+                <p class="tw:mt-4 tw:max-w-2xl tw:text-xl tw:leading-snug tw:text-white/80">@Entry.Summary</p>
+                <p class="tw:mt-6 tw:max-w-2xl tw:text-[15px] tw:leading-7 tw:text-[#c9c3b8]">@Entry.Details</p>
+
+                <div class="tw:mt-8 tw:max-w-3xl tw:overflow-hidden tw:rounded-lg tw:border tw:border-white/10 tw:bg-[#242424]">
+                    <div class="tw:flex tw:items-center tw:justify-between tw:border-b tw:border-white/10 tw:px-4 tw:py-2">
+                        <span class="tw:text-[11px] tw:uppercase tw:tracking-[0.14em] tw:text-white/40">C#</span>
+                        <button type="button"
+                                class="tw:text-xs tw:uppercase tw:tracking-wider tw:text-white/60 tw:hover:text-white"
+                                @onclick="CopyCode">
+                            @(_copied ? "Copied" : "Copy")
+                        </button>
+                    </div>
+                    <pre class="tw:overflow-x-auto tw:p-4 tw:text-[13px] tw:leading-6 tw:text-[#f0c6d8]"><code>@Entry.Code</code></pre>
+                </div>
+                <p class="tw:mt-4 tw:text-sm tw:text-white/40">@Entry.Source</p>
+            }
+        </article>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? Slug { get; set; }
+
+    private string _query = "";
+    private bool _navOpen;
+    private bool _copied;
+    private string? _scrolledSlug;
+
+    private DemoEntry? Entry => string.IsNullOrWhiteSpace(Slug)
+        ? DemoCatalog.Default
+        : DemoCatalog.Find(Slug);
+
+    private IReadOnlyList<DemoEntry> ActiveSectionEntries =>
+        Entry is null
+            ? []
+            : DemoCatalog.Sections.First(section => section.Entries.Any(item => item.Slug == Entry.Slug)).Entries;
+
+    private IEnumerable<DemoSection> VisibleSections =>
+        DemoCatalog.Sections
+            .Select(section => section with { Entries = section.Entries.Where(entry => Matches(section, entry)).ToList() })
+            .Where(section => section.Entries.Count > 0);
+
+    protected override void OnParametersSet()
+    {
+        _copied = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Entry is null || IsShowcase || _scrolledSlug == Entry.Slug)
+            return;
+
+        _scrolledSlug = Entry.Slug;
+        await Js.InvokeVoidAsync("docsScrollTo", "stage-" + Entry.Slug);
+    }
+
+    private async Task Select(DemoEntry entry)
+    {
+        if (!IsActive(entry))
+        {
+            _scrolledSlug = null;
+            Navigation.NavigateTo(entry.Slug);
+            return;
+        }
+
+        await Js.InvokeVoidAsync("docsScrollTo", "stage-" + entry.Slug);
+    }
+
+    private async Task OnStageKey(KeyboardEventArgs args, DemoEntry entry)
+    {
+        if (args.Key is "Enter" or " ")
+            await Select(entry);
+    }
+
+    private void OnSearch(ChangeEventArgs args) => _query = args.Value?.ToString() ?? "";
+
+    private bool Matches(DemoSection section, DemoEntry entry)
+    {
+        if (string.IsNullOrWhiteSpace(_query))
+            return true;
+
+        return section.Title.Contains(_query, StringComparison.OrdinalIgnoreCase)
+            || entry.Title.Contains(_query, StringComparison.OrdinalIgnoreCase)
+            || entry.Summary.Contains(_query, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool IsShowcase =>
+        Entry is not null && string.Equals(SectionTitle(Entry), "Examples", StringComparison.Ordinal);
+
+    private static string SourceUrl(DemoEntry entry) =>
+        "https://github.com/olaboutcode/blazor-anime/blob/master/samples/Examples.WebAssembly/" + entry.Source;
+
+    private bool IsActive(DemoEntry entry) =>
+        Entry is not null && string.Equals(Entry.Slug, entry.Slug, StringComparison.OrdinalIgnoreCase);
+
+    private bool SectionActive(DemoSection section) =>
+        Entry is not null && section.Entries.Any(entry => string.Equals(entry.Slug, Entry.Slug, StringComparison.OrdinalIgnoreCase));
+
+    private static string SectionTitle(DemoEntry entry) =>
+        DemoCatalog.Sections.First(section => section.Entries.Any(item => item.Slug == entry.Slug)).Title;
+
+    private async Task CopyCode()
+    {
+        if (Entry is null)
+            return;
+
+        await Js.InvokeVoidAsync("docsCopy", Entry.Code);
+        _copied = true;
+        await Task.Delay(1200);
+        _copied = false;
+    }
+}

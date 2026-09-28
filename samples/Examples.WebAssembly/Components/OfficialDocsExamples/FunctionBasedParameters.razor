@@ -1,6 +1,14 @@
 @implements IAsyncDisposable;
 @inject IAnime Anime;
 
+<div class="demo">
+    <div class="demo-content function-based-parameters-demo">
+        <div class="small square el"></div>
+        <div class="small square el"></div>
+        <div class="small square el"></div>
+    </div>
+</div>
+
 @code {
     private Animation? _animation;
 
@@ -11,7 +19,11 @@
             _animation ??= await Anime.Animate(
                 props => props
                 .Targets(".function-based-parameters-demo .el")
+                .TranslateX(180)
+                .Delay((index, total) => index * 120)
                 .Duration(750)
+                .Direction(Direction.Alternate)
+                .Loop(true)
                 .AutoPlay(true)
             );
         }

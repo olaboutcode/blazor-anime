@@ -1,5 +1,98 @@
+html, body, #app {
+    height: 100%;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+body {
+    position: static;
+    margin: 0;
+    overflow: hidden;
+    background: #141414;
+}
+
+.docs-shell {
+    height: 100dvh;
+}
+
+.docs-shell > header {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    border-bottom: 0;
+    z-index: auto;
+}
+
+.docs-shell h2 {
+    font-size: inherit;
+    letter-spacing: normal;
+    text-transform: none;
+    font-weight: 600;
+}
+
+.docs-shell a {
+    color: inherit;
+}
+
+.docs-shell article {
+    display: block;
+}
+
+.docs-stage-scroll {
+    scrollbar-width: none;
+}
+
+.docs-stage-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.docs-preview h3,
+.docs-preview h3 + p {
+    display: none;
+}
+
+.docs-preview .demo {
+    border-bottom: none;
+    min-height: 220px;
+    cursor: default;
+    color: #f4f1ea;
+}
+
+.docs-preview .demo-content {
+    width: min(100%, 360px);
+    height: auto;
+}
+
+.docs-preview-large .demo {
+    min-height: 440px;
+}
+
+.docs-preview-large .demo-content {
+    width: min(100%, 720px);
+}
+
+.docs-preview-large .animated-sphere-demo {
+    width: min(100%, 1160px) !important;
+}
+
+.docs-preview-large .bicycle-demo svg {
+    width: min(100%, 1280px) !important;
+}
+
+.docs-preview-large .error-404-demo .container {
+    width: min(100%, 1440px) !important;
+}
+
+.docs-note {
+    max-width: 16rem;
+    margin: 0;
+    color: #c8c2b8;
+    font-size: 14px;
+    line-height: 1.45;
+    text-align: left;
 }
 
 h1:focus {
