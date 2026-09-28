@@ -85,7 +85,7 @@ public sealed class PropsBuilderTests
             .Value(100)
             .Start(500)
             .From(2)
-            .Grid(new[] { 14, 7 })
+            .Grid([14, 7])
             .Axis(StaggerAxis.X)
             .Direction(Direction.Reverse)
             .Easing(Easing.EaseOutQuad)));
