@@ -152,11 +152,11 @@
         var timeline = await Anime.Timeline(props => props.AutoPlay(false).Easing(opening ? Easing.EaseOutSine : Easing.EaseInSine));
         await timeline.AddAsync(props => props
             .Targets(".menu-dot.first")
-            .TranslateX(opening ? 8 : 0)
+            .TranslateX(opening ? 18 : 0)
             .Duration(200), 0);
         await timeline.AddAsync(props => props
             .Targets(".menu-dot.last")
-            .TranslateX(opening ? -8 : 0)
+            .TranslateX(opening ? -18 : 0)
             .Duration(200), 0);
         await timeline.AddAsync(props => props
             .Targets(".menu-dot")
@@ -181,20 +181,12 @@
             .Rotate(saving ? -360 : 0)
             .Duration(750)
             .Easing(Easing.EaseOutExpo), 0);
-        await timeline.AddAsync(props => props
-            .Targets(".line2")
-            .ScaleY(saving ? 0.5 : 1)
-            .TranslateX(saving ? -2 : 0)
-            .Rotate(saving ? -45 : 0)
-            .Duration(700)
-            .Easing(Easing.EaseOutExpo), 0);
-        await timeline.AddAsync(props => props
-            .Targets(".line1")
-            .Rotate(saving ? -50 : 0)
-            .TranslateX(saving ? 7 : 0)
-            .ScaleX(saving ? 3 : 1)
-            .Duration(700)
-            .Easing(saving ? Easing.EaseOutExpo : Easing.EaseOutBack), 0);
+        await timeline.AddAsync(props => saving
+            ? props.Targets(".line2").Prop("x1", 6).Prop("y1", 12).Prop("x2", 11).Prop("y2", 17).Duration(700).Easing(Easing.EaseOutExpo)
+            : props.Targets(".line2").Prop("x1", 12).Prop("y1", 0).Prop("x2", 12).Prop("y2", 24).Duration(700).Easing(Easing.EaseOutExpo), 0);
+        await timeline.AddAsync(props => saving
+            ? props.Targets(".line1").Prop("x1", 11).Prop("y1", 17).Prop("x2", 20).Prop("y2", 7).Duration(700).Easing(Easing.EaseOutExpo)
+            : props.Targets(".line1").Prop("x1", 0).Prop("y1", 12).Prop("x2", 24).Prop("y2", 12).Duration(700).Easing(Easing.EaseOutBack), 0);
         if (saving)
         {
             await timeline.AddAsync(props => props

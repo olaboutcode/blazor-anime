@@ -219,18 +219,32 @@ nav a.active {
 .side-icon {
     top: 220px;
     right: 0;
-    padding: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    line-height: 0;
     background: rgba(255, 255, 255, 0.3);
     border: 0;
     border-radius: 50%;
     cursor: pointer;
 }
 
-.plus,
+.side-icon svg {
+    display: block;
+}
+
+.plus {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+}
+
 .line1,
 .line2 {
     transform-box: fill-box;
-    transform-origin: 50% 50%;
+    transform-origin: 50% 100%;
 }
 
 .saveinfo {
@@ -333,6 +347,10 @@ header.group .profile-name {
     border-top: 1px solid #ddd;
 }
 
+#travel-page main.home {
+    margin-top: 200px;
+}
+
 .places {
     width: 60%;
 }
@@ -410,7 +428,8 @@ aside.sidebar {
 
 .stats .bio {
     width: 58%;
-    line-height: 1.4;
+    margin: 0;
+    line-height: 1.35;
 }
 
 .stats .lg {
