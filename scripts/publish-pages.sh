@@ -35,27 +35,6 @@ cp -a "$tmp/travel/wwwroot/." "$out/travel/"
 find "$out" -type f \( -name '*.br' -o -name '*.gz' \) -delete
 : > "$out/.nojekyll"
 
-python3 - "$out" "$base" "$root/pages" <<'PY'
-import pathlib, sys
-out = pathlib.Path(sys.argv[1])
-base = sys.argv[2].rstrip("/")
-pages = pathlib.Path(sys.argv[3])
-
-for app in ("examples", "travel"):
-    index = out / app / "index.html"
-    text = index.read_text()
-    marker = '<base href="/" />'
-    href = f'<base href="{base}/{app}/" />'
-    if marker not in text:
-        raise SystemExit(f"{index} is missing {marker}")
-    index.write_text(text.replace(marker, href, 1))
-
-def publish_static(name: str) -> None:
-    source = (pages / name).read_text().replace("__BASE__", base)
-    (out / name).write_text(source)
-
-publish_static("index.html")
-publish_static("404.html")
-PY
+python3 "$root/scripts/publish-pages.py" "$out" "$base" "$root/pages"
 
 echo "Published $out with base $base"
