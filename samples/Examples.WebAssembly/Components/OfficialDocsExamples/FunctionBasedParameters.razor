@@ -1,7 +1,20 @@
 @implements IAsyncDisposable;
 @inject IAnime Anime;
 
+<div class="demo">
+    <div class="demo-content function-based-parameters-demo">
+        <div class="small square el"></div>
+        <div class="small square el"></div>
+        <div class="small square el"></div>
+    </div>
+</div>
+
 @code {
+    [CascadingParameter(Name = "DemoPlaying")]
+    public bool? Playing { get; set; }
+
+    private bool? _playingApplied;
+
     private Animation? _animation;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -11,10 +24,21 @@
             _animation ??= await Anime.Animate(
                 props => props
                 .Targets(".function-based-parameters-demo .el")
+                .TranslateX(180)
+                .Delay((index, total) => index * 120)
                 .Duration(750)
-                .AutoPlay(true)
+                .Direction(Direction.Alternate)
+                .Loop(true)
+                .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             );
+            _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
         }
+    }
+
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()

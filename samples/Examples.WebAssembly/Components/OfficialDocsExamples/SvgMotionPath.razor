@@ -14,6 +14,10 @@
 </div>
 
 @code {
+    [CascadingParameter(Name = "DemoPlaying")]
+    public bool? Playing { get; set; }
+
+    private bool? _playingApplied;
     private Animation? _animation;
     private SvgPath? _path;
 
@@ -32,8 +36,15 @@
                 .Easing(Easing.Linear)
                 .Duration(2000)
                 .Loop(true)
+                .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             );
+            _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
         }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()

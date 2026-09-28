@@ -1,7 +1,20 @@
 @implements IAsyncDisposable;
 @inject IAnime Anime;
 
+<div class="demo">
+    <div class="demo-content timeline-offset-demo">
+        <div class="el square"></div>
+        <div class="el circle"></div>
+        <div class="el triangle"></div>
+    </div>
+</div>
+
 @code {
+    [CascadingParameter(Name = "DemoPlaying")]
+    public bool? Playing { get; set; }
+
+    private bool? _playingApplied;
+
     private Timeline? _timeline;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -12,26 +25,33 @@
                 props => props
                 .Duration(750)
                 .Easing(Easing.EaseOutExpo)
-                .AutoPlay(true)
+                .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             )
             .AddAsync(
                 props => props
-                .Targets(".offsets-demo .el.square")
+                .Targets(".timeline-offset-demo .el.square")
                 .TranslateX(250)
             )
             .AddAsync(
                 props => props
-                .Targets(".offsets-demo .el.circle")
+                .Targets(".timeline-offset-demo .el.circle")
                 .TranslateX(250)
             , OffSet.Before(600))
             .AddAsync(
                 props => props
-                .Targets(".offsets-demo .el.triangle")
+                .Targets(".timeline-offset-demo .el.triangle")
                 .TranslateX(250)
             , 400);
+            _playingApplied = await DemoPlayback.Apply(_timeline, Playing, _playingApplied);
         }
     }
     
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        _playingApplied = await DemoPlayback.Apply(_timeline, Playing, _playingApplied);
+    }
+
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
         if (_timeline is not null)

@@ -1,0 +1,86 @@
+@using Examples.WebAssembly.Components.AdditionalFunExamples
+@using Examples.WebAssembly.Components.OfficialDocsExamples
+
+@switch (Slug)
+{
+    case "animated-sphere":
+        <AnimatedSphere />
+        break;
+    case "easter-icons":
+        <AnimatedEasterIcons />
+        break;
+    case "pedaling-bicycle":
+        <PedalingBicycle />
+        break;
+    case "error-404":
+        <Error404Page />
+        break;
+    case "relative-values":
+        <RelativeValues />
+        break;
+    case "function-based-values":
+        <FunctionBasedValues />
+        break;
+    case "function-based-parameters":
+        <FunctionBasedParameters />
+        break;
+    case "keyframes":
+        <Keyframes />
+        break;
+    case "property-keyframes":
+        <PropertyKeyframes />
+        break;
+    case "callbacks":
+        <AnimationCallbacks />
+        break;
+    case "controls":
+        <AnimationControls />
+        break;
+    case "easings":
+        <AnimationEasings />
+        break;
+    case "helpers":
+        <AnimationHelpers />
+        break;
+    case "timeline-basics":
+        <TimelineBasics />
+        break;
+    case "timeline-offsets":
+        <TimelineOffset />
+        break;
+    case "timeline-inheritance":
+        <TimelineInheritance />
+        break;
+    case "timeline-controls":
+        <TimelineControls />
+        break;
+    case "stagger-from":
+        <StaggerFrom />
+        break;
+    case "stagger-direction":
+        <StaggerDirection />
+        break;
+    case "stagger-easing":
+        <StaggerEasing />
+        break;
+    case "stagger-grid":
+        <StaggerGrid />
+        break;
+    case "stagger-axis":
+        <StaggerAxisDemo />
+        break;
+    case "svg-line-drawing":
+        <SvgLineDrawing />
+        break;
+    case "svg-morphing":
+        <SvgMorphing />
+        break;
+    case "svg-motion-path":
+        <SvgMotionPath />
+        break;
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public string Slug { get; set; } = "";
+}

@@ -16,6 +16,10 @@
 </div>
 
 @code {
+    [CascadingParameter(Name = "DemoPlaying")]
+    public bool? Playing { get; set; }
+
+    private bool? _playingApplied;
     private Animation? _animation;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -25,6 +29,7 @@
             _animation ??= await Anime.Animate(
                 props => props
                 .Targets(".morphing-demo .polymorph")
+                .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
                 .Points(
                     props => props.Value([
                         "70 24 119.574 60.369 100.145 117.631 50.855 101.631 3.426 54.369",
@@ -38,7 +43,13 @@
                 .Duration(2000)
                 .Loop(true)
             );
+            _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
         }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()

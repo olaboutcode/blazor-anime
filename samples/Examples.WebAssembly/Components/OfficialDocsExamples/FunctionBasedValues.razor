@@ -19,6 +19,11 @@
 </div>
 
 @code {
+    [CascadingParameter(Name = "DemoPlaying")]
+    public bool? Playing { get; set; }
+
+    private bool? _playingApplied;
+
     private Animation? _animation;
     private Random _rnd = new Random();
 
@@ -37,8 +42,9 @@
                 .Delay(DelaySetter)
                 .Direction(Direction.Alternate)
                 .Loop(true)
-                .AutoPlay(true)
+                .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             );
+            _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
         }
     }
 
@@ -62,6 +68,12 @@
 
     public double DelaySetter(int index, int count) =>
         _rnd.Next(0, 400);
+
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
+    }
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {

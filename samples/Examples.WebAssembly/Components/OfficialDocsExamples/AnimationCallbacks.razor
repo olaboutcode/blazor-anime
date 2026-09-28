@@ -7,6 +7,11 @@
 </div>
 
 @code {
+    [CascadingParameter(Name = "DemoPlaying")]
+    public bool? Playing { get; set; }
+
+    private bool? _playingApplied;
+
     private Animation? _animationA;
     private float _progress;
 
@@ -25,8 +30,9 @@
                 .Easing(Easing.EaseInOutCirc)
                 .Update(OnUpdate)
                 .Loop(2)
-                .AutoPlay(true)
+                .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             );
+            _playingApplied = await DemoPlayback.Apply(_animationA, Playing, _playingApplied);
         }
     }
 
@@ -39,5 +45,10 @@
     {
         _progress = state.Progress;
         StateHasChanged();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _playingApplied = await DemoPlayback.Apply(_animationA, Playing, _playingApplied);
     }
 }

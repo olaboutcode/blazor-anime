@@ -1,15 +1,15 @@
-﻿@page "/"
-@using Examples.WebAssembly.Components.AdditionalFunExamples
-@using Examples.WebAssembly.Components.OfficialDocsExamples
+@page "/"
+@page "/{Slug}"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>@(Entry?.Title ?? "Examples") · Blazor.Anime</PageTitle>
 
-<AnimatedSphere />
-<AnimatedEasterIcons />
-<PedalingBicycle />
-<Error404Page />
-<AnimationCallbacks></AnimationCallbacks>
-<RelativeValues></RelativeValues>
-<FunctionBasedValues></FunctionBasedValues>
-<Keyframes></Keyframes>
-<PropertyKeyframes></PropertyKeyframes>
+<DocsShell Slug="@Slug" />
+
+@code {
+    [Parameter]
+    public string? Slug { get; set; }
+
+    private DemoEntry? Entry => string.IsNullOrWhiteSpace(Slug)
+        ? DemoCatalog.Default
+        : DemoCatalog.Find(Slug);
+}
