@@ -1,9 +1,17 @@
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace BlazorAnime;
 
 public sealed class PropsBuilder
 {
+    internal List<IDisposable> CallbackHandles { get; }
+
+    public PropsBuilder() => CallbackHandles = [];
+
+    private PropsBuilder(List<IDisposable> callbackHandles) => CallbackHandles = callbackHandles;
+
+    private PropsBuilder Nested() => new(CallbackHandles);
     public PropsBuilder Easing(Easing easing)
     {
         if(easing != null)
@@ -86,10 +94,35 @@ public sealed class PropsBuilder
             _props.Add(new GenProp<object>(property, new[] { from, to }));
         return this;
     }
+    public PropsBuilder Prop(string property, Relative value)
+    {
+        if(!string.IsNullOrWhiteSpace(property) && value != null)
+            _props.Add(new GenProp<string>(property, value.GetValue()));
+        return this;
+    }
+    public PropsBuilder Prop(string property, ElementReference element)
+    {
+        if(!string.IsNullOrWhiteSpace(property))
+            _props.Add(new GenProp<ElementReference>(property, element));
+        return this;
+    }
+    public PropsBuilder Prop(string property, params ElementReference[] elements)
+    {
+        if(!string.IsNullOrWhiteSpace(property)
+            && elements is { Length: > 0 })
+            _props.Add(new GenProp<ElementReference[]>(property, elements));
+        return this;
+    }
     public PropsBuilder Prop(string property, SvgPathParam path)
     {
         if(!string.IsNullOrWhiteSpace(property) && path != null)
             _props.Add(new SvgProp(property, path.ParamRef));
+        return this;
+    }
+    internal PropsBuilder ObjectTarget(string property, object reference)
+    {
+        if(!string.IsNullOrWhiteSpace(property) && reference != null)
+            _props.Add(new ObjectTargetProp(property, reference));
         return this;
     }
     public PropsBuilder Prop(string property, Action<AnimationState> callback)
@@ -126,7 +159,7 @@ public sealed class PropsBuilder
         if (string.IsNullOrWhiteSpace(property) || build == null)
             return this;
     
-        var builder = new PropsBuilder();
+        var builder = Nested();
         build(builder);
         _props.Add(new GenProp<object>(property, builder._props.ToObject()));
         return this;
@@ -136,7 +169,8 @@ public sealed class PropsBuilder
         if (string.IsNullOrWhiteSpace(property) || build == null)
             return this;
     
-        var builder = build(new PropsBuilder());
+        var builder = build(Nested());
+        Absorb(builder);
         _props.Add(new GenProp<object>(property, builder._props.ToObject()));
         return this;
     }
@@ -150,7 +184,7 @@ public sealed class PropsBuilder
         var keyframes = new List<object>();
         foreach (var build in builders)
         {
-            var builder = new PropsBuilder();
+            var builder = Nested();
             build(builder);
             keyframes.Add(builder._props.ToObject());
         }
@@ -167,7 +201,8 @@ public sealed class PropsBuilder
         var keyframes = new List<object>();
         foreach (var builderFunc in builders)
         {
-            var builder = builderFunc(new PropsBuilder());
+            var builder = builderFunc(Nested());
+            Absorb(builder);
             keyframes.Add(builder._props.ToObject());
         }
         _props.Add(new GenProp<object[]>(property, [..keyframes]));
@@ -175,43 +210,37 @@ public sealed class PropsBuilder
     }
 
     internal IReadOnlyList<Prop> Build() => _props.AsReadOnly();
+
+    private void Absorb(PropsBuilder builder)
+    {
+        if (!ReferenceEquals(builder.CallbackHandles, CallbackHandles))
+            CallbackHandles.AddRange(builder.CallbackHandles);
+    }
     private readonly List<Prop> _props = [];
 
-    private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, double> callback)
+    private CallbackProp CreateValueSetterCallback(string propName, Func<int, int, double> callback) =>
+        CreateValueCallback(propName, (index, total) => callback(index, total));
+
+    private CallbackProp CreateValueSetterCallback(string propName, Func<int, int, string> callback) =>
+        CreateValueCallback(propName, (index, total) => callback(index, total));
+
+    private CallbackProp CreateValueSetterCallback(string propName, Func<int, int, object> callback) =>
+        CreateValueCallback(propName, callback);
+
+    private CallbackProp CreateValueCallback(string propName, Func<int, int, object?> callback)
     {
         ValidationChecks.EnsureAcceptableCallback(callback);
-        return new CallbackProp(
-            propName,
-            callback.Method.Name,
-            callback.Method.GetParameters().Length,
-            DotNetObjectReference.Create(callback.Target!));
+        var relay = new ValueCallbackRelay(callback);
+        CallbackHandles.Add(relay);
+        return new CallbackProp(propName, "InvokeAll", 2, relay.Reference);
     }
-    private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, string> callback)
+
+    private CallbackProp CreateStateCallback(string propName, Action<AnimationState> callback)
     {
         ValidationChecks.EnsureAcceptableCallback(callback);
-        return new CallbackProp(
-            propName,
-            callback.Method.Name,
-            callback.Method.GetParameters().Length,
-            DotNetObjectReference.Create(callback.Target!));
-    }
-    private static CallbackProp CreateValueSetterCallback(string propName, Func<int, int, object> callback)
-    {
-        ValidationChecks.EnsureAcceptableCallback(callback);
-        return new CallbackProp(
-            propName,
-            callback.Method.Name,
-            callback.Method.GetParameters().Length,
-            DotNetObjectReference.Create(callback.Target!));
-    }
-    private static CallbackProp CreateStateCallback(string propName, Action<AnimationState> callback)
-    {
-        ValidationChecks.EnsureAcceptableCallback(callback);
-        return new CallbackProp(
-            propName,
-            callback.Method.Name,
-            callback.Method.GetParameters().Length,
-            DotNetObjectReference.Create(callback.Target!));
+        var relay = new StateCallbackRelay(callback);
+        CallbackHandles.Add(relay);
+        return new CallbackProp(propName, "Invoke", 1, relay.Reference);
     }
 }
 

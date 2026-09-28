@@ -44,4 +44,17 @@ public static class TimelineExtensions
         await timeline.AddAsync(configure, offSet);
         return timeline;
     }
+
+    /// <summary>
+    /// Add an animation at a relative or absolute offset such as "+=500".
+    /// </summary>
+    public static async Task<Timeline> AddAsync(
+        this Task<Timeline> task,
+        Func<PropsBuilder, PropsBuilder> configure,
+        string offSet)
+    {
+        var timeline = await task;
+        await timeline.AddAsync(configure, offSet);
+        return timeline;
+    }
 }

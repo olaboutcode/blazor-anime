@@ -42,7 +42,7 @@ builder.Services.AddBlazorAnime();
 In your `_Host.cshtml` (server-side) or in your `index.html` (client-side) add the following lines to the `body` tag **after** the `_framework` reference
 ```html
 <!-- Reference the animeBlazor.js javascript file. -->
-<script src="_content/BlazorAnime/blazor.anime.js"></script>
+<script src="_content/BlazorAnime/blazor.anime.interop.js"></script>
 ```
 Add Blazor Anime reference in your `_Imports.razor`
 ```
@@ -391,7 +391,7 @@ await Anime.Animate(props => props
     .TranslateX(270)
     .Delay(stagger => stagger
         .Value(100)
-        .Direction(true) // Reverse direction
+        .Direction(Direction.Reverse) // Reverse direction
     )
     .AutoPlay(true));
 ```
@@ -640,13 +640,12 @@ await Anime.Animate(props => props
 #### SVG Motion Path
 Animate element along an SVG path.
 ```csharp
-await Anime.Animate(props => props
+var path = await Anime.GetSvgPath(".motion-path-demo path");
+await Anime.Animate(async props => props
     .Targets(".motion-path-demo .el")
-    .MotionPath(new MotionPathOptions
-    {
-        Path = ".motion-path-demo path",
-        AlignAngle = true // Rotate element based on path direction
-    })
+    .TranslateX(await path.Get("x"))
+    .TranslateY(await path.Get("y"))
+    .Rotate(await path.Get("angle"))
     .Duration(2000)
     .Easing(Easing.EaseInOutSine)
     .Loop(true)

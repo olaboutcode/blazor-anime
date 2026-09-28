@@ -31,6 +31,9 @@ public sealed class Stagger
         return new Stagger(new[] { from, to }, builder.Build());
     }
 
+    internal static Stagger FromParts(object value, IReadOnlyList<StgOptionProp> options) =>
+        new(value, options);
+
     internal IReadOnlyList<StgOptionProp> GetOptions() => _options;
     internal object GetValue() => _value;
 
@@ -64,10 +67,24 @@ public sealed class StaggerOptionsBuilder
         return this;
     }
 
-    public StaggerOptionsBuilder Grid(int rows, int columns)
+    /// <summary>
+    /// anime.js reads <c>grid</c> as <c>[columns, rows]</c>.
+    /// </summary>
+    public StaggerOptionsBuilder Grid(int columns, int rows)
     {
-        _options.Add(new StgOptionProp("grid", new[] { rows, columns }));
+        _options.Add(new StgOptionProp("grid", new[] { columns, rows }));
         return this;
+    }
+
+    /// <summary>
+    /// anime.js reads <c>grid</c> as <c>[columns, rows]</c>.
+    /// </summary>
+    public StaggerOptionsBuilder Grid(int[] columnsAndRows)
+    {
+        ArgumentNullException.ThrowIfNull(columnsAndRows);
+        if (columnsAndRows.Length < 2)
+            throw new ArgumentException("Grid expects [columns, rows].", nameof(columnsAndRows));
+        return Grid(columnsAndRows[0], columnsAndRows[1]);
     }
 
     public StaggerOptionsBuilder Axis(StaggerAxis value)
@@ -82,9 +99,110 @@ public sealed class StaggerOptionsBuilder
         return this;
     }
 
+    public StaggerOptionsBuilder From(int index) => From(StaggerPosition.Index(index));
+
     internal IReadOnlyList<StgOptionProp> Build() => _options.AsReadOnly();
     private readonly List<StgOptionProp> _options;
     internal StaggerOptionsBuilder() => _options = [];
+}
+
+/// <summary>
+/// Names from the anime.js stagger examples. Values are the same as <see cref="StaggerPosition"/>.
+/// </summary>
+public static class StaggerFrom
+{
+    public static StaggerPosition First => StaggerPosition.First;
+    public static StaggerPosition Last => StaggerPosition.Last;
+    public static StaggerPosition Center => StaggerPosition.Center;
+    public static StaggerPosition Index(int index) => StaggerPosition.Index(index);
+}
+
+/// <summary>
+/// Fluent stagger description used by <c>Delay(stagger =&gt; stagger.Value(...))</c>.
+/// </summary>
+public sealed class StaggerSyntax
+{
+    private object _value = 0d;
+    private readonly StaggerOptionsBuilder _options = new();
+    private bool _hasOptions;
+
+    public StaggerSyntax Value(double value)
+    {
+        _value = value;
+        return this;
+    }
+
+    public StaggerSyntax Value(double from, double to)
+    {
+        _value = new[] { from, to };
+        return this;
+    }
+
+    public StaggerSyntax Value(string value)
+    {
+        _value = value;
+        return this;
+    }
+
+    public StaggerSyntax Value(string from, string to)
+    {
+        _value = new[] { from, to };
+        return this;
+    }
+
+    public StaggerSyntax Start(double value)
+    {
+        _hasOptions = true;
+        _options.Start(value);
+        return this;
+    }
+
+    public StaggerSyntax Direction(Direction value)
+    {
+        _hasOptions = true;
+        _options.Direction(value);
+        return this;
+    }
+
+    public StaggerSyntax Easing(Easing value)
+    {
+        _hasOptions = true;
+        _options.Easing(value);
+        return this;
+    }
+
+    public StaggerSyntax Grid(int columns, int rows)
+    {
+        _hasOptions = true;
+        _options.Grid(columns, rows);
+        return this;
+    }
+
+    public StaggerSyntax Grid(int[] columnsAndRows)
+    {
+        _hasOptions = true;
+        _options.Grid(columnsAndRows);
+        return this;
+    }
+
+    public StaggerSyntax Axis(StaggerAxis value)
+    {
+        _hasOptions = true;
+        _options.Axis(value);
+        return this;
+    }
+
+    public StaggerSyntax From(StaggerPosition value)
+    {
+        _hasOptions = true;
+        _options.From(value);
+        return this;
+    }
+
+    public StaggerSyntax From(int index) => From(StaggerPosition.Index(index));
+
+    internal Stagger ToStagger() =>
+        Stagger.FromParts(_value, _hasOptions ? _options.Build() : []);
 }
 
 public sealed class StaggerAxis

@@ -97,6 +97,22 @@ internal class StgOptionProp(
     }
 }
 
+internal sealed class ObjectTargetProp(string name, object reference) : Prop(name, reference)
+{
+    public override object GetValue()
+    {
+        return new
+        {
+            name = Name,
+            value = new
+            {
+                propType = "objectTarget",
+                value = GetPrimValue()
+            }
+        };
+    }
+}
+
 internal class CallbackProp(
     string name,
     string callbackName, 

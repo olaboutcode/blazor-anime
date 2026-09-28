@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Components;
+
 namespace BlazorAnime;
 
 public static class PropsBuilderExtensions
@@ -34,6 +36,18 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Targets(
         this PropsBuilder builder,
         params string[] selectors) => builder.Prop("targets", selectors);
+    public static PropsBuilder Targets(
+        this PropsBuilder builder,
+        params ElementReference[] elements) => builder.Prop("targets", elements);
+    public static PropsBuilder Targets(
+        this PropsBuilder builder,
+        params JsTarget[] targets)
+    {
+        var references = targets.Select(target => target.Reference).ToArray();
+        return references.Length == 1
+            ? builder.ObjectTarget("targets", references[0])
+            : builder.ObjectTarget("targets", references);
+    }
     public static PropsBuilder Points(
         this PropsBuilder builder,
         Action<PropsBuilder> configure) => builder.Prop("points", configure);
@@ -49,6 +63,10 @@ public static class PropsBuilderExtensions
     public static PropsBuilder EndDelay(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("endDelay", callback);
+    public static PropsBuilder EndDelay(
+        this PropsBuilder builder,
+        Func<StaggerSyntax, StaggerSyntax> configure) =>
+        builder.EndDelay(configure(new StaggerSyntax()).ToStagger());
     public static PropsBuilder Duration(
         this PropsBuilder builder,
         int milliseconds) => builder.Prop("duration", milliseconds);
@@ -67,6 +85,10 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Delay(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("delay", callback);
+    public static PropsBuilder Delay(
+        this PropsBuilder builder,
+        Func<StaggerSyntax, StaggerSyntax> configure) =>
+        builder.Delay(configure(new StaggerSyntax()).ToStagger());
     public static PropsBuilder Round(
         this PropsBuilder builder,
         int value) => builder.Prop("round", value);
@@ -1419,4 +1441,56 @@ public static class PropsBuilderExtensions
     public static PropsBuilder ClipPath(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("clipPath", callback);
+
+    // Unit strings and relative operators on the transforms anime.js treats as first-class.
+    public static PropsBuilder TranslateX(this PropsBuilder builder, string value) => builder.Prop("translateX", value);
+    public static PropsBuilder TranslateX(this PropsBuilder builder, Relative value) => builder.Prop("translateX", value);
+    public static PropsBuilder TranslateY(this PropsBuilder builder, string value) => builder.Prop("translateY", value);
+    public static PropsBuilder TranslateY(this PropsBuilder builder, Relative value) => builder.Prop("translateY", value);
+    public static PropsBuilder TranslateZ(this PropsBuilder builder, string value) => builder.Prop("translateZ", value);
+    public static PropsBuilder TranslateZ(this PropsBuilder builder, Relative value) => builder.Prop("translateZ", value);
+    public static PropsBuilder Rotate(this PropsBuilder builder, string value) => builder.Prop("rotate", value);
+    public static PropsBuilder Rotate(this PropsBuilder builder, Relative value) => builder.Prop("rotate", value);
+    public static PropsBuilder RotateX(this PropsBuilder builder, string value) => builder.Prop("rotateX", value);
+    public static PropsBuilder RotateX(this PropsBuilder builder, Relative value) => builder.Prop("rotateX", value);
+    public static PropsBuilder RotateY(this PropsBuilder builder, string value) => builder.Prop("rotateY", value);
+    public static PropsBuilder RotateY(this PropsBuilder builder, Relative value) => builder.Prop("rotateY", value);
+    public static PropsBuilder RotateZ(this PropsBuilder builder, string value) => builder.Prop("rotateZ", value);
+    public static PropsBuilder RotateZ(this PropsBuilder builder, Relative value) => builder.Prop("rotateZ", value);
+    public static PropsBuilder Scale(this PropsBuilder builder, string value) => builder.Prop("scale", value);
+    public static PropsBuilder Scale(this PropsBuilder builder, Relative value) => builder.Prop("scale", value);
+    public static PropsBuilder ScaleX(this PropsBuilder builder, string value) => builder.Prop("scaleX", value);
+    public static PropsBuilder ScaleX(this PropsBuilder builder, Relative value) => builder.Prop("scaleX", value);
+    public static PropsBuilder ScaleY(this PropsBuilder builder, string value) => builder.Prop("scaleY", value);
+    public static PropsBuilder ScaleY(this PropsBuilder builder, Relative value) => builder.Prop("scaleY", value);
+    public static PropsBuilder ScaleZ(this PropsBuilder builder, string value) => builder.Prop("scaleZ", value);
+    public static PropsBuilder ScaleZ(this PropsBuilder builder, Relative value) => builder.Prop("scaleZ", value);
+    public static PropsBuilder SkewX(this PropsBuilder builder, string value) => builder.Prop("skewX", value);
+    public static PropsBuilder SkewX(this PropsBuilder builder, Relative value) => builder.Prop("skewX", value);
+    public static PropsBuilder SkewY(this PropsBuilder builder, string value) => builder.Prop("skewY", value);
+    public static PropsBuilder SkewY(this PropsBuilder builder, Relative value) => builder.Prop("skewY", value);
+
+    // SVG attributes used by morphing, line drawing, and shape animation.
+    public static PropsBuilder D(this PropsBuilder builder, string value) => builder.Prop("d", value);
+    public static PropsBuilder D(this PropsBuilder builder, string from, string to) => builder.Prop("d", from, to);
+    public static PropsBuilder D(this PropsBuilder builder, params Action<PropsBuilder>[] build) => builder.Prop("d", build);
+    public static PropsBuilder Fill(this PropsBuilder builder, string value) => builder.Prop("fill", value);
+    public static PropsBuilder Fill(this PropsBuilder builder, string from, string to) => builder.Prop("fill", from, to);
+    public static PropsBuilder Stroke(this PropsBuilder builder, string value) => builder.Prop("stroke", value);
+    public static PropsBuilder Stroke(this PropsBuilder builder, string from, string to) => builder.Prop("stroke", from, to);
+    public static PropsBuilder StrokeWidth(this PropsBuilder builder, double value) => builder.Prop("strokeWidth", value);
+    public static PropsBuilder StrokeWidth(this PropsBuilder builder, double from, double to) => builder.Prop("strokeWidth", from, to);
+    public static PropsBuilder StrokeWidth(this PropsBuilder builder, string value) => builder.Prop("strokeWidth", value);
+    public static PropsBuilder Cx(this PropsBuilder builder, double value) => builder.Prop("cx", value);
+    public static PropsBuilder Cx(this PropsBuilder builder, double from, double to) => builder.Prop("cx", from, to);
+    public static PropsBuilder Cy(this PropsBuilder builder, double value) => builder.Prop("cy", value);
+    public static PropsBuilder Cy(this PropsBuilder builder, double from, double to) => builder.Prop("cy", from, to);
+    public static PropsBuilder R(this PropsBuilder builder, double value) => builder.Prop("r", value);
+    public static PropsBuilder R(this PropsBuilder builder, double from, double to) => builder.Prop("r", from, to);
+    public static PropsBuilder Rx(this PropsBuilder builder, double value) => builder.Prop("rx", value);
+    public static PropsBuilder Ry(this PropsBuilder builder, double value) => builder.Prop("ry", value);
+    public static PropsBuilder X(this PropsBuilder builder, double value) => builder.Prop("x", value);
+    public static PropsBuilder X(this PropsBuilder builder, string value) => builder.Prop("x", value);
+    public static PropsBuilder Y(this PropsBuilder builder, double value) => builder.Prop("y", value);
+    public static PropsBuilder Y(this PropsBuilder builder, string value) => builder.Prop("y", value);
 }

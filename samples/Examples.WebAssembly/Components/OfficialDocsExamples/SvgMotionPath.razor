@@ -15,19 +15,20 @@
 
 @code {
     private Animation? _animation;
+    private SvgPath? _path;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var svgPath = await Anime.GetSvgPath(".somePath");
-            
+            var path = _path ??= await Anime.GetSvgPath(".somePath");
+
             _animation ??= await Anime.Animate(
                 async props => props
                 .Targets(".motion-path-demo .el")
-                .TranslateX(await svgPath.Get("x"))
-                .TranslateY(await svgPath.Get("y"))
-                .Rotate(await svgPath.Get("angle"))
+                .TranslateX(await path.Get("x"))
+                .TranslateY(await path.Get("y"))
+                .Rotate(await path.Get("angle"))
                 .Easing(Easing.Linear)
                 .Duration(2000)
                 .Loop(true)
@@ -38,8 +39,8 @@
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
         if (_animation is not null)
-        {
             await _animation.DisposeAsync();
-        }
+        if (_path is not null)
+            await _path.DisposeAsync();
     }
 }

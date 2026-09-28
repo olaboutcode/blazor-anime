@@ -2,142 +2,59 @@ using Microsoft.JSInterop;
 
 namespace BlazorAnime;
 
-public sealed class Timeline: IAsyncDisposable
+public sealed class Timeline : Animation
 {
     /// <summary>
-    /// Add Timeline animation props
+    /// Add an animation that starts when the previous child ends.
     /// </summary>
-    /// <param name="configure"></param>
-    public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure)
+    public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure) =>
+        await AddCore(configure, offset: null);
+
+    /// <summary>
+    /// Add an animation at an absolute time, in milliseconds.
+    /// </summary>
+    public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure, double offSet) =>
+        await AddCore(configure, offSet);
+
+    /// <summary>
+    /// Add an animation at a relative or absolute offset such as "+=500" or "-=200".
+    /// </summary>
+    public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure, string offSet) =>
+        await AddCore(configure, offSet);
+
+    /// <summary>
+    /// Add an animation at a relative offset.
+    /// </summary>
+    public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure, OffSet offSet) =>
+        await AddCore(configure, offSet.GetValue());
+
+    internal Timeline(IJSObjectReference jsRef, IEnumerable<IDisposable> callbacks)
+        : base(jsRef, callbacks)
     {
-        await TimelineJsRef.InvokeVoidAsync(
-            "add",
-            configure(new PropsBuilder()).Build().ToObject());
     }
 
-    /// <summary>
-    /// Add Timeline animation props with relative offSet 
-    /// </summary>
-    /// <param name="configure"></param>
-    /// <param name="offSet"></param>
-    public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure, double offSet)
+    private async Task AddCore(Func<PropsBuilder, PropsBuilder> configure, object? offset)
     {
-        await TimelineJsRef.InvokeVoidAsync(
-            "add",
-            configure(new PropsBuilder()).Build().ToObject(),
-            offSet);
+        var builder = configure(new PropsBuilder());
+        Track(builder.CallbackHandles);
+        var props = builder.Build().ToObject();
+        if (offset is null)
+            await Js.InvokeVoidAsync("add", props);
+        else
+            await Js.InvokeVoidAsync("add", props, offset);
     }
-
-    /// <summary>
-    /// Add Timeline animation props with relative offSet 
-    /// </summary>
-    /// <param name="configure"></param>
-    /// <param name="offSet"></param>
-    public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure, OffSet offSet)
-    {
-        await TimelineJsRef.InvokeVoidAsync(
-            "add",
-            configure(new PropsBuilder()).Build().ToObject(),
-            offSet.GetValue());
-    }
-
-    /// <summary>
-    /// Play Timeline animation
-    /// </summary>
-    public async Task Play() =>
-        await TimelineJsRef.InvokeVoidAsync("play");
-
-    /// <summary>
-    /// Pause Timeline animation
-    /// </summary>
-    public async Task Pause() =>
-        await TimelineJsRef.InvokeVoidAsync("pause");
-
-    /// <summary>
-    /// Restart Timeline animation
-    /// </summary>
-    public async Task Restart() =>
-        await TimelineJsRef.InvokeVoidAsync("restart");
-
-    /// <summary>
-    /// Reverse Timeline animation
-    /// </summary>
-    public async Task Reverse() =>
-        await TimelineJsRef.InvokeVoidAsync("reverse");
-
-    /// <summary>
-    /// Jump to specific time on the Timeline
-    /// </summary>
-    /// <param name="time"></param>
-    public async Task Seek(double time) =>
-        await TimelineJsRef.InvokeVoidAsync("seek", time);
-
-    /// <summary>
-    /// Get Timeline progress
-    /// </summary>
-    /// <returns>double</returns>
-    public async Task<double> GetProgress() =>
-        await TimelineJsRef.InvokeAsync<double>("getProgress");
-
-    /// <summary>
-    /// Timeline started animating
-    /// </summary>
-    /// <returns></returns>
-    public async Task<bool> Began() =>
-        ToBool(await TimelineJsRef.InvokeAsync<int>("hasBegun"));
-
-    /// <summary>
-    /// Timeline completed animating
-    /// </summary>
-    /// <returns></returns>
-    public async Task<bool> Completed() =>
-        ToBool(await TimelineJsRef.InvokeAsync<int>("hasCompleted"));
-
-    /// <summary>
-    /// Timeline animation change started
-    /// </summary>
-    /// <returns></returns>
-    public async Task<bool> ChangeBegan() =>
-        ToBool(await TimelineJsRef.InvokeAsync<int>("changeHasBegun"));
-
-    /// <summary>
-    /// Timeline animation change completed
-    /// </summary>
-    /// <returns></returns>
-    public async Task<bool> ChangeCompleted() =>
-        ToBool(await TimelineJsRef.InvokeAsync<int>("changeHasCompleted"));
-
-    /// <summary>
-    /// Timeline animation loop started
-    /// </summary>
-    /// <returns></returns>
-    public async Task<bool> LoopBegan() =>
-        ToBool(await TimelineJsRef.InvokeAsync<int>("loopHasBegun"));
-
-    public async ValueTask DisposeAsync()
-    {
-        await TimelineJsRef.DisposeAsync();
-    }
-
-    internal Timeline(IJSObjectReference jsRef) => TimelineJsRef = jsRef;
-    private IJSObjectReference TimelineJsRef { get; init; }
-    private static bool ToBool(int val) => val == 1;
 }
 
 public sealed class OffSet
 {
     /// <summary>
-    /// Start animation before `value` milliseconds before the previous animation ends
+    /// Start this animation <paramref name="value"/> milliseconds before the previous one ends.
     /// </summary>
-    /// <param name="value"></param>
-    /// <returns>OffSet</returns>
     public static OffSet Before(double value) => new(value, "-=");
-    
+
     /// <summary>
-    /// Start animation after `value` milliseconds after the previous animation ends
+    /// Start this animation <paramref name="value"/> milliseconds after the previous one ends.
     /// </summary>
-    /// <param name="value"></param>
-    /// <returns>OffSet</returns>
     public static OffSet After(double value) => new(value, "+=");
 
     private OffSet(double value, string offSet)

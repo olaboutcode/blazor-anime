@@ -12,129 +12,278 @@
 
 
 // Interop section
-let transformProps = (props) => {
-    let finalProps = {};
+const VALUE_FN = "__blazorAnimeValueFn";
+
+function normalizeCount(value) {
+    if (value === true) return -1;
+    if (value === false || value == null) return 0;
+    return value;
+}
+
+function toState(anim) {
+    return {
+        id: anim.id,
+        progress: anim.progress,
+        began: !!anim.began,
+        completed: !!anim.completed,
+        changeBegan: !!anim.changeBegan,
+        changeCompleted: !!anim.changeCompleted,
+        loopBegan: !!anim.loopBegan,
+        paused: !!anim.paused,
+        reversed: !!anim.reversed,
+        reversePlayback: !!anim.reversePlayback,
+        duration: anim.duration,
+        delay: anim.delay,
+        endDelay: anim.endDelay,
+        currentTime: anim.currentTime,
+        remaining: normalizeCount(anim.remaining),
+        loop: normalizeCount(anim.loop),
+        direction: anim.direction
+    };
+}
+
+function isDomNode(value) {
+    return typeof Node !== "undefined" && value instanceof Node;
+}
+
+function isPlain(value) {
+    if (!value || typeof value !== "object") return false;
+    const proto = Object.getPrototypeOf(value);
+    return proto === Object.prototype || proto === null;
+}
+
+function isMarker(value) {
+    return isPlain(value) && value[VALUE_FN] === true;
+}
+
+function resolveTargets(targets) {
+    if (targets == null) return [];
+    if (typeof targets === "string") {
+        try {
+            return Array.from(document.querySelectorAll(targets));
+        } catch {
+            return [];
+        }
+    }
+    if (isDomNode(targets)) return [targets];
+    if (typeof NodeList !== "undefined" && (targets instanceof NodeList || targets instanceof HTMLCollection)) {
+        return Array.from(targets);
+    }
+    if (Array.isArray(targets)) {
+        const result = [];
+        const seen = new Set();
+        for (const item of targets) {
+            for (const resolved of resolveTargets(item)) {
+                if (resolved && typeof resolved === "object") {
+                    if (seen.has(resolved)) continue;
+                    seen.add(resolved);
+                }
+                result.push(resolved);
+            }
+        }
+        return result;
+    }
+    return [targets];
+}
+
+function transformSetter(name, setterValue) {
+    if (Array.isArray(setterValue)) {
+        return setterValue.map((item) => {
+            if (item && typeof item === "object" && !isDomNode(item) && !isMarker(item)) {
+                return transformProps(item);
+            }
+            return item;
+        });
+    }
+    if (name === "strokeDashoffset" && (typeof setterValue === "number" || typeof setterValue === "string")) {
+        return [anime.setDashoffset, setterValue];
+    }
+    if (setterValue && typeof setterValue === "object" && !isDomNode(setterValue)) {
+        return transformProps(setterValue);
+    }
+    return setterValue;
+}
+
+function transformProps(props) {
+    if (!props || typeof props !== "object") return props;
+    const finalProps = {};
     for (const key in props) {
-        if (props.hasOwnProperty(key)) {
-            const prop = props[key];
-            const name = prop.name;
-            const propType = prop.value.propType;
+        if (!Object.prototype.hasOwnProperty.call(props, key)) continue;
+        const prop = props[key];
+        if (!prop || !prop.value) continue;
+        const name = prop.name;
+        const propType = prop.value.propType;
+        const payload = prop.value.value;
 
-            if (propType === 'setter') {
-                const setterValue = prop.value.value;
-                if (setterValue instanceof Array) {
-                    finalProps[name] = [];
-                    setterValue.forEach((setterVal) => {
-                        finalProps[name].push((typeof setterVal === 'object')
-                            ? transformProps(setterVal)
-                            : setterVal
-                        );
-                    })
-                }
-                else if (typeof setterValue === 'object') {
-                    finalProps[name] = transformProps(setterValue);
-                }
-                else if (name === 'strokeDashoffset') {
-                    finalProps[name] = [anime.setDashoffset, setterValue];
-                }
-                else {
-                    finalProps[name] = setterValue;
-                }
-            }
-
-            if (propType === 'svgSetter') {
-                finalProps[name] = prop.value.value;
-            }
-
-            if (propType === 'stagger') {
-                const staggerProps = prop.value.value;
-                const value = (staggerProps.value instanceof Array)
-                    ? [staggerProps.value[0], staggerProps.value[1]]
-                    : staggerProps.value;
-                finalProps[name] = (Object.keys(staggerProps.options).length === 0)
-                    ? anime.stagger(value)
-                    : anime.stagger(value, transformProps(staggerProps.options));
-            }
-
-            if (propType === 'callback') {
-                const dotNetRef = prop.value.value.dotNetRef;
-                const callbackName = prop.value.value.callback;
-                const paramCount = prop.value.paramCount;
-
-                if (callbackName !== '' && dotNetRef !== undefined) {
-                    switch (paramCount) {
-                        case 2:
-                            finalProps[name] = (_, index, targetsLength) => {
-                                return dotNetRef.invokeMethod(callbackName, index, targetsLength);
-                            }
-                            break;
-                        default:
-                            finalProps[name] = (state) => {
-                                return dotNetRef.invokeMethod(callbackName, state);
-                            }
-                    }
-                }
+        if (propType === "setter") {
+            finalProps[name] = transformSetter(name, payload);
+        } else if (propType === "svgSetter") {
+            finalProps[name] = payload;
+        } else if (propType === "objectTarget") {
+            finalProps[name] = Array.isArray(payload)
+                ? payload.map((item) => item.target)
+                : payload.target;
+        } else if (propType === "stagger") {
+            const staggerProps = payload;
+            const value = Array.isArray(staggerProps.value)
+                ? [staggerProps.value[0], staggerProps.value[1]]
+                : staggerProps.value;
+            const options = staggerProps.options || {};
+            finalProps[name] = Object.keys(options).length === 0
+                ? anime.stagger(value)
+                : anime.stagger(value, transformProps(options));
+        } else if (propType === "callback") {
+            const dotNetRef = payload && payload.dotNetRef;
+            const callbackName = payload && payload.callback;
+            const paramCount = prop.value.paramCount;
+            if (!callbackName || !dotNetRef) continue;
+            if (paramCount >= 2) {
+                finalProps[name] = {
+                    [VALUE_FN]: true,
+                    dotNetRef,
+                    callbackName
+                };
+            } else {
+                finalProps[name] = (anim) => {
+                    dotNetRef.invokeMethodAsync(callbackName, toState(anim)).catch(() => {});
+                };
             }
         }
     }
     return finalProps;
-};
+}
+
+async function makeValueFn(marker, targets) {
+    const total = targets.length;
+    if (total === 0) return () => undefined;
+    const values = await marker.dotNetRef.invokeMethodAsync(marker.callbackName, total);
+    return (_element, index) => values[index];
+}
+
+async function materialize(node, targets) {
+    if (Array.isArray(node)) {
+        for (let i = 0; i < node.length; i++) {
+            if (isMarker(node[i])) node[i] = await makeValueFn(node[i], targets);
+            else await materialize(node[i], targets);
+        }
+        return;
+    }
+    if (!isPlain(node) || isDomNode(node)) return;
+    for (const key of Object.keys(node)) {
+        const value = node[key];
+        if (isMarker(value)) node[key] = await makeValueFn(value, targets);
+        else await materialize(value, targets);
+    }
+}
+
+async function transformPropsAsync(props) {
+    const transformed = transformProps(props);
+    await materialize(transformed, resolveTargets(transformed.targets));
+    return transformed;
+}
+
+function firstElement(target) {
+    if (typeof target === "string") return document.querySelector(target);
+    return target;
+}
+
+function attachInstanceApi(instance) {
+    instance.getProgress = () => instance.progress;
+    instance.setProgress = (percent) => {
+        const clamped = Math.min(100, Math.max(0, Number(percent) || 0));
+        instance.seek((clamped / 100) * (instance.duration || 0));
+    };
+    instance.hasBegun = () => instance.began ? 1 : 0;
+    instance.hasCompleted = () => instance.completed ? 1 : 0;
+    instance.changeHasBegun = () => instance.changeBegan ? 1 : 0;
+    instance.changeHasCompleted = () => instance.changeCompleted ? 1 : 0;
+    instance.loopHasBegun = () => instance.loopBegan ? 1 : 0;
+    instance.isPaused = () => instance.paused ? 1 : 0;
+    instance.isReversed = () => instance.reversed ? 1 : 0;
+    instance.isReversePlayback = () => !!instance.reversePlayback;
+    instance.getId = () => instance.id;
+    instance.getLoop = () => normalizeCount(instance.loop);
+    instance.getRemaining = () => normalizeCount(instance.remaining);
+    instance.getDuration = () => instance.duration;
+    instance.getDelay = () => instance.delay;
+    instance.getEndDelay = () => instance.endDelay;
+    instance.getCurrentTime = () => instance.currentTime;
+    instance.getDirection = () => instance.direction;
+    instance.getTargetCount = () => (instance.animatables || []).length;
+    instance.getCurrentValues = () => {
+        const values = {};
+        for (const animation of instance.animations || []) {
+            const current = animation.currentValue;
+            values[animation.property] = current == null ? "" : String(current);
+        }
+        return values;
+    };
+    instance.whenFinished = () => instance.finished;
+    instance.finish = () => instance.seek(instance.duration);
+    instance.get = (target, propName, unit) =>
+        unit !== undefined && unit !== null
+            ? anime.get(target, propName, unit)
+            : anime.get(target, propName);
+    instance.set = async (targets, props) => {
+        anime.set(targets, await transformPropsAsync(props));
+    };
+    instance.random = (min, max) => anime.random(min, max);
+    return instance;
+}
 
 window.AnimeJs = {
-    createAnimation: (props) => {
-        let animation = anime(transformProps(props))
-        animation['getProgress'] = () => animation.progress;
-        animation['hasBegun'] = () => animation.began ? 1 : 0;
-        animation['hasCompleted'] = () => animation.completed ? 1 : 0;
-        animation['changeHasBegun'] = () => animation.changeBegan ? 1 : 0;
-        animation['changeHasCompleted'] = () => animation.changeCompleted ? 1 : 0;
-        animation['loopHasBegun'] = () => animation.loopBegan ? 1 : 0;
-        animation['isPaused'] = () => animation.paused ? 1 : 0;
-        animation['isReversed'] = () => animation.reversed ? 1 : 0;
-        animation['getId'] = () => animation.id;
-        animation['getLoop'] = () => animation.loop;
-        animation['getDuration'] = () => animation.duration;
-        animation['getDelay'] = () => animation.delay;
-        animation['getDirection'] = () => animation.direction;
-        return animation;
+    createAnimation: async (props) => {
+        const animation = anime(await transformPropsAsync(props));
+        return attachInstanceApi(animation);
     },
-    createTimeline: (props) => {
-        let timeline = anime.timeline(transformProps(props));
+    createTimeline: async (props) => {
+        const timeline = anime.timeline(await transformPropsAsync(props));
         const add = timeline.add;
-        timeline['add'] = (props, offset) => add(transformProps(props), offset);
-        timeline['getProgress'] = () => timeline.progress;
-        timeline['hasBegun'] = () => timeline.began ? 1 : 0;
-        timeline['hasCompleted'] = () => timeline.completed ? 1 : 0;
-        timeline['changeHasBegun'] = () => timeline.changeBegan ? 1 : 0;
-        timeline['changeHasCompleted'] = () => timeline.changeCompleted ? 1 : 0;
-        timeline['loopHasBegun'] = () => timeline.loopBegan ? 1 : 0;
-        timeline['isPaused'] = () => timeline.paused ? 1 : 0;
-        timeline['isReversed'] = () => timeline.reversed ? 1 : 0;
-        timeline['getId'] = () => timeline.id;
-        timeline['getLoop'] = () => timeline.loop;
-        return timeline;
+        timeline.add = async (childProps, offset) => {
+            add.call(timeline, await transformPropsAsync(childProps), offset);
+        };
+        return attachInstanceApi(timeline);
     },
     get: (target, propName, unit) => {
-        return unit !== undefined
+        return unit !== undefined && unit !== null
             ? anime.get(target, propName, unit)
             : anime.get(target, propName);
     },
-    set: (targets, props) => {
-        anime.set(targets, transformProps(props));
+    set: async (targets, props) => {
+        anime.set(targets, await transformPropsAsync(props));
     },
-    random: (min, max) => {
-        return anime.random(min, max);
+    remove: (targets) => {
+        anime.remove(targets);
     },
-    runningLength: () => {
-        return anime.running.length;
+    random: (min, max) => anime.random(min, max),
+    runningLength: () => anime.running.length,
+    getSpeed: () => anime.speed,
+    setSpeed: (value) => {
+        anime.speed = value;
     },
+    version: () => anime.version,
     suspendWhenDocumentHidden: (value) => {
         anime.suspendWhenDocumentHidden = value;
     },
-    path: (svgTarget) => {
+    getSuspendWhenDocumentHidden: () => anime.suspendWhenDocumentHidden,
+    convertPx: (element, value, unit) => anime.convertPx(firstElement(element), value, unit),
+    setDashoffset: (element) => anime.setDashoffset(firstElement(element)),
+    path: (svgTarget, percent) => ({
+        path: anime.path(svgTarget, percent == null ? 100 : percent)
+    }),
+    createObject: (values) => {
+        const target = Object.assign({}, values);
         return {
-            path: anime.path(svgTarget)
-        }
+            target,
+            readNumber: (name) => {
+                const value = target[name];
+                return typeof value === "number" ? value : Number(value);
+            },
+            readString: (name) => {
+                const value = target[name];
+                return value == null ? "" : String(value);
+            }
+        };
     }
 };
 // End Interop section

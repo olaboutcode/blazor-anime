@@ -6,8 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Authors>olaboutcode</Authors>
         <Version>0.0.1</Version>
-        <PackageTags>blazor animation with tag selection</PackageTags>
-        <Description>Blazor animation for tag selection</Description>
+        <PackageTags>blazor;anime.js;animation</PackageTags>
+        <Description>Typed Blazor bindings for anime.js v3.</Description>
         <PackageId>BlazorAnime</PackageId>
         <Copyright>olaboutcode</Copyright>
         <PackageReleaseNotes>Initial release</PackageReleaseNotes>

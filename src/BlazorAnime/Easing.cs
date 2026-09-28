@@ -2,15 +2,18 @@ namespace BlazorAnime;
 
 public sealed class Easing
 {
+    /// <summary>Passes an anime.js easing expression through unchanged, for example "easeInElastic(1, .5)".</summary>
+    public static Easing Raw(string definition) => new(definition);
+
     public static Easing Spring() => new("spring");
     public static Easing Steps(int steps) => new($"steps({steps})");
-    public static Easing EaseInElastic(double amplitude, double period)
+    public static Easing EaseInElastic(double amplitude = 1, double period = 0.5)
         => new($"easeInElastic({amplitude}, {period})");
-    public static Easing EaseOutElastic(double amplitude, double period)
+    public static Easing EaseOutElastic(double amplitude = 1, double period = 0.5)
         => new($"easeOutElastic({amplitude}, {period})");
-    public static Easing EaseInOutElastic(double amplitude, double period)
+    public static Easing EaseInOutElastic(double amplitude = 1, double period = 0.5)
         => new($"easeInOutElastic({amplitude}, {period})");
-    public static Easing EaseOutInElastic(double amplitude, double period)
+    public static Easing EaseOutInElastic(double amplitude = 1, double period = 0.5)
         => new($"easeOutInElastic({amplitude}, {period})");
     public static Easing CubicBezier(double x1, double y1, double x2, double y2) =>
         new($"cubicBezier({x1}, {y1}, {x2}, {y2})");
