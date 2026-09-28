@@ -1,0 +1,69 @@
+@page "/harness"
+@inject IAnime Anime
+@implements IAsyncDisposable
+
+<h1>Animation harness</h1>
+
+<div id="harness" data-ready="@(_ready ? "true" : "false")">
+    <div id="box" @ref="_box"></div>
+    <output id="progress">@_progress.ToString("0")</output>
+    <button id="seek-box" @onclick="SeekBox" disabled="@(!_ready)">Seek box</button>
+
+    <div id="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
+    <button id="seek-stagger" @onclick="SeekStagger" disabled="@(!_ready)">Seek stagger</button>
+</div>
+
+@code {
+    private ElementReference _box;
+    private Animation? _boxAnimation;
+    private Animation? _staggerAnimation;
+    private bool _ready;
+    private float _progress;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _boxAnimation = await Anime.Animate(props => props
+            .Targets(_box)
+            .TranslateX(120)
+            .Duration(400)
+            .Easing(Easing.Linear)
+            .AutoPlay(false)
+            .Complete(OnComplete));
+
+        _staggerAnimation = await Anime.Animate(props => props
+            .Targets("#dots .dot")
+            .TranslateX(80)
+            .Duration(200)
+            .Delay(Stagger.Create(100))
+            .Easing(Easing.Linear)
+            .AutoPlay(false));
+
+        _ready = true;
+        StateHasChanged();
+    }
+
+    private async Task SeekBox() => await _boxAnimation!.Seek(400);
+
+    private async Task SeekStagger() => await _staggerAnimation!.Seek(120);
+
+    private void OnComplete(AnimationState state)
+    {
+        _progress = state.Progress;
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_boxAnimation is not null)
+            await _boxAnimation.DisposeAsync();
+        if (_staggerAnimation is not null)
+            await _staggerAnimation.DisposeAsync();
+    }
+}
