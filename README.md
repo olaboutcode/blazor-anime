@@ -651,6 +651,8 @@ var running = await Anime.RunningLength();
 
 ## Samples
 
+Pushes to `master` publish both samples to [olaboutcode.github.io/blazor-anime](https://olaboutcode.github.io/blazor-anime/). In the repository settings, set GitHub Pages to deploy from GitHub Actions. `scripts/publish-pages.sh` builds that same site locally.
+
 `samples/Examples.WebAssembly` walks through the anime.js docs and a few longer demos (a wireframe sphere, Easter icons, a bicycle, and a 404 page). The http profile listens on `http://localhost:5161`.
 
 ```bash
