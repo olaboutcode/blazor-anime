@@ -14,8 +14,11 @@ public sealed class PropsBuilder
     private PropsBuilder Nested() => new(CallbackHandles);
     public PropsBuilder Easing(Easing easing)
     {
-        if(easing != null)
-            _props.Add(new GenProp<string>("easing", easing.GetValue()));
+        if (easing == null)
+            return this;
+        _props.Add(easing.IsCurve
+            ? new EasingCurveProp("easing", easing.Samples)
+            : new GenProp<string>("easing", easing.GetValue()));
         return this;
     }
     public PropsBuilder Direction(Direction direction)
@@ -148,10 +151,28 @@ public sealed class PropsBuilder
             _props.Add(CreateValueSetterCallback(property, callback));
         return this;
     }
+    public PropsBuilder Prop(string property, Func<TargetInfo, double> callback)
+    {
+        if(!string.IsNullOrWhiteSpace(property))
+            _props.Add(CreateTargetCallback(property, callback));
+        return this;
+    }
+    public PropsBuilder Prop(string property, Func<TargetInfo, string> callback)
+    {
+        if(!string.IsNullOrWhiteSpace(property))
+            _props.Add(CreateTargetCallback(property, callback));
+        return this;
+    }
+    public PropsBuilder Prop(string property, Func<TargetInfo, object> callback)
+    {
+        if(!string.IsNullOrWhiteSpace(property))
+            _props.Add(CreateTargetCallback(property, callback));
+        return this;
+    }
     public PropsBuilder Prop(string property, Stagger stagger)
     {
         if(!string.IsNullOrWhiteSpace(property) && stagger != null)
-            _props.Add(new StgProp(property, stagger.GetValue(), stagger.GetOptions().ToObject()));
+            _props.Add(new StgProp(property, stagger.GetValue(), stagger.GetOptions().ToStaggerOptions()));
         return this;
     }
     public PropsBuilder Prop(string property, Action<PropsBuilder> build)
@@ -233,6 +254,23 @@ public sealed class PropsBuilder
         var relay = new ValueCallbackRelay(callback);
         CallbackHandles.Add(relay);
         return new CallbackProp(propName, "InvokeAll", 2, relay.Reference);
+    }
+
+    private CallbackProp CreateTargetCallback(string propName, Func<TargetInfo, double> callback) =>
+        CreateTargetCallbackCore(propName, target => callback(target));
+
+    private CallbackProp CreateTargetCallback(string propName, Func<TargetInfo, string> callback) =>
+        CreateTargetCallbackCore(propName, target => callback(target));
+
+    private CallbackProp CreateTargetCallback(string propName, Func<TargetInfo, object> callback) =>
+        CreateTargetCallbackCore(propName, target => callback(target));
+
+    private CallbackProp CreateTargetCallbackCore(string propName, Func<TargetInfo, object?> callback)
+    {
+        ValidationChecks.EnsureAcceptableCallback(callback);
+        var relay = new TargetCallbackRelay(callback);
+        CallbackHandles.Add(relay);
+        return new CallbackProp(propName, "InvokeTargets", 3, relay.Reference);
     }
 
     private CallbackProp CreateStateCallback(string propName, Action<AnimationState> callback)

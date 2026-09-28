@@ -65,6 +65,9 @@ public static class PropsBuilderExtensions
         Func<int, int, double> callback) => builder.Prop("endDelay", callback);
     public static PropsBuilder EndDelay(
         this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("endDelay", target);
+    public static PropsBuilder EndDelay(
+        this PropsBuilder builder,
         Func<StaggerSyntax, StaggerSyntax> configure) =>
         builder.EndDelay(configure(new StaggerSyntax()).ToStagger());
     public static PropsBuilder Duration(
@@ -73,6 +76,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Duration(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("duration", callback);
+    public static PropsBuilder Duration(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("duration", target);
     public static PropsBuilder AutoPlay(
         this PropsBuilder builder,
         bool autoPlay) => builder.Prop("autoplay", autoPlay);
@@ -85,6 +91,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Delay(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("delay", callback);
+    public static PropsBuilder Delay(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("delay", target);
     public static PropsBuilder Delay(
         this PropsBuilder builder,
         Func<StaggerSyntax, StaggerSyntax> configure) =>
@@ -142,6 +151,9 @@ public static class PropsBuilderExtensions
         Func<int, int, double> callback) => builder.Prop("translateX", callback);
     public static PropsBuilder TranslateX(
         this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("translateX", target);
+    public static PropsBuilder TranslateX(
+        this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("translateX", path);
     
     public static PropsBuilder TranslateY(
@@ -167,6 +179,9 @@ public static class PropsBuilderExtensions
         Func<int, int, double> callback) => builder.Prop("translateY", callback);
     public static PropsBuilder TranslateY(
         this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("translateY", target);
+    public static PropsBuilder TranslateY(
+        this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("translateY", path);
     
     public static PropsBuilder TranslateZ(
@@ -190,6 +205,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder TranslateZ(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("translateZ", callback);
+    public static PropsBuilder TranslateZ(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("translateZ", target);
     public static PropsBuilder TranslateZ(
         this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("translateZ", path);
@@ -218,6 +236,9 @@ public static class PropsBuilderExtensions
         Func<int, int, double> callback) => builder.Prop("rotate", callback);
     public static PropsBuilder Rotate(
         this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("rotate", target);
+    public static PropsBuilder Rotate(
+        this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("rotate", path);
     
     public static PropsBuilder RotateX(
@@ -241,6 +262,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder RotateX(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("rotateX", callback);
+    public static PropsBuilder RotateX(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("rotateX", target);
     public static PropsBuilder RotateX(
         this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("rotateX", path);
@@ -268,6 +292,9 @@ public static class PropsBuilderExtensions
         Func<int, int, double> callback) => builder.Prop("rotateY", callback);
     public static PropsBuilder RotateY(
         this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("rotateY", target);
+    public static PropsBuilder RotateY(
+        this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("rotateY", path);
     
     public static PropsBuilder RotateZ(
@@ -291,6 +318,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder RotateZ(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("rotateZ", callback);
+    public static PropsBuilder RotateZ(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("rotateZ", target);
     public static PropsBuilder RotateZ(
         this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("rotateZ", path);
@@ -317,6 +347,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Scale(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("scale", callback);
+    public static PropsBuilder Scale(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("scale", target);
     public static PropsBuilder Scale(
         this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("scale", path);
@@ -347,6 +380,9 @@ public static class PropsBuilderExtensions
         Func<int, int, double> callback) => builder.Prop("scaleX", callback);
     public static PropsBuilder ScaleX(
         this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("scaleX", target);
+    public static PropsBuilder ScaleX(
+        this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("scaleX", path);
     
     public static PropsBuilder ScaleY(
@@ -372,6 +408,9 @@ public static class PropsBuilderExtensions
         Func<int, int, double> callback) => builder.Prop("scaleY", callback);
     public static PropsBuilder ScaleY(
         this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("scaleY", target);
+    public static PropsBuilder ScaleY(
+        this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("scaleY", path);
     
     public static PropsBuilder ScaleZ(
@@ -395,6 +434,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder ScaleZ(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("scaleZ", callback);
+    public static PropsBuilder ScaleZ(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("scaleZ", target);
     public static PropsBuilder ScaleZ(
         this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("scaleZ", path);
@@ -423,6 +465,9 @@ public static class PropsBuilderExtensions
         Func<int, int, double> callback) => builder.Prop("skewX", callback);
     public static PropsBuilder SkewX(
         this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("skewX", target);
+    public static PropsBuilder SkewX(
+        this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("skewX", path);
     
     public static PropsBuilder SkewY(
@@ -448,6 +493,9 @@ public static class PropsBuilderExtensions
         Func<int, int, double> callback) => builder.Prop("skewY", callback);
     public static PropsBuilder SkewY(
         this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("skewY", target);
+    public static PropsBuilder SkewY(
+        this PropsBuilder builder,
         SvgPathParam path) => builder.Prop("skewY", path);
 
     // Color Properties
@@ -468,6 +516,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder BackgroundColor(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("backgroundColor", callback);
+    public static PropsBuilder BackgroundColor(
+        this PropsBuilder builder,
+        Func<TargetInfo, string> target) => builder.Prop("backgroundColor", target);
     
     public static PropsBuilder Color(
         this PropsBuilder builder,
@@ -484,6 +535,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Color(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("color", callback);
+    public static PropsBuilder Color(
+        this PropsBuilder builder,
+        Func<TargetInfo, string> target) => builder.Prop("color", target);
     
     public static PropsBuilder BorderColor(
         this PropsBuilder builder,
@@ -500,6 +554,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder BorderColor(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("borderColor", callback);
+    public static PropsBuilder BorderColor(
+        this PropsBuilder builder,
+        Func<TargetInfo, string> target) => builder.Prop("borderColor", target);
     
     // Opacity
     // Element transparency from 0 (transparent) to 1 (opaque)
@@ -521,6 +578,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Opacity(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("opacity", callback);
+    public static PropsBuilder Opacity(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("opacity", target);
     
     // Border Properties
     // Border styling: radius (rounded corners) and width
@@ -545,6 +605,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder BorderRadius(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("borderRadius", callback);
+    public static PropsBuilder BorderRadius(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("borderRadius", target);
     
     public static PropsBuilder BorderWidth(
         this PropsBuilder builder,
@@ -567,6 +630,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder BorderWidth(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("borderWidth", callback);
+    public static PropsBuilder BorderWidth(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("borderWidth", target);
     
     // Dimension Properties
     // Element size: width and height
@@ -591,6 +657,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Width(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("width", callback);
+    public static PropsBuilder Width(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("width", target);
     
     public static PropsBuilder Height(
         this PropsBuilder builder,
@@ -613,6 +682,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Height(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("height", callback);
+    public static PropsBuilder Height(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("height", target);
     
     // Position Properties
     // CSS positioning values for positioned elements (absolute, relative, fixed)
@@ -637,6 +709,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Top(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("top", callback);
+    public static PropsBuilder Top(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("top", target);
     
     public static PropsBuilder Left(
         this PropsBuilder builder,
@@ -659,6 +734,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Left(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("left", callback);
+    public static PropsBuilder Left(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("left", target);
     
     public static PropsBuilder Right(
         this PropsBuilder builder,
@@ -681,6 +759,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Right(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("right", callback);
+    public static PropsBuilder Right(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("right", target);
     
     public static PropsBuilder Bottom(
         this PropsBuilder builder,
@@ -703,6 +784,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Bottom(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("bottom", callback);
+    public static PropsBuilder Bottom(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("bottom", target);
     
     // Margin Properties
     // Outer spacing around elements (top, left, right, bottom)
@@ -727,6 +811,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder MarginTop(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("marginTop", callback);
+    public static PropsBuilder MarginTop(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("marginTop", target);
     
     public static PropsBuilder MarginLeft(
         this PropsBuilder builder,
@@ -749,6 +836,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder MarginLeft(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("marginLeft", callback);
+    public static PropsBuilder MarginLeft(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("marginLeft", target);
     
     public static PropsBuilder MarginRight(
         this PropsBuilder builder,
@@ -771,6 +861,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder MarginRight(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("marginRight", callback);
+    public static PropsBuilder MarginRight(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("marginRight", target);
     
     public static PropsBuilder MarginBottom(
         this PropsBuilder builder,
@@ -793,6 +886,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder MarginBottom(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("marginBottom", callback);
+    public static PropsBuilder MarginBottom(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("marginBottom", target);
     
     // Padding Properties
     // Inner spacing inside elements (top, left, right, bottom)
@@ -817,6 +913,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder PaddingTop(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("paddingTop", callback);
+    public static PropsBuilder PaddingTop(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("paddingTop", target);
     
     public static PropsBuilder PaddingLeft(
         this PropsBuilder builder,
@@ -839,6 +938,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder PaddingLeft(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("paddingLeft", callback);
+    public static PropsBuilder PaddingLeft(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("paddingLeft", target);
     
     public static PropsBuilder PaddingRight(
         this PropsBuilder builder,
@@ -861,6 +963,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder PaddingRight(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("paddingRight", callback);
+    public static PropsBuilder PaddingRight(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("paddingRight", target);
     
     public static PropsBuilder PaddingBottom(
         this PropsBuilder builder,
@@ -883,6 +988,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder PaddingBottom(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("paddingBottom", callback);
+    public static PropsBuilder PaddingBottom(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("paddingBottom", target);
     
     // Typography Properties
     // Text styling: size, spacing, and line height
@@ -907,6 +1015,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder FontSize(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("fontSize", callback);
+    public static PropsBuilder FontSize(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("fontSize", target);
     
     public static PropsBuilder LetterSpacing(
         this PropsBuilder builder,
@@ -929,6 +1040,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder LetterSpacing(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("letterSpacing", callback);
+    public static PropsBuilder LetterSpacing(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("letterSpacing", target);
     
     public static PropsBuilder LineHeight(
         this PropsBuilder builder,
@@ -951,6 +1065,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder LineHeight(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("lineHeight", callback);
+    public static PropsBuilder LineHeight(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("lineHeight", target);
     
     public static PropsBuilder FontWeight(
         this PropsBuilder builder,
@@ -973,6 +1090,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder FontWeight(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("fontWeight", callback);
+    public static PropsBuilder FontWeight(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("fontWeight", target);
     
     public static PropsBuilder WordSpacing(
         this PropsBuilder builder,
@@ -995,6 +1115,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder WordSpacing(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("wordSpacing", callback);
+    public static PropsBuilder WordSpacing(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("wordSpacing", target);
     
     public static PropsBuilder TextIndent(
         this PropsBuilder builder,
@@ -1017,6 +1140,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder TextIndent(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("textIndent", callback);
+    public static PropsBuilder TextIndent(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("textIndent", target);
 
     // Visual Effects
     // Shadows, filters, and other visual enhancements
@@ -1035,6 +1161,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder BoxShadow(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("boxShadow", callback);
+    public static PropsBuilder BoxShadow(
+        this PropsBuilder builder,
+        Func<TargetInfo, string> target) => builder.Prop("boxShadow", target);
     
     public static PropsBuilder TextShadow(
         this PropsBuilder builder,
@@ -1051,6 +1180,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder TextShadow(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("textShadow", callback);
+    public static PropsBuilder TextShadow(
+        this PropsBuilder builder,
+        Func<TargetInfo, string> target) => builder.Prop("textShadow", target);
     
     public static PropsBuilder Filter(
         this PropsBuilder builder,
@@ -1067,6 +1199,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Filter(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("filter", callback);
+    public static PropsBuilder Filter(
+        this PropsBuilder builder,
+        Func<TargetInfo, string> target) => builder.Prop("filter", target);
 
     // Min/Max Dimensions
     // Constraints for element sizing
@@ -1091,6 +1226,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder MinWidth(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("minWidth", callback);
+    public static PropsBuilder MinWidth(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("minWidth", target);
     
     public static PropsBuilder MaxWidth(
         this PropsBuilder builder,
@@ -1113,6 +1251,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder MaxWidth(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("maxWidth", callback);
+    public static PropsBuilder MaxWidth(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("maxWidth", target);
     
     public static PropsBuilder MinHeight(
         this PropsBuilder builder,
@@ -1135,6 +1276,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder MinHeight(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("minHeight", callback);
+    public static PropsBuilder MinHeight(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("minHeight", target);
     
     public static PropsBuilder MaxHeight(
         this PropsBuilder builder,
@@ -1157,6 +1301,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder MaxHeight(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("maxHeight", callback);
+    public static PropsBuilder MaxHeight(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("maxHeight", target);
 
     // Z-Index
     // Stacking order for positioned elements
@@ -1172,6 +1319,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder ZIndex(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("zIndex", callback);
+    public static PropsBuilder ZIndex(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("zIndex", target);
 
     // Outline Properties
     // Element outline styling (similar to border but doesn't affect layout)
@@ -1196,6 +1346,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder OutlineWidth(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("outlineWidth", callback);
+    public static PropsBuilder OutlineWidth(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("outlineWidth", target);
     
     public static PropsBuilder OutlineColor(
         this PropsBuilder builder,
@@ -1212,6 +1365,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder OutlineColor(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("outlineColor", callback);
+    public static PropsBuilder OutlineColor(
+        this PropsBuilder builder,
+        Func<TargetInfo, string> target) => builder.Prop("outlineColor", target);
     
     public static PropsBuilder OutlineOffset(
         this PropsBuilder builder,
@@ -1234,6 +1390,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder OutlineOffset(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("outlineOffset", callback);
+    public static PropsBuilder OutlineOffset(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("outlineOffset", target);
 
     // Transform Origin
     // Pivot point for transform operations
@@ -1252,6 +1411,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder TransformOrigin(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("transformOrigin", callback);
+    public static PropsBuilder TransformOrigin(
+        this PropsBuilder builder,
+        Func<TargetInfo, string> target) => builder.Prop("transformOrigin", target);
 
     // Background Properties
     // Background image positioning and sizing
@@ -1270,6 +1432,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder BackgroundPosition(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("backgroundPosition", callback);
+    public static PropsBuilder BackgroundPosition(
+        this PropsBuilder builder,
+        Func<TargetInfo, string> target) => builder.Prop("backgroundPosition", target);
     
     public static PropsBuilder BackgroundSize(
         this PropsBuilder builder,
@@ -1286,6 +1451,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder BackgroundSize(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("backgroundSize", callback);
+    public static PropsBuilder BackgroundSize(
+        this PropsBuilder builder,
+        Func<TargetInfo, string> target) => builder.Prop("backgroundSize", target);
 
     // Flexbox Properties
     // Flexible box layout properties
@@ -1304,6 +1472,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder FlexGrow(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("flexGrow", callback);
+    public static PropsBuilder FlexGrow(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("flexGrow", target);
     
     public static PropsBuilder FlexShrink(
         this PropsBuilder builder,
@@ -1320,6 +1491,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder FlexShrink(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("flexShrink", callback);
+    public static PropsBuilder FlexShrink(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("flexShrink", target);
     
     public static PropsBuilder FlexBasis(
         this PropsBuilder builder,
@@ -1342,6 +1516,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder FlexBasis(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("flexBasis", callback);
+    public static PropsBuilder FlexBasis(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("flexBasis", target);
     
     public static PropsBuilder Order(
         this PropsBuilder builder,
@@ -1355,6 +1532,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Order(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("order", callback);
+    public static PropsBuilder Order(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("order", target);
 
     // Gap Properties
     // Spacing between flex/grid items
@@ -1379,6 +1559,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Gap(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("gap", callback);
+    public static PropsBuilder Gap(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("gap", target);
     
     public static PropsBuilder RowGap(
         this PropsBuilder builder,
@@ -1401,6 +1584,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder RowGap(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("rowGap", callback);
+    public static PropsBuilder RowGap(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("rowGap", target);
     
     public static PropsBuilder ColumnGap(
         this PropsBuilder builder,
@@ -1423,6 +1609,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder ColumnGap(
         this PropsBuilder builder,
         Func<int, int, double> callback) => builder.Prop("columnGap", callback);
+    public static PropsBuilder ColumnGap(
+        this PropsBuilder builder,
+        Func<TargetInfo, double> target) => builder.Prop("columnGap", target);
 
     // Clip Path
     // Shape clipping for elements
@@ -1441,6 +1630,9 @@ public static class PropsBuilderExtensions
     public static PropsBuilder ClipPath(
         this PropsBuilder builder,
         Func<int, int, string> callback) => builder.Prop("clipPath", callback);
+    public static PropsBuilder ClipPath(
+        this PropsBuilder builder,
+        Func<TargetInfo, string> target) => builder.Prop("clipPath", target);
 
     // Unit strings and relative operators on the transforms anime.js treats as first-class.
     public static PropsBuilder TranslateX(this PropsBuilder builder, string value) => builder.Prop("translateX", value);

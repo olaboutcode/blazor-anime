@@ -31,19 +31,19 @@ public sealed class Stagger
         return new Stagger(new[] { from, to }, builder.Build());
     }
 
-    internal static Stagger FromParts(object value, IReadOnlyList<StgOptionProp> options) =>
+    internal static Stagger FromParts(object value, IReadOnlyList<Prop> options) =>
         new(value, options);
 
-    internal IReadOnlyList<StgOptionProp> GetOptions() => _options;
+    internal IReadOnlyList<Prop> GetOptions() => _options;
     internal object GetValue() => _value;
 
-    private Stagger(object value, IReadOnlyList<StgOptionProp> options)
+    private Stagger(object value, IReadOnlyList<Prop> options)
     {
         _options = options;
         _value = value;
     }
 
-    private readonly IReadOnlyList<StgOptionProp> _options;
+    private readonly IReadOnlyList<Prop> _options;
     private readonly object _value;
 }
 
@@ -63,7 +63,10 @@ public sealed class StaggerOptionsBuilder
 
     public StaggerOptionsBuilder Easing(Easing value)
     {
-        _options.Add(new StgOptionProp("easing", value.GetValue()));
+        ArgumentNullException.ThrowIfNull(value);
+        _options.Add(value.IsCurve
+            ? new EasingCurveProp("easing", value.Samples)
+            : new StgOptionProp("easing", value.GetValue()));
         return this;
     }
 
@@ -101,8 +104,8 @@ public sealed class StaggerOptionsBuilder
 
     public StaggerOptionsBuilder From(int index) => From(StaggerPosition.Index(index));
 
-    internal IReadOnlyList<StgOptionProp> Build() => _options.AsReadOnly();
-    private readonly List<StgOptionProp> _options;
+    internal IReadOnlyList<Prop> Build() => _options.AsReadOnly();
+    private readonly List<Prop> _options;
     internal StaggerOptionsBuilder() => _options = [];
 }
 
@@ -233,18 +236,11 @@ public sealed class StaggerPosition
 
 internal static class StaggerExtensions
 {
-    internal static System.Dynamic.ExpandoObject ToObject(this IEnumerable<StgOptionProp> props)
+    internal static Dictionary<string, object> ToStaggerOptions(this IEnumerable<Prop> props)
     {
-        Dictionary<string, StgOptionProp> properties = [];
+        var options = new Dictionary<string, object>();
         foreach (var prop in props)
-        {
-            properties[prop.GetName()] = prop;
-        }
-        dynamic propsObject = new System.Dynamic.ExpandoObject();
-        foreach (var property in properties.Values)
-        {
-            ((IDictionary<string, object>)propsObject).Add(property.GetName(), property.GetValue());
-        }
-        return propsObject;
+            options[prop.GetName()] = prop.GetValue();
+        return options;
     }
 }

@@ -104,7 +104,7 @@ function transformSetter(name, setterValue) {
     return setterValue;
 }
 
-function transformProps(props) {
+function transformProps(props, forStagger = false) {
     if (!props || typeof props !== "object") return props;
     const finalProps = {};
     for (const key in props) {
@@ -131,7 +131,12 @@ function transformProps(props) {
             const options = staggerProps.options || {};
             finalProps[name] = Object.keys(options).length === 0
                 ? anime.stagger(value)
-                : anime.stagger(value, transformProps(options));
+                : anime.stagger(value, transformProps(options, true));
+        } else if (propType === "easingCurve") {
+            const ease = curveEasing(payload);
+            // anime.js calls an easing parameter as (element, index, total) and uses the return value.
+            // stagger passes the easing straight to its parser, which keeps a function as-is.
+            finalProps[name] = forStagger ? ease : function () { return ease; };
         } else if (propType === "callback") {
             const dotNetRef = payload && payload.dotNetRef;
             const callbackName = payload && payload.callback;
@@ -141,7 +146,8 @@ function transformProps(props) {
                 finalProps[name] = {
                     [VALUE_FN]: true,
                     dotNetRef,
-                    callbackName
+                    callbackName,
+                    withTarget: paramCount >= 3
                 };
             } else {
                 finalProps[name] = (anim) => {
@@ -153,10 +159,43 @@ function transformProps(props) {
     return finalProps;
 }
 
+function curveEasing(samples) {
+    return (progress) => {
+        const clamped = Math.min(1, Math.max(0, Number(progress) || 0));
+        const scaled = clamped * (samples.length - 1);
+        const index = Math.floor(scaled);
+        const next = Math.min(index + 1, samples.length - 1);
+        const fraction = scaled - index;
+        return samples[index] + (samples[next] - samples[index]) * fraction;
+    };
+}
+
+function describeTarget(element, index, total) {
+    const dataset = {};
+    const source = element && element.dataset;
+    if (source) {
+        for (const key of Object.keys(source)) {
+            const value = source[key];
+            dataset[key] = value == null ? "" : String(value);
+        }
+    }
+    const tag = element && element.tagName ? String(element.tagName) : "";
+    return {
+        index,
+        total,
+        id: element && element.id ? String(element.id) : "",
+        tagName: tag.toLowerCase(),
+        dataset
+    };
+}
+
 async function makeValueFn(marker, targets) {
     const total = targets.length;
     if (total === 0) return () => undefined;
-    const values = await marker.dotNetRef.invokeMethodAsync(marker.callbackName, total);
+    const argument = marker.withTarget
+        ? targets.map((element, index) => describeTarget(element, index, total))
+        : total;
+    const values = await marker.dotNetRef.invokeMethodAsync(marker.callbackName, argument);
     return (_element, index) => values[index];
 }
 

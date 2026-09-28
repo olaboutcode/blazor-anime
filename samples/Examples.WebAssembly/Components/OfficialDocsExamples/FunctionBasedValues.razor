@@ -42,37 +42,24 @@
         }
     }
 
-    [JSInvokable]
-    public double TranslationXSetter(int index, int targetsCount) =>
-        index switch
-        {
-            0 => 170,
-            1 => 80,
-            2 => 270,
-            _ => 0
-        };
+    public double TranslationXSetter(TargetInfo target) =>
+        double.Parse(target.Dataset.GetValueOrDefault("x", "0"));
 
-    [JSInvokable]
     public double TranslationYSetter(int index, int count) =>
         50 + (-50 * index);
 
-    [JSInvokable]
     public double ScaleSetter(int index, int count) =>
         (count - index) + .25;
 
-    [JSInvokable]
     public double RotationSetter(int index, int count) =>
         _rnd.Next(-360, 360);
 
-    [JSInvokable]
     public object BorderRadiusSetter(int index, int count) =>
         new string[2]{"50%", _rnd.Next(10, 35)+"%"};
 
-    [JSInvokable]
     public double DurationSetter(int index, int count) =>
         _rnd.Next(1200, 1800);
 
-    [JSInvokable]
     public double DelaySetter(int index, int count) =>
         _rnd.Next(0, 400);
 

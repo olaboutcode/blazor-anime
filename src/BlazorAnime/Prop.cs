@@ -97,6 +97,22 @@ internal class StgOptionProp(
     }
 }
 
+internal sealed class EasingCurveProp(string name, double[] samples) : Prop(name, samples)
+{
+    public override object GetValue()
+    {
+        return new
+        {
+            name = Name,
+            value = new
+            {
+                propType = "easingCurve",
+                value = GetPrimValue()
+            }
+        };
+    }
+}
+
 internal sealed class ObjectTargetProp(string name, object reference) : Prop(name, reference)
 {
     public override object GetValue()

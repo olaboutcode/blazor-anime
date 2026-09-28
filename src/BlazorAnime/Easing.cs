@@ -2,6 +2,22 @@ namespace BlazorAnime;
 
 public sealed class Easing
 {
+    /// <summary>
+    /// Samples <paramref name="ease"/> from 0 to 1. JavaScript interpolates those samples on every frame.
+    /// </summary>
+    public static Easing Curve(Func<double, double> ease, int samples = 64)
+    {
+        ArgumentNullException.ThrowIfNull(ease);
+        if (samples < 2)
+            throw new ArgumentOutOfRangeException(nameof(samples), "A curve needs at least two samples.");
+
+        var table = new double[samples];
+        var last = samples - 1;
+        for (var i = 0; i < samples; i++)
+            table[i] = ease(i / (double)last);
+        return new Easing(table);
+    }
+
     /// <summary>Passes an anime.js easing expression through unchanged, for example "easeInElastic(1, .5)".</summary>
     public static Easing Raw(string definition) => new(definition);
 
@@ -61,7 +77,15 @@ public sealed class Easing
     public static Easing EaseOutInBack { get; } = new("easeOutInBack");
     public static Easing EaseOutInBounce { get; } = new("easeOutInBounce");
 
-    public string GetValue() => _name;
-    private Easing(string name) { _name = name; }
-    private readonly string _name;
+    public string GetValue() => _name ?? throw new InvalidOperationException(
+        "A sampled curve has no anime.js expression. Pass it to Easing().");
+
+    internal bool IsCurve => _samples is not null;
+    internal double[] Samples => _samples ?? throw new InvalidOperationException(
+        "This easing is an anime.js expression.");
+
+    private Easing(string name) => _name = name;
+    private Easing(double[] samples) => _samples = samples;
+    private readonly string? _name;
+    private readonly double[]? _samples;
 }

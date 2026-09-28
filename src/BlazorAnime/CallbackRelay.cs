@@ -54,3 +54,31 @@ internal sealed class ValueCallbackRelay : IDisposable
 
     public void Dispose() => _reference.Dispose();
 }
+
+/// <summary>
+/// Same as <see cref="ValueCallbackRelay"/>, but each value can read a snapshot of its target.
+/// </summary>
+internal sealed class TargetCallbackRelay : IDisposable
+{
+    private readonly Func<TargetInfo, object?> _callback;
+    private readonly DotNetObjectReference<TargetCallbackRelay> _reference;
+
+    public TargetCallbackRelay(Func<TargetInfo, object?> callback)
+    {
+        _callback = callback;
+        _reference = DotNetObjectReference.Create(this);
+    }
+
+    public DotNetObjectReference<TargetCallbackRelay> Reference => _reference;
+
+    [JSInvokable]
+    public object?[] InvokeTargets(TargetInfo[] targets)
+    {
+        var values = new object?[targets.Length];
+        for (var index = 0; index < targets.Length; index++)
+            values[index] = _callback(targets[index]);
+        return values;
+    }
+
+    public void Dispose() => _reference.Dispose();
+}

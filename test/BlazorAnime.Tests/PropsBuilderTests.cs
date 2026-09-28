@@ -123,6 +123,68 @@ public sealed class PropsBuilderTests
     }
 
     [Fact]
+    public void TargetCallback_SendsASnapshotInsteadOfTheIndex()
+    {
+        var host = new CallbackHost();
+        using var root = new Props();
+        var built = root.Build(builder => builder.TranslateX(host.FromTarget));
+
+        var callback = built.GetProperty("translateX").GetProperty("value");
+        Assert.Equal("callback", callback.GetProperty("propType").GetString());
+        Assert.Equal(3, callback.GetProperty("paramCount").GetInt32());
+        Assert.Equal("InvokeTargets", callback.GetProperty("value").GetProperty("callback").GetString());
+    }
+
+    [Fact]
+    public void Curve_SamplesTheFunctionFromZeroToOne()
+    {
+        var easing = Easing.Curve(t => t * t, samples: 5);
+
+        Assert.Equal(5, easing.Samples.Length);
+        Assert.Equal(0, easing.Samples[0]);
+        Assert.Equal(1, easing.Samples[^1], precision: 5);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Easing.Curve(t => t, 1));
+    }
+
+    [Fact]
+    public void Curve_IsSentAsSamplesForJavaScriptToInterpolate()
+    {
+        using var root = new Props();
+        var built = root.Build(builder => builder
+            .Easing(Easing.Curve(t => t, 3))
+            .Delay(stagger => stagger.Value(10).Easing(Easing.Curve(t => t, 4))));
+
+        var easing = built.GetProperty("easing").GetProperty("value");
+        Assert.Equal("easingCurve", easing.GetProperty("propType").GetString());
+        Assert.Equal(3, easing.GetProperty("value").GetArrayLength());
+
+        var staggerEasing = StaggerValue(built, "delay")
+            .GetProperty("options")
+            .GetProperty("easing")
+            .GetProperty("value");
+        Assert.Equal("easingCurve", staggerEasing.GetProperty("propType").GetString());
+        Assert.Equal(4, staggerEasing.GetProperty("value").GetArrayLength());
+    }
+
+    [Fact]
+    public void TargetInfo_RoundTripsTheSnapshotContract()
+    {
+        var json = """{"index":1,"total":2,"id":"a","tagName":"div","dataset":{"x":"4"}}""";
+        var info = JsonSerializer.Deserialize<TargetInfo>(json, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true
+        });
+
+        Assert.NotNull(info);
+        Assert.Equal(1, info.Index);
+        Assert.Equal(2, info.Total);
+        Assert.Equal("a", info.Id);
+        Assert.Equal("div", info.TagName);
+        Assert.Equal("4", info.Dataset["x"]);
+    }
+
+    [Fact]
     public void Loop_TrueAndCount_KeepTheirJsonKinds()
     {
         using var infinite = new Props();
@@ -159,6 +221,8 @@ public sealed class PropsBuilderTests
     private sealed class CallbackHost
     {
         public double Delay(int index, int total) => index * 25;
+
+        public double FromTarget(TargetInfo info) => info.Index;
 
         public void OnUpdate(AnimationState state)
         {

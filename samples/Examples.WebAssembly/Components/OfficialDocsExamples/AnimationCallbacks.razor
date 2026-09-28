@@ -30,13 +30,11 @@
         }
     }
 
-    [JSInvokable]
     public double SetDelay(int index, int targetsCount)
     {
         return index * 500;
     }
 
-    [JSInvokable]
     public void OnUpdate(AnimationState state)
     {
         _progress = state.Progress;

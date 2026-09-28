@@ -164,6 +164,90 @@ test("timeline offset waits until the previous child plus the gap", async () => 
     assert.equal(second.target.v, 1);
 });
 
+test("a sampled curve eases from the table instead of a named function", async () => {
+    const api = loadAnime();
+    const target = api.createObject({ x: 0 });
+    const animation = await api.createAnimation({
+        targets: prop("targets", "objectTarget", target),
+        x: setter("x", 100),
+        duration: setter("duration", 100),
+        autoplay: setter("autoplay", false),
+        easing: {
+            name: "easing",
+            value: { propType: "easingCurve", value: [0, 0, 1] }
+        }
+    });
+
+    animation.seek(50);
+    assert.ok(Math.abs(target.target.x) < 0.001, `midpoint was ${target.target.x}`);
+    animation.seek(100);
+    assert.equal(target.target.x, 100);
+});
+
+test("stagger accepts a sampled curve as its easing", async () => {
+    const api = loadAnime();
+    const rows = [api.createObject({ n: 0 }), api.createObject({ n: 0 })];
+    const animation = await api.createAnimation({
+        targets: prop("targets", "objectTarget", rows),
+        n: setter("n", 1),
+        duration: setter("duration", 10),
+        autoplay: setter("autoplay", false),
+        easing: setter("easing", "linear"),
+        delay: prop("delay", "stagger", {
+            value: 100,
+            options: {
+                easing: {
+                    name: "easing",
+                    value: { propType: "easingCurve", value: [0, 1] }
+                }
+            }
+        })
+    });
+
+    animation.seek(animation.getDuration());
+    assert.deepEqual(rows.map((row) => row.target.n), [1, 1]);
+});
+
+test("target callbacks receive a snapshot of each target", async () => {
+    const api = loadAnime();
+    const rows = [
+        api.createObject({ n: 0, id: "a", tagName: "DIV", dataset: { x: "4" } }),
+        api.createObject({ n: 0, id: "b", tagName: "SPAN", dataset: { x: "9" } })
+    ];
+    let seen = [];
+    const animation = await api.createAnimation({
+        targets: prop("targets", "objectTarget", rows),
+        n: {
+            name: "n",
+            value: {
+                propType: "callback",
+                paramCount: 3,
+                value: {
+                    callback: "InvokeTargets",
+                    dotNetRef: {
+                        async invokeMethodAsync(name, infos) {
+                            assert.equal(name, "InvokeTargets");
+                            seen = infos;
+                            return infos.map((info) => Number(info.dataset.x));
+                        }
+                    }
+                }
+            }
+        },
+        duration: setter("duration", 10),
+        autoplay: setter("autoplay", false),
+        easing: setter("easing", "linear")
+    });
+
+    animation.seek(10);
+    assert.deepEqual(rows.map((row) => row.target.n), [4, 9]);
+    assert.equal(seen[0].id, "a");
+    assert.equal(seen[0].tagName, "div");
+    assert.equal(seen[0].dataset.x, "4");
+    assert.equal(seen[1].index, 1);
+    assert.equal(seen[1].total, 2);
+});
+
 test("speed and random use the anime.js helpers", () => {
     const api = loadAnime();
     api.setSpeed(2);
