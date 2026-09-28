@@ -2,12 +2,17 @@
 @inject IAnime Anime;
 
 <div class="demo">
-    <div class="demo-content offsets-demo">
+    <div class="demo-content timeline-inheritance-demo">
         <div class="el square"></div>
     </div>
 </div>
 
 @code {
+    [CascadingParameter(Name = "DemoPlaying")]
+    public bool? Playing { get; set; }
+
+    private bool? _playingApplied;
+
     private Timeline? _timeline;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -18,14 +23,21 @@
                 props => props
                 .Duration(750)
                 .Easing(Easing.EaseOutExpo)
-                .AutoPlay(true)
+                .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             )
             .AddAsync(
                 props => props
-                .Targets(".offsets-demo .el.square")
+                .Targets(".timeline-inheritance-demo .el.square")
                 .TranslateX(250)
             );
+            _playingApplied = await DemoPlayback.Apply(_timeline, Playing, _playingApplied);
         }
+    }
+
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        _playingApplied = await DemoPlayback.Apply(_timeline, Playing, _playingApplied);
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()

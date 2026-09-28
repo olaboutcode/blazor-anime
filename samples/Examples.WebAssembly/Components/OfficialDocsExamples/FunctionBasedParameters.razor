@@ -10,6 +10,11 @@
 </div>
 
 @code {
+    [CascadingParameter(Name = "DemoPlaying")]
+    public bool? Playing { get; set; }
+
+    private bool? _playingApplied;
+
     private Animation? _animation;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -24,9 +29,16 @@
                 .Duration(750)
                 .Direction(Direction.Alternate)
                 .Loop(true)
-                .AutoPlay(true)
+                .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             );
+            _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
         }
+    }
+
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()

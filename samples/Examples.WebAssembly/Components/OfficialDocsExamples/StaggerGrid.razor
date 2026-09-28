@@ -151,6 +151,11 @@
 </div>
 
 @code {
+    [CascadingParameter(Name = "DemoPlaying")]
+    public bool? Playing { get; set; }
+
+    private bool? _playingApplied;
+
     private Animation? _animation = null;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -160,7 +165,7 @@
             _animation ??= await Anime.Animate(
                 props => props
                 .Targets(".staggering-grid-demo .el")
-                .AutoPlay(true)
+                .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
                 .Loop(3)
                 .Scale([
                     props => props
@@ -177,7 +182,14 @@
                     .From(StaggerPosition.Center)
                 ))
             );
+            _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
         }
+    }
+
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()

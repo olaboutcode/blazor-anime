@@ -149,7 +149,7 @@ public static class DemoCatalog
                     .Easing(Easing.EaseOutExpo));
 
                 await timeline.AddAsync(child => child
-                    .Targets(".offsets-demo .el.square")
+                    .Targets(".timeline-basics-demo .el.square")
                     .TranslateX(250));
                 """,
                 "Components/OfficialDocsExamples/TimelineBasics.razor"),
@@ -158,13 +158,13 @@ public static class DemoCatalog
                 "A number is an absolute time in milliseconds. OffSet.Before and OffSet.After shift from the end of the previous child. The string \"+=500\" is the same idea as OffSet.After(500).",
                 """
                 await timeline.AddAsync(child => child
-                    .Targets(".offsets-demo .el.square")
+                    .Targets(".timeline-offset-demo .el.square")
                     .TranslateX(250));
                 await timeline.AddAsync(child => child
-                    .Targets(".offsets-demo .el.circle")
+                    .Targets(".timeline-offset-demo .el.circle")
                     .TranslateX(250), OffSet.Before(600));
                 await timeline.AddAsync(child => child
-                    .Targets(".offsets-demo .el.triangle")
+                    .Targets(".timeline-offset-demo .el.triangle")
                     .TranslateX(250), 400);
                 """,
                 "Components/OfficialDocsExamples/TimelineOffset.razor"),
@@ -177,7 +177,7 @@ public static class DemoCatalog
                     .Easing(Easing.EaseOutExpo));
 
                 await timeline.AddAsync(child => child
-                    .Targets(".offsets-demo .el.square")
+                    .Targets(".timeline-inheritance-demo .el.square")
                     .TranslateX(250));
                 """,
                 "Components/OfficialDocsExamples/TimelineInheritance.razor"),
@@ -191,7 +191,7 @@ public static class DemoCatalog
                     .AutoPlay(false));
 
                 await timeline.AddAsync(child => child
-                    .Targets(".offsets-demo .el.square")
+                    .Targets(".timeline-controls-demo .el.square")
                     .TranslateX(250));
                 await timeline.Play();
                 """,
