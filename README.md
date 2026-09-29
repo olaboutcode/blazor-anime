@@ -30,6 +30,7 @@ This guide matches the [anime.js v4 documentation](https://animejs.com/documenta
   - [SVG](#svg)
   - [Easings](#easings)
   - [Helpers](#helpers)
+- [Animatable](#animatable)
 - [Samples](#samples)
 - [Building](#building)
 
@@ -51,6 +52,17 @@ Add the namespace in `_Imports.razor`:
 
 ```razor
 @using BlazorAnime
+```
+
+Animatable is a second package. It registers `IAnimatable` and loads `BlazorAnime.Animatable.lib.module.js`. That file imports the core module, so the page still has one engine.
+
+```bash
+dotnet add package BlazorAnime.Animatable
+```
+
+```csharp
+builder.Services.AddBlazorAnime();
+builder.Services.AddBlazorAnimeAnimatable();
 ```
 
 ## Usage example
@@ -660,6 +672,53 @@ var pauses = await Anime.GetPauseOnDocumentHidden();
 
 `PauseOnDocumentHidden(true)` is the anime.js default: playback pauses while the tab is hidden.
 
+## Animatable
+
+`BlazorAnime.Animatable` binds `createAnimatable`. A property is a number duration in milliseconds, or a settings object. Calling it later animates to a new number. `Get` reads one number. `GetValues` reads a color or any other list of numbers. `Revert` restores the original values. `DisposeAsync` pauses and releases the instance.
+
+```razor
+@implements IAsyncDisposable
+@inject IAnimatable Animatable
+
+<div class="square"></div>
+
+@code {
+    private Animatable? _square;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _square = await Animatable.Create(".square", props => props
+                .Property("x", 500)
+                .Property("y", property => property.Duration(500).Ease(Easing.Out(4)))
+                .Ease(Easing.Out(3)));
+        }
+    }
+
+    private async Task Follow(double x, double y)
+    {
+        if (_square is null)
+            return;
+        await _square.Set("x", x);
+        await _square.Set("y", y);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_square is not null)
+            await _square.DisposeAsync();
+    }
+}
+```
+
+Property names are the anime.js names: `x`, `translateX`, `backgroundColor`. A setter accepts a `double` or a list of doubles. Pass a duration and an `Easing` when that one call should override the settings:
+
+```csharp
+await _square.Set("y", 50, durationMilliseconds: 500, ease: Easing.Out(2));
+await _square.Set("backgroundColor", new[] { 164d, 255, 79 });
+```
+
 ## Samples
 
 Pushes to `master` publish both samples to [olaboutcode.github.io/blazor-anime](https://olaboutcode.github.io/blazor-anime/). In the repository settings, set GitHub Pages to deploy from GitHub Actions. `scripts/publish-pages.sh` builds that same site locally, and `scripts/publish-pages.bat` does it on Windows.
@@ -689,7 +748,7 @@ The solution file is `BlazorAnime.slnx`. Package versions are declared once in `
 ```bash
 dotnet build BlazorAnime.slnx
 dotnet test test/BlazorAnime.Tests/BlazorAnime.Tests.csproj
-node --test test/interop/anime-interop.test.cjs
+node --test test/interop/*.cjs
 dotnet test test/BlazorAnime.UiTests/BlazorAnime.UiTests.csproj
 ```
 

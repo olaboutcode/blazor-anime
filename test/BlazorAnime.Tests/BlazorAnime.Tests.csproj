@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\BlazorAnime\BlazorAnime.csproj" />
+    <ProjectReference Include="..\..\src\BlazorAnime.Animatable\BlazorAnime.Animatable.csproj" />
   </ItemGroup>
 
 </Project>

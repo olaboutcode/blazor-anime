@@ -28,7 +28,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: node --test test/interop/anime-interop.test.cjs
+      - run: node --test test/interop/*.cjs
 
   bundle:
     runs-on: ubuntu-latest
@@ -39,8 +39,8 @@ jobs:
           node-version: 22
       - run: npm ci --prefix src/BlazorAnime/anime
       - run: npm run build --prefix src/BlazorAnime/anime
-      - run: git diff --exit-code -- src/BlazorAnime/wwwroot/BlazorAnime.lib.module.js
-      - run: node --test test/interop/anime-interop.test.cjs
+      - run: git add -N -- src/BlazorAnime/wwwroot src/BlazorAnime.Animatable/wwwroot && git diff --exit-code -- src/BlazorAnime/wwwroot src/BlazorAnime.Animatable/wwwroot
+      - run: node --test test/interop/*.cjs
       - name: Reject a root npm manifest
         run: test ! -e package.json && test ! -e package-lock.json
 
