@@ -1,7 +1,10 @@
+@implements IAsyncDisposable;
+@using System.Globalization
 @inject IAnime Anime;
 
 <div class="demo-content animation-callbacks-demo">
     <p>Progress: @_progress</p>
+    <p>@_event</p>
     <div class="el large square" style="background-color: #00ffdd;"></div>
     <div class="el large square" style="background-color: hsl(44, 100%, 50%);"></div>
 </div>
@@ -13,14 +16,15 @@
     private bool? _playingApplied;
 
     private Animation? _animationA;
-    private float _progress;
+    private string _progress = "0.00";
+    private string _event = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             _animationA ??= await Anime.Animate(props => props
-                .Targets(".animation-callbacks-demo .el ")
+                .Targets(".animation-callbacks-demo .el")
                 .TranslateX(270)
                 .BackgroundColor("#FFA500")
                 .BorderRadius("10%", "50%")
@@ -28,7 +32,10 @@
                 .Duration(500)
                 .Alternate(true)
                 .Ease(Easing.InOutCirc)
+                .OnBegin(OnBegin)
                 .OnUpdate(OnUpdate)
+                .OnLoop(OnLoop)
+                .OnComplete(OnComplete)
                 .Loop(2)
                 .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             );
@@ -41,14 +48,43 @@
         return index * 500;
     }
 
+    public void OnBegin(AnimationState state) => Show("Began");
+
     public void OnUpdate(AnimationState state)
     {
-        _progress = state.Progress;
+        if (Playing == false)
+            return;
+        _progress = state.Progress.ToString("0.00", CultureInfo.InvariantCulture);
+        StateHasChanged();
+    }
+
+    public void OnLoop(AnimationState state) => Show("Looped");
+
+    public void OnComplete(AnimationState state) => Show("Complete");
+
+    private void Show(string name)
+    {
+        if (Playing == false)
+            return;
+        _event = name;
         StateHasChanged();
     }
 
     protected override async Task OnParametersSetAsync()
     {
+        if (Playing == false)
+        {
+            _progress = "0.00";
+            _event = "";
+        }
         _playingApplied = await DemoPlayback.Apply(_animationA, Playing, _playingApplied);
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (_animationA is not null)
+        {
+            await _animationA.DisposeAsync();
+        }
     }
 }

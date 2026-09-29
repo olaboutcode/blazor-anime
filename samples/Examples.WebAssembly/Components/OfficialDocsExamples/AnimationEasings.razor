@@ -3,7 +3,9 @@
 
 <div class="demo">
     <div class="demo-content animation-easings-demo">
-        <div class="el large square"></div>
+        <div class="el expo large square"></div>
+        <div class="el spring large square"></div>
+        <div class="el curve large square"></div>
     </div>
 </div>
 
@@ -13,37 +15,51 @@
 
     private bool? _playingApplied;
 
-    private Animation? _animation;
+    private Animation? _expo;
+    private Animation? _spring;
+    private Animation? _curve;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animate(
-                props => props
-                .Targets(".animation-easings-demo .el")
-                .TranslateX(220)
-                .Duration(900)
-                .Ease(Easing.InOutExpo)
-                .Alternate(true)
-                .Loop(true)
-                .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
-            );
-            _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
+            _expo ??= await Start(".animation-easings-demo .expo", Easing.InOutExpo);
+            _spring ??= await Start(".animation-easings-demo .spring", Easing.Spring());
+            _curve ??= await Start(".animation-easings-demo .curve", Easing.Curve(t => t * t));
+            await ApplyAll();
         }
     }
 
-    
+    private Task<Animation> Start(string target, Easing ease) =>
+        Anime.Animate(props => props
+            .Targets(target)
+            .TranslateX(220)
+            .Duration(900)
+            .Ease(ease)
+            .Alternate(true)
+            .Loop(true)
+            .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing)));
+
+    private async Task ApplyAll()
+    {
+        var applied = _playingApplied;
+        _playingApplied = await DemoPlayback.Apply(_expo, Playing, applied);
+        await DemoPlayback.Apply(_spring, Playing, applied);
+        await DemoPlayback.Apply(_curve, Playing, applied);
+    }
+
     protected override async Task OnParametersSetAsync()
     {
-        _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
+        await ApplyAll();
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
-        if (_animation is not null)
-        {
-            await _animation.DisposeAsync();
-        }
+        if (_expo is not null)
+            await _expo.DisposeAsync();
+        if (_spring is not null)
+            await _spring.DisposeAsync();
+        if (_curve is not null)
+            await _curve.DisposeAsync();
     }
 }

@@ -4,6 +4,7 @@
 <div class="demo">
     <div class="demo-content timeline-inheritance-demo">
         <div class="el square"></div>
+        <div class="el circle"></div>
     </div>
 </div>
 
@@ -29,7 +30,13 @@
                 props => props
                 .Targets(".timeline-inheritance-demo .el.square")
                 .TranslateX(250)
-            );
+            )
+            .AddAsync(
+                props => props
+                .Targets(".timeline-inheritance-demo .el.circle")
+                .TranslateX(250)
+                .Ease(Easing.Linear)
+            , 0);
             _playingApplied = await DemoPlayback.Apply(_timeline, Playing, _playingApplied);
         }
     }

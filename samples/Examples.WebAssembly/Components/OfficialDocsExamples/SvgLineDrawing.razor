@@ -31,11 +31,10 @@
             var lines = _lines ??= await Anime.CreateDrawable(".line-drawing-demo .lines path");
             _animation ??= await Anime.Animate(props => props
                 .Targets(lines)
-                .Draw("0 1")
-                .Ease(Easing.InOutSine)
-                .Duration(1500)
-                .Delay(DelaySetter)
-                .Alternate(true)
+                .Draw("0 0", "0 1", "1 1")
+                .Ease(Easing.InOutQuad)
+                .Duration(2000)
+                .Delay(Stagger.Create(100))
                 .Loop(true)
                 .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             );
@@ -43,9 +42,6 @@
         }
     }
 
-    public double DelaySetter(int i, int l) => i * 250;
-
-    
     protected override async Task OnParametersSetAsync()
     {
         _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);

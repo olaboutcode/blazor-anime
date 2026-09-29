@@ -75,34 +75,42 @@ public static class DemoCatalog
                 "Components/OfficialDocsExamples/Keyframes.razor"),
             Entry("property-keyframes", "Property keyframes",
                 "Keyframes can live on a single property.",
-                "The array form is the same one used for animation keyframes. Duration on the animation is the full run; each step can set its own duration too.",
+                "Each step uses To. A step can set its own duration, delay, and ease. Ease on the animation covers steps that leave ease unset.",
                 """
                 await Anime.Animate(props => props
                     .Targets(".property-keyframes-demo .el")
                     .TranslateX([
-                        step => step.To(250).Duration(1000),
-                        step => step.To(0).Duration(500)
+                        step => step.To(250).Duration(1000).Delay(500),
+                        step => step.To(0).Duration(1000).Delay(500)
                     ])
-                    .Duration(4000)
+                    .ScaleX([
+                        step => step.To(4).Duration(100).Delay(500).Ease(Easing.OutExpo),
+                        step => step.To(1).Duration(900)
+                    ])
+                    .Ease(Easing.OutElastic(1, .8))
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/PropertyKeyframes.razor"),
             Entry("callbacks", "Callbacks",
-                "Begin, update, and complete receive a snapshot of the animation.",
-                "The callback is an Action of AnimationState. It can be a lambda. The snapshot includes progress, current time, and how many loops remain. It is not the live anime.js instance.",
+                "Begin, update, loop, and complete receive a snapshot.",
+                "OnBegin runs after the delay. OnUpdate reports progress from 0 to 1. OnLoop runs when a repeat begins. Loop(2) is two extra repeats, and Alternate(true) flips direction between them. OnComplete runs after those repeats finish.",
                 """
                 await Anime.Animate(props => props
                     .Targets(".animation-callbacks-demo .el")
-                    .TranslateX(250)
-                    .OnBegin(state => Log("began", state))
-                    .OnUpdate(state => Log("update", state))
-                    .OnComplete(state => Log("complete", state))
-                    .Loop(true));
+                    .TranslateX(270)
+                    .Delay((index, total) => index * 500)
+                    .Duration(500)
+                    .Alternate(true)
+                    .OnBegin(state => Show("Began"))
+                    .OnUpdate(state => Show(state.Progress))
+                    .OnLoop(state => Show("Looped"))
+                    .OnComplete(state => Show("Complete"))
+                    .Loop(2));
                 """,
                 "Components/OfficialDocsExamples/AnimationCallbacks.razor"),
             Entry("controls", "Controls",
-                "Play, pause, seek, and restart the same animation.",
-                "AutoPlay(false) leaves the animation paused. Seek takes milliseconds. Progress takes a percentage from 0 to 100. Finished completes when playback ends, and does not complete while Loop(true) is set.",
+                "Play, pause, resume, seek, restart, reverse, alternate, and complete.",
+                "AutoPlay(false) leaves the animation paused. Seek takes milliseconds. Progress is 0 to 1. Resume continues in the current direction. Alternate mirrors the current time and flips direction. Complete seeks to the end and removes the animation from the engine. Finished does not complete while Loop(true) is set.",
                 """
                 var animation = await Anime.Animate(props => props
                     .Targets(".animation-controls-demo .el")
@@ -110,20 +118,33 @@ public static class DemoCatalog
                     .AutoPlay(false));
 
                 await animation.Play();
+                await animation.Pause();
+                await animation.Resume();
                 await animation.Seek(400);
+                await animation.Reverse();
+                await animation.Alternate();
                 await animation.Restart();
+                await animation.Complete();
                 """,
                 "Components/OfficialDocsExamples/AnimationControls.razor"),
             Entry("easings", "Easings",
-                "Named curves, elastic, spring, and a sampled C# function.",
-                "EaseInOutExpo is a property. EaseOutElastic is a method because amplitude and period are optional. Easing.Curve samples a C# function from 0 to 1 and the browser interpolates that table.",
+                "A named ease, a spring, and a sampled C# curve.",
+                "InOutExpo is a built-in name. Spring() uses the default spring. Curve samples a C# function from 0 to 1, and the browser interpolates that table.",
                 """
                 await Anime.Animate(props => props
-                    .Targets(".animation-easings-demo .el")
+                    .Targets(".animation-easings-demo .expo")
                     .TranslateX(220)
-                    .Duration(900)
                     .Ease(Easing.InOutExpo)
-                    .Alternate(true)
+                    .Loop(true));
+                await Anime.Animate(props => props
+                    .Targets(".animation-easings-demo .spring")
+                    .TranslateX(220)
+                    .Ease(Easing.Spring())
+                    .Loop(true));
+                await Anime.Animate(props => props
+                    .Targets(".animation-easings-demo .curve")
+                    .TranslateX(220)
+                    .Ease(Easing.Curve(t => t * t))
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/AnimationEasings.razor"),
@@ -144,7 +165,7 @@ public static class DemoCatalog
         [
             Entry("timeline-basics", "Basics",
                 "A timeline plays child animations with shared defaults.",
-                "Duration and easing set on the timeline apply to each child that does not set its own. AddAsync appends a child. The timeline is itself an animation, so play, pause, and dispose are the same methods.",
+                "Duration and ease set on the timeline become defaults for each child that does not set its own. AddAsync appends a child. The timeline is itself an animation, so play, pause, and dispose are the same methods.",
                 """
                 var timeline = await Anime.CreateTimeline(props => props
                     .Duration(750)
@@ -171,8 +192,8 @@ public static class DemoCatalog
                 """,
                 "Components/OfficialDocsExamples/TimelineOffset.razor"),
             Entry("timeline-inheritance", "Inheritance",
-                "Children inherit duration and easing from the timeline.",
-                "Set the shared timing on the timeline. A child can still override a single property, such as its own easing or duration, without repeating the rest.",
+                "Children inherit duration and ease, and one child can override them.",
+                "The square inherits 750ms and OutExpo. The circle starts at the same time, position 0, and overrides the ease with Linear.",
                 """
                 var timeline = await Anime.CreateTimeline(props => props
                     .Duration(750)
@@ -181,11 +202,15 @@ public static class DemoCatalog
                 await timeline.AddAsync(child => child
                     .Targets(".timeline-inheritance-demo .el.square")
                     .TranslateX(250));
+                await timeline.AddAsync(child => child
+                    .Targets(".timeline-inheritance-demo .el.circle")
+                    .TranslateX(250)
+                    .Ease(Easing.Linear), 0);
                 """,
                 "Components/OfficialDocsExamples/TimelineInheritance.razor"),
             Entry("timeline-controls", "Controls",
                 "A timeline pauses, seeks, and restarts as one animation.",
-                "Call Play, Pause, Seek, or Restart on the timeline. Children added with AddAsync stay on that same instance.",
+                "Call Play, Pause, Seek, or Restart on the timeline. AutoPlay(false) is playback on the timeline, not a default copied onto each child.",
                 """
                 var timeline = await Anime.CreateTimeline(props => props
                     .Duration(750)
@@ -213,17 +238,17 @@ public static class DemoCatalog
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/StaggerFrom.razor"),
-            Entry("stagger-direction", "Direction",
-                "Reverse the order the stagger walks.",
-                "Reversed on the stagger options starts at the last target.",
+            Entry("stagger-direction", "Reversed",
+                "Start the stagger at the last target.",
+                "Reversed(true) walks from the last target back to the first.",
                 """
                 .Delay(Stagger.Create(100, stagger => stagger
                     .Reversed(true)))
                 """,
                 "Components/OfficialDocsExamples/StaggerDirection.razor"),
-            Entry("stagger-easing", "Easing",
-                "Ease the stagger itself, not only the motion.",
-                "The easing on a stagger changes the gap between targets. Easing.Curve works here too, and the curve is passed through without the extra wrapper an animation easing needs.",
+            Entry("stagger-easing", "Ease",
+                "Ease the gaps between staggered targets.",
+                "Ease on the stagger changes the gap between targets.",
                 """
                 .Delay(Stagger.Create(100, stagger => stagger
                     .Ease(Easing.OutQuad)))
@@ -231,7 +256,7 @@ public static class DemoCatalog
                 "Components/OfficialDocsExamples/StaggerEasing.razor"),
             Entry("stagger-grid", "Grid",
                 "Stagger across columns and rows.",
-                "Grid takes columns first, then rows. The targets are laid out in that order, left to right.",
+                "Grid takes columns first, then rows. The targets are laid out in that order, left to right. Loop(3) is three extra repeats of the scale.",
                 """
                 .Delay(Stagger.Create(100, stagger => stagger
                     .Grid(14, 5)
@@ -240,7 +265,7 @@ public static class DemoCatalog
                 "Components/OfficialDocsExamples/StaggerGrid.razor"),
             Entry("stagger-axis", "Axis",
                 "Limit a grid stagger to one axis.",
-                "Axis is StaggerAxis.X or StaggerAxis.Y. Combined with From, the wave starts on a side or at the center and travels along that axis.",
+                "Axis is StaggerAxis.X or StaggerAxis.Y. Combined with From, the wave starts at the center and travels along that axis. Loop(3) is three extra repeats.",
                 """
                 .Delay(Stagger.Create(100, stagger => stagger
                     .Grid(14, 5)
@@ -253,16 +278,15 @@ public static class DemoCatalog
         [
             Entry("svg-line-drawing", "Line drawing",
                 "Draw strokes with a drawable proxy.",
-                "CreateDrawable wraps the paths. Draw(\"0 1\") reveals each stroke. Delay by index so each path starts after the one before it.",
+                "CreateDrawable wraps the paths. Draw walks from \"0 0\" to \"0 1\" to \"1 1\": so the stroke draws on and then the dash leaves the end. The delay is a 100ms stagger.",
                 """
                 var lines = await Anime.CreateDrawable(".line-drawing-demo .lines path");
                 await Anime.Animate(props => props
                     .Targets(lines)
-                    .Draw("0 1")
-                    .Ease(Easing.InOutSine)
-                    .Duration(1500)
-                    .Delay((index, total) => index * 250)
-                    .Alternate(true)
+                    .Draw("0 0", "0 1", "1 1")
+                    .Ease(Easing.InOutQuad)
+                    .Duration(2000)
+                    .Delay(Stagger.Create(100))
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/SvgLineDrawing.razor"),
