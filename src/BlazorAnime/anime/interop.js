@@ -398,13 +398,13 @@ export function install(anime) {
                 ? anime.get(target, propName, unit)
                 : anime.get(target, propName),
         set: async (targets, props) => {
+            // utils.set returns a thenable animation. Leave it so this call resolves immediately.
             anime.set(targets, await transformPropsAsync(props, []));
         },
         remove: (targets) => {
             anime.remove(targets);
         },
         random: (min, max) => anime.random(min, max),
-        runningLength: () => 0,
         getSpeed: () => anime.engine.speed,
         setSpeed: (value) => {
             anime.engine.speed = value;
@@ -414,7 +414,6 @@ export function install(anime) {
             anime.engine.pauseOnDocumentHidden = value;
         },
         getPauseOnDocumentHidden: () => anime.engine.pauseOnDocumentHidden,
-        convertPx: () => 0,
         createMotionPath: (path, offset = 0) => {
             const motion = anime.createMotionPath(path, offset);
             if (!motion) {

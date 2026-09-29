@@ -120,10 +120,8 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     }
 
     /// <summary>
-    /// Immediately sets values to the specified targets.
+    /// Immediately sets values. This is <c>utils.set</c>. The animation it returns is not exposed.
     /// </summary>
-    /// <param name="targets"></param>
-    /// <param name="build"></param>
     public async Task Set(string[] targets, Func<PropsBuilder, PropsBuilder> build)
     {
         await JsRuntime.InvokeVoidAsync(
@@ -199,26 +197,8 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
         await JsRuntime.InvokeAsync<string>(IdentifierVersion);
 
     /// <summary>
-    /// Converts a pixel value to another unit using <c>anime.convertPx</c>.
+    /// Reads a value with <c>utils.get</c>. Pass a unit to convert it.
     /// </summary>
-    public async Task<double> ConvertPx(ElementReference element, string value, string unit) =>
-        await JsRuntime.InvokeAsync<double>(IdentifierConvertPx, element, value, unit);
-
-    /// <summary>
-    /// Converts a pixel value to another unit using <c>anime.convertPx</c>.
-    /// </summary>
-    public async Task<double> ConvertPx(string selector, string value, string unit) =>
-        await JsRuntime.InvokeAsync<double>(IdentifierConvertPx, selector, value, unit);
-
-    /// <summary>
-    /// Get the original value of an element.
-    /// <para>
-    /// Since anime.js uses getComputedStyle to access original CSS, the values are almost always returned in 'px',
-    /// </para>
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="propName"></param>
-    /// <returns></returns>
     public async Task<string> Get(ElementReference target, string propName) =>
         await JsRuntime.InvokeAsync<string>(IdentifierGetElementValue, target, propName, null);
 
@@ -260,11 +240,8 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     }
 
     /// <summary>
-    /// Returns a random integer within a specific range.
+    /// Returns a random integer in the range. This is <c>utils.random</c>.
     /// </summary>
-    /// <param name="minValue"></param>
-    /// <param name="maxValue"></param>
-    /// <returns></returns>
     public async Task<int> Random(int minValue, int maxValue)
     {
         return await JsRuntime.InvokeAsync<int>(
@@ -275,21 +252,8 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     }
 
     /// <summary>
-    /// Returns the number of all active anime.js instances currently running.
+    /// Sets <c>engine.pauseOnDocumentHidden</c>. anime.js defaults this to true.
     /// </summary>
-    /// <returns></returns>
-    public async Task<int> RunningLength()
-    {
-        return await JsRuntime.InvokeAsync<int>(IdentifierGetRunningLength);
-    }
-
-    /// <summary>
-    /// By default, all animations are paused when switching tabs, 
-    /// <br/>useful if you want to make sure the user sees everything and doesn't miss an important part of your animation.
-    /// <br/>But you can choose to let the animation runs normally without any pause, 
-    /// <br/>like a video or an audio track that can continuously plays in the background.
-    /// </summary>
-    /// <param name="value"></param>
     public async Task PauseOnDocumentHidden(bool value)
     {
         await JsRuntime.InvokeVoidAsync(IdentifierPauseOnDocumentHidden, value);
@@ -353,7 +317,6 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     private const string IdentifierSetElementValue = "AnimeJs.set";
     private const string IdentifierGetElementValue = "AnimeJs.get";
     private const string IdentifierGetRandomValue = "AnimeJs.random";
-    private const string IdentifierGetRunningLength = "AnimeJs.runningLength";
     private const string IdentifierCreateMotionPath = "AnimeJs.createMotionPath";
     private const string IdentifierCreateDrawable = "AnimeJs.createDrawable";
     private const string IdentifierMorphTo = "AnimeJs.morphTo";
@@ -363,7 +326,6 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     private const string IdentifierGetSpeed = "AnimeJs.getSpeed";
     private const string IdentifierSetSpeed = "AnimeJs.setSpeed";
     private const string IdentifierVersion = "AnimeJs.version";
-    private const string IdentifierConvertPx = "AnimeJs.convertPx";
     private const string IdentifierCreateObject = "AnimeJs.createObject";
 }
 
@@ -395,11 +357,8 @@ public interface IAnime
     Task<double> GetSpeed();
     Task SetSpeed(double speed);
     Task<string> Version();
-    Task<double> ConvertPx(ElementReference element, string value, string unit);
-    Task<double> ConvertPx(string selector, string value, string unit);
     Task PauseOnDocumentHidden(bool value);
     Task<bool> GetPauseOnDocumentHidden();
-    Task<int> RunningLength();
 }
 
 public static class PropExtensions

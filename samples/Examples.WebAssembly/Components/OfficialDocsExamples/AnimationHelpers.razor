@@ -1,44 +1,26 @@
-@implements IAsyncDisposable;
 @inject IAnime Anime;
 
 <div class="demo">
-    <div class="demo-content">
-        <p class="docs-note">Get, Set, and Random read and write values. They do not draw a shape on their own.</p>
+    <div class="demo-content helpers-demo">
+        <p class="docs-note">@_note</p>
+        <div class="small square el"></div>
     </div>
 </div>
 
 @code {
-    [CascadingParameter(Name = "DemoPlaying")]
-    public bool? Playing { get; set; }
-
-    private bool? _playingApplied;
-
-    private Animation? _animation;
+    private string _note = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            _animation ??= await Anime.Animate(
-                props => props
-                .Duration(750)
-                .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
-            );
-            _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
-        }
-    }
+        if (!firstRender)
+            return;
 
-    
-    protected override async Task OnParametersSetAsync()
-    {
-        _playingApplied = await DemoPlayback.Apply(_animation, Playing, _playingApplied);
-    }
-
-    async ValueTask IAsyncDisposable.DisposeAsync()
-    {
-        if (_animation is not null)
-        {
-            await _animation.DisposeAsync();
-        }
+        var distance = await Anime.Random(40, 40);
+        await Anime.Set(".helpers-demo .el", "translateX", distance);
+        var current = await Anime.Get(".helpers-demo .el", "translateX");
+        var version = await Anime.Version();
+        var speed = await Anime.GetSpeed();
+        _note = $"anime.js {version}, speed {speed}. translateX is {current}.";
+        StateHasChanged();
     }
 }

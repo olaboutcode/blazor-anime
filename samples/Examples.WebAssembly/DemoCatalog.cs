@@ -128,13 +128,15 @@ public static class DemoCatalog
                 """,
                 "Components/OfficialDocsExamples/AnimationEasings.razor"),
             Entry("helpers", "Helpers",
-                "Random, get, and set talk to the engine without building a timeline.",
-                "Random is asynchronous, so read it before you build an animation. Get uses computed style. Remove takes targets out of running animations and leaves the elements in the document.",
+                "Random, get, set, and remove are utils. Speed is the engine.",
+                "Get reads computed style, and the unit overload converts it. Set writes immediately and does not cancel other tweens. Version is the pinned anime.js build. PauseOnDocumentHidden is engine.pauseOnDocumentHidden.",
                 """
                 var distance = await Anime.Random(0, 250);
-                var current = await Anime.Get(".el", "translateX");
-                await Anime.Set(".el", "translateX", distance);
-                await Anime.Remove(".el");
+                await Anime.Set(".helpers-demo .el", "translateX", distance);
+                var current = await Anime.Get(".helpers-demo .el", "translateX");
+                await Anime.Remove(".helpers-demo .el");
+                var version = await Anime.Version();
+                await Anime.SetSpeed(1);
                 """,
                 "Components/OfficialDocsExamples/AnimationHelpers.razor")
         ]),

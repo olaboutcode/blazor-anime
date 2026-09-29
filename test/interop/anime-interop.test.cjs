@@ -433,10 +433,24 @@ test("drawable draw changes a path dash", async () => {
     assert.equal(attrs["stroke-dashoffset"], "0");
 });
 
+test("set writes a value without waiting for its animation", async () => {
+    const api = await loadAnime();
+    const target = api.createObject({ x: 0 });
+    await api.set(target.target, {
+        x: setter("x", 7)
+    });
+    assert.equal(target.target.x, 7);
+    assert.equal(api.get(target.target, "x"), 7);
+});
+
 test("speed and random use the anime.js helpers", async () => {
     const api = await loadAnime();
+    assert.equal(api.version(), "4.5.0");
     api.setSpeed(2);
     assert.equal(api.getSpeed(), 2);
     assert.equal(api.random(4, 4), 4);
+    api.pauseOnDocumentHidden(false);
+    assert.equal(api.getPauseOnDocumentHidden(), false);
+    api.pauseOnDocumentHidden(true);
     api.setSpeed(1);
 });
