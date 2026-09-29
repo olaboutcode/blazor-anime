@@ -664,7 +664,7 @@ var pauses = await Anime.GetPauseOnDocumentHidden();
 
 Pushes to `master` publish both samples to [olaboutcode.github.io/blazor-anime](https://olaboutcode.github.io/blazor-anime/). In the repository settings, set GitHub Pages to deploy from GitHub Actions. `scripts/publish-pages.sh` builds that same site locally, and `scripts/publish-pages.bat` does it on Windows.
 
-`samples/Examples` walks through the anime.js documentation demos: animation, timeline, stagger, and SVG. The http profile listens on `http://localhost:5161`.
+`samples/Examples` walks through the anime.js documentation demos for the modules this package implements: animation, timeline, SVG, utilities, and easings. The http profile listens on `http://localhost:5161`.
 
 ```bash
 dotnet run --project samples/Examples

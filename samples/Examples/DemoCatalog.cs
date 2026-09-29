@@ -8,14 +8,20 @@ public sealed record DemoEntry(
     string Code,
     string Source);
 
-public sealed record DemoSection(string Title, IReadOnlyList<DemoEntry> Entries);
+public sealed record DemoGroup(string? Title, IReadOnlyList<DemoEntry> Entries);
+
+public sealed record DemoSection(string Id, string Title, IReadOnlyList<DemoGroup> Groups)
+{
+    public IEnumerable<DemoEntry> Entries => Groups.SelectMany(group => group.Entries);
+}
 
 public static class DemoCatalog
 {
     public static IReadOnlyList<DemoSection> Sections { get; } =
     [
-        new("Animation",
+        new("animation", "Animation",
         [
+            Group("Tween values",
             Entry("relative-values", "Relative values",
                 "Move, resize, and rotate from the value the element already has.",
                 "Relative.Multiply, Relative.Subtract, and Relative.Add read the current computed value when the animation is created. A unit string such as \"2turn\" is passed through to anime.js.",
@@ -41,7 +47,8 @@ public static class DemoCatalog
                     .Alternate(true)
                     .Loop(true));
                 """,
-                "Components/FunctionBasedValues.razor"),
+                "Components/FunctionBasedValues.razor")),
+            Leaves(
             Entry("function-based-parameters", "Function based parameters",
                 "Delay can be a function of the target index.",
                 "Lambdas and ordinary methods both work. The function runs once per target while the animation is created, then anime.js uses the returned number.",
@@ -54,7 +61,8 @@ public static class DemoCatalog
                     .Alternate(true)
                     .Loop(true));
                 """,
-                "Components/FunctionBasedParameters.razor"),
+                "Components/FunctionBasedParameters.razor")),
+            Group("Keyframes",
             Entry("keyframes", "Keyframes",
                 "One property walks through several steps.",
                 "Pass the steps as an array of builders. A comma-separated list of lambdas binds to the target-info overload instead of a keyframe sequence.",
@@ -90,7 +98,8 @@ public static class DemoCatalog
                     .Ease(Easing.OutElastic(1, .8))
                     .Loop(true));
                 """,
-                "Components/PropertyKeyframes.razor"),
+                "Components/PropertyKeyframes.razor")),
+            Leaves(
             Entry("callbacks", "Callbacks",
                 "Begin, update, loop, and complete receive a snapshot.",
                 "OnBegin runs after the delay. OnUpdate reports progress from 0 to 1. OnLoop runs when a repeat begins. Loop(2) is two extra repeats, and Alternate(true) flips direction between them. OnComplete runs after those repeats finish.",
@@ -126,43 +135,11 @@ public static class DemoCatalog
                 await animation.Restart();
                 await animation.Complete();
                 """,
-                "Components/AnimationControls.razor"),
-            Entry("easings", "Easings",
-                "A named ease, a spring, and a sampled C# curve.",
-                "InOutExpo is a built-in name. Spring() uses the default spring. Curve samples a C# function from 0 to 1, and the browser interpolates that table.",
-                """
-                await Anime.Animate(props => props
-                    .Targets(".animation-easings-demo .expo")
-                    .TranslateX(220)
-                    .Ease(Easing.InOutExpo)
-                    .Loop(true));
-                await Anime.Animate(props => props
-                    .Targets(".animation-easings-demo .spring")
-                    .TranslateX(220)
-                    .Ease(Easing.Spring())
-                    .Loop(true));
-                await Anime.Animate(props => props
-                    .Targets(".animation-easings-demo .curve")
-                    .TranslateX(220)
-                    .Ease(Easing.Curve(t => t * t))
-                    .Loop(true));
-                """,
-                "Components/AnimationEasings.razor"),
-            Entry("helpers", "Helpers",
-                "Random, get, set, and remove are utils. Speed is the engine.",
-                "Get reads computed style, and the unit overload converts it. Set writes immediately and does not cancel other tweens. Version is the pinned anime.js build. PauseOnDocumentHidden is engine.pauseOnDocumentHidden.",
-                """
-                var distance = await Anime.Random(0, 250);
-                await Anime.Set(".helpers-demo .el", "translateX", distance);
-                var current = await Anime.Get(".helpers-demo .el", "translateX");
-                await Anime.Remove(".helpers-demo .el");
-                var version = await Anime.Version();
-                await Anime.SetSpeed(1);
-                """,
-                "Components/AnimationHelpers.razor")
+                "Components/AnimationControls.razor"))
         ]),
-        new("Timeline",
+        new("timeline", "Timeline",
         [
+            Leaves(
             Entry("timeline-basics", "Basics",
                 "A timeline plays child animations with shared defaults.",
                 "Duration and ease set on the timeline become defaults for each child that does not set its own. AddAsync appends a child. The timeline is itself an animation, so play, pause, and dispose are the same methods.",
@@ -222,10 +199,57 @@ public static class DemoCatalog
                     .TranslateX(250));
                 await timeline.Play();
                 """,
-                "Components/TimelineControls.razor")
+                "Components/TimelineControls.razor"))
         ]),
-        new("Stagger",
+        new("svg", "SVG",
         [
+            Leaves(
+            Entry("svg-line-drawing", "Line drawing",
+                "Draw strokes with a drawable proxy.",
+                "CreateDrawable wraps the paths. Draw walks from \"0 0\" to \"0 1\" to \"1 1\": so the stroke draws on and then the dash leaves the end. The delay is a 100ms stagger.",
+                """
+                var lines = await Anime.CreateDrawable(".line-drawing-demo .lines path");
+                await Anime.Animate(props => props
+                    .Targets(lines)
+                    .Draw("0 0", "0 1", "1 1")
+                    .Ease(Easing.InOutQuad)
+                    .Duration(2000)
+                    .Delay(Stagger.Create(100))
+                    .Loop(true));
+                """,
+                "Components/SvgLineDrawing.razor"),
+            Entry("svg-morphing", "Morphing",
+                "Tween a polygon through four point lists.",
+                "Each frame is a points string. The first frame moves from the current shape to the next one. Later frames use To. MorphTo returns a function for D or Points when the target is another element.",
+                """
+                .Points(
+                    frame => frame.FromTo(
+                        "70 24 119.574 60.369 100.145 117.631 50.855 101.631 3.426 54.369",
+                        "70 41 118.574 59.369 111.145 132.631 60.855 84.631 20.426 60.369"),
+                    frame => frame.To("70 6 119.574 60.369 100.145 117.631 39.855 117.631 55.426 68.369"),
+                    frame => frame.To("70 57 136.574 54.369 89.145 100.631 28.855 132.631 38.426 64.369"),
+                    frame => frame.To("70 24 119.574 60.369 100.145 117.631 50.855 101.631 3.426 54.369"))
+                """,
+                "Components/SvgMorphing.razor"),
+            Entry("svg-motion-path", "Motion path",
+                "Move an element along an SVG path.",
+                "CreateMotionPath returns translateX, translateY, and rotate as functions. Offset is 0 to 1, and 0 starts at the beginning of the path. Dispose the MotionPath with the animation.",
+                """
+                var motion = await Anime.CreateMotionPath(".motion-path-demo path");
+                await Anime.Animate(props => props
+                    .Targets(".motion-path-demo .el")
+                    .TranslateX(motion.TranslateX)
+                    .TranslateY(motion.TranslateY)
+                    .Rotate(motion.Rotate)
+                    .Duration(2000)
+                    .Ease(Easing.Linear)
+                    .Loop(true));
+                """,
+                "Components/SvgMotionPath.razor"))
+        ]),
+        new("utilities", "Utilities",
+        [
+            Group("Stagger",
             Entry("stagger-from", "From",
                 "Start the stagger at the first item, the last, the center, or an index.",
                 "Stagger.Create builds the delay. From accepts StaggerPosition or an integer index.",
@@ -272,52 +296,45 @@ public static class DemoCatalog
                     .From(StaggerPosition.Center)
                     .Axis(StaggerAxis.X)))
                 """,
-                "Components/StaggerAxisDemo.razor")
+                "Components/StaggerAxisDemo.razor")),
+            Leaves(
+            Entry("helpers", "Utils",
+                "Random, get, set, and remove are utils. Speed is the engine.",
+                "Get reads computed style, and the unit overload converts it. Set writes immediately and does not cancel other tweens. Version is the pinned anime.js build. PauseOnDocumentHidden is engine.pauseOnDocumentHidden.",
+                """
+                var distance = await Anime.Random(0, 250);
+                await Anime.Set(".helpers-demo .el", "translateX", distance);
+                var current = await Anime.Get(".helpers-demo .el", "translateX");
+                await Anime.Remove(".helpers-demo .el");
+                var version = await Anime.Version();
+                await Anime.SetSpeed(1);
+                """,
+                "Components/AnimationHelpers.razor"))
         ]),
-        new("SVG",
+        new("easings", "Easings",
         [
-            Entry("svg-line-drawing", "Line drawing",
-                "Draw strokes with a drawable proxy.",
-                "CreateDrawable wraps the paths. Draw walks from \"0 0\" to \"0 1\" to \"1 1\": so the stroke draws on and then the dash leaves the end. The delay is a 100ms stagger.",
+            Leaves(
+            Entry("easings", "Easings",
+                "A named ease, a spring, and a sampled C# curve.",
+                "InOutExpo is a built-in name. Spring() uses the default spring. Curve samples a C# function from 0 to 1, and the browser interpolates that table.",
                 """
-                var lines = await Anime.CreateDrawable(".line-drawing-demo .lines path");
                 await Anime.Animate(props => props
-                    .Targets(lines)
-                    .Draw("0 0", "0 1", "1 1")
-                    .Ease(Easing.InOutQuad)
-                    .Duration(2000)
-                    .Delay(Stagger.Create(100))
+                    .Targets(".animation-easings-demo .expo")
+                    .TranslateX(220)
+                    .Ease(Easing.InOutExpo)
+                    .Loop(true));
+                await Anime.Animate(props => props
+                    .Targets(".animation-easings-demo .spring")
+                    .TranslateX(220)
+                    .Ease(Easing.Spring())
+                    .Loop(true));
+                await Anime.Animate(props => props
+                    .Targets(".animation-easings-demo .curve")
+                    .TranslateX(220)
+                    .Ease(Easing.Curve(t => t * t))
                     .Loop(true));
                 """,
-                "Components/SvgLineDrawing.razor"),
-            Entry("svg-morphing", "Morphing",
-                "Tween a polygon through four point lists.",
-                "Each frame is a points string. The first frame moves from the current shape to the next one. Later frames use To. MorphTo returns a function for D or Points when the target is another element.",
-                """
-                .Points(
-                    frame => frame.FromTo(
-                        "70 24 119.574 60.369 100.145 117.631 50.855 101.631 3.426 54.369",
-                        "70 41 118.574 59.369 111.145 132.631 60.855 84.631 20.426 60.369"),
-                    frame => frame.To("70 6 119.574 60.369 100.145 117.631 39.855 117.631 55.426 68.369"),
-                    frame => frame.To("70 57 136.574 54.369 89.145 100.631 28.855 132.631 38.426 64.369"),
-                    frame => frame.To("70 24 119.574 60.369 100.145 117.631 50.855 101.631 3.426 54.369"))
-                """,
-                "Components/SvgMorphing.razor"),
-            Entry("svg-motion-path", "Motion path",
-                "Move an element along an SVG path.",
-                "CreateMotionPath returns translateX, translateY, and rotate as functions. Offset is 0 to 1, and 0 starts at the beginning of the path. Dispose the MotionPath with the animation.",
-                """
-                var motion = await Anime.CreateMotionPath(".motion-path-demo path");
-                await Anime.Animate(props => props
-                    .Targets(".motion-path-demo .el")
-                    .TranslateX(motion.TranslateX)
-                    .TranslateY(motion.TranslateY)
-                    .Rotate(motion.Rotate)
-                    .Duration(2000)
-                    .Ease(Easing.Linear)
-                    .Loop(true));
-                """,
-                "Components/SvgMotionPath.razor")
+                "Components/AnimationEasings.razor"))
         ])
     ];
 
@@ -330,4 +347,8 @@ public static class DemoCatalog
 
     private static DemoEntry Entry(string slug, string title, string summary, string details, string code, string source) =>
         new(slug, title, summary, details, code.Trim(), source);
+
+    private static DemoGroup Group(string title, params DemoEntry[] entries) => new(title, entries);
+
+    private static DemoGroup Leaves(params DemoEntry[] entries) => new(null, entries);
 }
