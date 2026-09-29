@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [master, v4]
   pull_request:
 
 concurrency:
@@ -29,6 +29,19 @@ jobs:
         with:
           node-version: 22
       - run: node --test test/interop/anime-interop.test.cjs
+
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --prefix src/BlazorAnime/anime
+      - run: npm run build --prefix src/BlazorAnime/anime
+      - run: node --test test/interop/anime-v4-spike.test.cjs
+      - name: Reject a root npm manifest
+        run: test ! -e package.json && test ! -e package-lock.json
 
   browser:
     runs-on: ubuntu-latest

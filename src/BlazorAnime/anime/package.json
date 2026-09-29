@@ -1,0 +1,13 @@
+{
+  "name": "blazor-anime-js",
+  "private": true,
+  "dependencies": {
+    "animejs": "4.5.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10"
+  },
+  "scripts": {
+    "build": "node build.mjs"
+  }
+}
