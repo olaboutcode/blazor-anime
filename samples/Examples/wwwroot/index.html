@@ -39,6 +39,23 @@
             if (!scroller) return;
             scroller.scrollTo({ top: el.offsetTop, behavior: "smooth" });
         };
+        window.docsPointer = function (element, clientX, clientY) {
+            var rect = element.getBoundingClientRect();
+            var halfWidth = rect.width / 2;
+            var halfHeight = rect.height / 2;
+            var x = clientX - rect.left - halfWidth;
+            var y = clientY - rect.top - halfHeight;
+            return {
+                x: Math.min(halfWidth, Math.max(-halfWidth, x)),
+                y: Math.min(halfHeight, Math.max(-halfHeight, y)),
+                width: rect.width,
+                height: rect.height
+            };
+        };
+        window.docsAngle = function (element, clientX, clientY) {
+            var rect = element.getBoundingClientRect();
+            return Math.atan2(clientY - rect.top - rect.height / 2, clientX - rect.left - rect.width / 2);
+        };
     </script>
 </head>
 

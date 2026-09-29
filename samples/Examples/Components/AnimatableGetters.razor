@@ -1,0 +1,73 @@
+@inherits AnimatableDemo
+
+<div class="demo animatable-getters" @ref="_stage" @onpointermove="Move">
+    <div class="animatable-readout">
+        <span><span class="animatable-caption">x</span>@_x</span>
+        <div class="circle"></div>
+        <span><span class="animatable-caption">y</span>@_y</span>
+    </div>
+    <span class="animatable-hint">Move cursor</span>
+</div>
+
+@code {
+    private ElementReference _stage;
+    private Animatable? _circle;
+    private string _x = "0.00";
+    private string _y = "0.00";
+    private int _pendingReads;
+    private bool _reading;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _circle = await Create(".animatable-getters .circle", props => props
+            .Property("x", 500)
+            .Property("y", 500)
+            .Ease(Easing.Out(2))
+            .OnRender(state => { _ = Refresh(); }));
+    }
+
+    private async Task Move(PointerEventArgs pointer)
+    {
+        await Track(pointer, async next =>
+        {
+            if (_circle is null)
+                return;
+            var point = await Pointer(_stage, next);
+            await _circle.Set("x", point.X);
+            await _circle.Set("y", point.Y);
+        });
+    }
+
+    private async Task Refresh()
+    {
+        _pendingReads++;
+        if (_reading)
+            return;
+        _reading = true;
+        try
+        {
+            while (_pendingReads > 0 && Live && !Reverted && _circle is not null)
+            {
+                _pendingReads = 0;
+                var x = await _circle.Get("x");
+                var y = await _circle.Get("y");
+                _x = x.ToString("0.00");
+                _y = y.ToString("0.00");
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (JSException)
+        {
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+        finally
+        {
+            _reading = false;
+        }
+    }
+}

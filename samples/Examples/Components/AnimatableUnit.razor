@@ -1,0 +1,33 @@
+@inherits AnimatableDemo
+
+<div class="demo animatable-unit" @onpointermove="Move">
+    <div class="clock" @ref="_clock"></div>
+    <span class="animatable-hint">Move cursor</span>
+</div>
+
+@code {
+    private ElementReference _clock;
+    private Animatable? _hand;
+    private double _angle = Math.PI / 2;
+    private double _last;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _hand = await Create(".animatable-unit .clock", props => props
+            .Property("rotate", property => property.Unit("rad").Duration(400)));
+    }
+
+    private async Task Move(PointerEventArgs pointer)
+    {
+        await Track(pointer, async next =>
+        {
+            if (_hand is null)
+                return;
+            var current = await Angle(_clock, next);
+            await _hand.Set("rotate", Unwrap(current, ref _angle, ref _last));
+        });
+    }
+}

@@ -1,0 +1,51 @@
+@inherits AnimatableDemo
+
+<div class="demo animatable-ease" @onpointermove="Move">
+    <div class="animatable-pair">
+        <div class="animatable-col">
+            <div class="clock clock-1" @ref="_linearClock"></div>
+            <span class="animatable-caption">linear</span>
+        </div>
+        <div class="animatable-col">
+            <div class="clock clock-2" @ref="_elasticClock"></div>
+            <span class="animatable-caption">outElastic</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    private ElementReference _linearClock;
+    private ElementReference _elasticClock;
+    private Animatable? _linear;
+    private Animatable? _elastic;
+    private double _linearAngle = Math.PI / 2;
+    private double _linearLast;
+    private double _elasticAngle = Math.PI / 2;
+    private double _elasticLast;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _linear = await Create(".animatable-ease .clock-1", props => props
+            .Property("rotate", property => property.Unit("rad"))
+            .Ease(Easing.Linear));
+        _elastic = await Create(".animatable-ease .clock-2", props => props
+            .Property("rotate", property => property.Unit("rad"))
+            .Ease(Easing.OutElastic()));
+    }
+
+    private async Task Move(PointerEventArgs pointer)
+    {
+        await Track(pointer, async next =>
+        {
+            if (_linear is null || _elastic is null)
+                return;
+            var linear = Unwrap(await Angle(_linearClock, next), ref _linearAngle, ref _linearLast);
+            var elastic = Unwrap(await Angle(_elasticClock, next), ref _elasticAngle, ref _elasticLast);
+            await _linear.Set("rotate", linear);
+            await _elastic.Set("rotate", elastic);
+        });
+    }
+}
