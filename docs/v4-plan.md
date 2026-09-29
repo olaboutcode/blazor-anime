@@ -14,7 +14,7 @@
 
 BlazorAnime is a Razor class library that embeds anime.js 3.2.2 as a minified UMD global and exposes it through a typed C# builder. Call sites build a `PropsBuilder`, the library serializes that to a marker payload, and `src/BlazorAnime/wwwroot/blazor.anime.interop.js` turns the markers into an `anime({...})` call. Blazor loads that file as a classic script (`_content/BlazorAnime/blazor.anime.interop.js`), not as a module.
 
-anime.js v4 is a different API (`animate(targets, parameters)`, `ease`, `createTimeline`, `svg.createDrawable`, an `engine` module) and the package is ESM-first. anime.js 3 is no longer the supported engine upstream. BlazorAnime 0.0.1 has not been published, so there is no consumer to keep on the current C# surface. This plan stays in this repository. Local branch `v4` already exists at `3d81119` (the same commit as `master`). The first release is one NuGet package, **BlazorAnime 1.0.0**, whose public C# surface uses v4 names. Breaking, renaming, and moving the current types is expected. A bundler step, rooted at `src/BlazorAnime/anime/` so a root `package-lock.json` is never produced, emits one classic IIFE that is still that same script URL. The interop style worth keeping is the mechanism (marker payload, `invokeMethodAsync` relays, one-shot function values, `TargetInfo` snapshots), not the v3 parameter names. Those names are not translated back inside JavaScript.
+anime.js v4 is a different API (`animate(targets, parameters)`, `ease`, `createTimeline`, `svg.createDrawable`, an `engine` module) and the package is ESM-first. anime.js 3 is no longer the supported engine upstream. BlazorAnime 0.0.1 has not been published, so there is no consumer to keep on the current C# surface. This plan stays in this repository. Local branch `v4` already exists at `3d81119` (the same commit as `master`). The first release is one NuGet package, **BlazorAnime 1.0.0**, whose public C# surface uses v4 names. Breaking, renaming, and moving the current types is expected. A bundler step, rooted at `src/BlazorAnime/anime/` so a root `package-lock.json` is never produced, emits one ES module at `wwwroot/BlazorAnime.lib.module.js`. Blazor loads that file because the app references the package. The host `index.html` has no anime script tag. The interop style worth keeping is the mechanism (marker payload, `invokeMethodAsync` relays, one-shot function values, `TargetInfo` snapshots), not the v3 parameter names. Those names are not translated back inside JavaScript.
 
 `master` stays on the current tree only so GitHub Pages does not deploy a half-migrated demo. That is a release gate, not support for v3. The cutover is one merge, package version **1.0.0**. Do not tag or publish 0.0.1.
 
@@ -41,7 +41,7 @@ Pain that a shim would freeze in place:
 
 ### Goals
 
-- Pin `animejs@4.5.0` and ship it as one classic script at the existing URL.
+- Pin `animejs@4.5.0` and ship the core as `wwwroot/BlazorAnime.lib.module.js`, which Blazor loads with no `<script>` tag.
 - Retarget `IAnime`, builders, easings, timeline add, stagger options, SVG helpers, playback, and `AnimationState` to v4 names and v4 behavior. Move and rename files when that surface wants a different layout. The in-repo samples and tests move with the API in the same change. There is no external v3 caller to keep compiling.
 - Keep the load-bearing interop mechanisms: `invokeMethodAsync` only, state snapshots, dispose-pauses, function values computed once per target, `TargetInfo` without a live DOM element, `Loop(true)` forever, millisecond ints at the C# boundary.
 - Port `samples/Examples.WebAssembly` against the official v4 docs, then `samples/PageTransitions`.
@@ -50,7 +50,7 @@ Pain that a shim would freeze in place:
 ### Non-Goals
 
 - A second repository, a second package id, or a JS compatibility shim that accepts `easeInOutQuad` / `endDelay` / `anime.timeline()`.
-- WAAPI (`waapi.animate`), timers (`createTimer`), scope, draggable, layout, animatable, scroll observers, `splitText` / `text` / `scrambleText`, and the three.js adapter. Nothing in `IAnime` calls them today. They are a follow-up.
+- Implementing the satellite packages in the 1.0.0 merge. `createTimer` is core. WAAPI, draggable, scope, scroll, animatable, and text are later packages (`BlazorAnime.Waapi`, `BlazorAnime.Draggable`, `BlazorAnime.Scope`, `BlazorAnime.Scroll`, `BlazorAnime.Animatable`, `BlazorAnime.Text`). The three.js adapter stays out. The seams those packages use (`IAnimeHandle`, builder values, `BlazorAnime.lib.module.js`) are part of this plan.
 - Redesigning the docs shell, Tailwind (`tw:` utilities), column widths, or `DemoPlayback` selection. The version text in `DocsShell.razor` (the `3.2.2` span) is updated to the pinned engine version; layout, Tailwind, and column widths stay. Samples otherwise change only to call the new API and to follow the v4 examples they already mirror. `DemoPlayback` stays `Restart` when a card is selected and `Reset` when it is not. `reset()` already pauses on 4.5.0, so do not add `Pause()` after `Reset`.
 - A runtime feature flag that selects v3 or v4 inside one process.
 - Targeting `animejs@5.0.0-beta.*`.
@@ -59,9 +59,9 @@ Pain that a shim would freeze in place:
 
 1. **One repository, branch `v4`, and the first release is v4.** v4 is this library’s supported API, not a migration beside a supported v3. Local branch `v4` already exists at `3d81119` (`Merge pull request #3 from olaboutcode/docs`), the same commit as `master`. Do not run `git checkout -b v4`. Do not tag that commit `v0.0.1`. BlazorAnime has not been published, and anime.js 3 is no longer supported upstream, so breaking the current C# API is the work, not a cost to avoid. Move types, split files, and rewrite call sites when the v4 shape needs it. `master` stays on the current tree only so `pages.yml` does not deploy a half-migrated demo. If `master` later moves, merge it into `v4`. Do not open a second remote.
 
-2. **One package id, version 1.0.0, and that is the first publish.** `BlazorAnime` 0.0.1 is the number in `BlazorAnime.csproj`. It has not been pushed to NuGet. Do not publish it, and do not tell anyone to pin it to stay on v3. A 0.2.0 bump would read as “still a preview of the v3 binding.” 1.0.0 is the version that says the supported API is the v4 surface. No `BlazorAnime.V3` package.
+2. **One core package, version 1.0.0, and that is the first publish.** `BlazorAnime` 0.0.1 is the number in `BlazorAnime.csproj`. It has not been pushed to NuGet. Do not publish it, and do not tell anyone to pin it to stay on v3. A 0.2.0 bump would read as “still a preview of the v3 binding.” 1.0.0 is the version that says the supported API is the v4 surface. No `BlazorAnime.V3` package. Later features that return their own object ship as `BlazorAnime.Waapi` and the other ids in the API map. They are not part of the 1.0.0 publish.
 
-3. **Bundle from the ESM entry. Do not paste the UMD.** `animejs@4.5.0` is `"type": "module"` with `module` `./dist/modules/index.js`. It also publishes `dist/bundles/anime.umd.min.js` (confirmed HTTP 200, 118,043 bytes, header `Anime.js - UMD minified bundle`, global `anime`). The UMD is not the integration. esbuild bundles the modules this library calls, plus the interop, into one IIFE assigned to `window.AnimeJs`. Blazor’s script tag does not change and does not become `type="module"`. A module would break the existing tags in `samples/Examples.WebAssembly/wwwroot/index.html` and `samples/PageTransitions/wwwroot/index.html`, and a bare ESM import would 404 on GitHub Pages.
+3. **Bundle from the ESM entry into a JS initializer. Do not paste the UMD, and do not ask the host for a script tag.** `animejs@4.5.0` is `"type": "module"` with `module` `./dist/modules/index.js`. It also publishes `dist/bundles/anime.umd.min.js` (118,043 bytes, global `anime`). The UMD is not the integration. esbuild bundles the core modules plus the interop into `src/BlazorAnime/wwwroot/BlazorAnime.lib.module.js` (`--format=esm`). The assembly name is `BlazorAnime`, so Blazor imports that file during startup when the app references the package. `AddBlazorAnime()` only registers `IAnime`. On load the module assigns `globalThis.AnimeJs`, which keeps the existing `IJSRuntime` identifiers. Delete the `<script src="_content/BlazorAnime/blazor.anime.interop.js">` tags from both sample `index.html` files and from `README.md`. A bare `import 'animejs'` in the browser is not the design: the published file is already bundled, and GitHub Pages resolves it through the same base href Blazor uses for `_framework` and `_content`.
 
 4. **npm lives only in `src/BlazorAnime/anime/`.** `package.json` and `package-lock.json` are committed there. `npm ci` / `npm run build` always use `--prefix src/BlazorAnime/anime`. Never run npm at the repo root. `.gitignore` already ignores `node_modules/`. CI fails if a root `package.json` or `package-lock.json` appears.
 
@@ -79,7 +79,7 @@ Pain that a shim would freeze in place:
 
 10. **Function values stay one-shot.** v4 calls `(target, index, targets)` and, since 4.4.0, the third argument is the targets array, not `total`. The DOM element is still not sent to C#. JS snapshots `TargetInfo` once, `invokeMethodAsync` collects every value, and the installed function returns `values[index]`. `total` on the C# `Func<int, int, T>` remains `targets.length`. `refresh()` does not re-enter .NET unless C# `Refresh()` re-materializes first.
 
-11. **Core only. Keep v4’s default tween composition `'replace'`.** This migration replaces today’s coverage: `animate`, timeline, stagger, svg (`createMotionPath`, `createDrawable`, `morphTo`), easings (named curves, `spring`, `cubicBezier`, `steps`, sampled curves, including the `outIn*` strings the runtime still parses), `utils` (`get`, `set`, `remove`, `random`, `round`), and `engine` (`speed`, `pauseOnDocumentHidden`, manual `update` only as the replacement for instance `tick`). Not WAAPI or the extra modules.
+11. **Core is the clock and the values it plays. Keep v4’s default tween composition `'replace'`.** `IAnime` covers `animate`, `createTimer`, `createTimeline`, stagger, svg (`createMotionPath`, `createDrawable`, `morphTo`), easings (named curves, `spring`, `cubicBezier`, `steps`, sampled curves, including the `outIn*` strings the runtime still parses), `utils` (`get`, `set`, `remove`, `random`, `round`), and `engine` (`speed`, `pauseOnDocumentHidden`, manual `update` only as the replacement for instance `tick`). Timer stays here because the engine drives timers, animations, and timelines as one family, and a timeline holds timers. WAAPI, draggable, scope, scroll, animatable, and text are the satellite packages below.
 
 `defaults.composition` is `compositionTypes.replace` (`globals.js`). `getTweenSiblings(target, propName)` in `animation.js` overrides tweens of the same property that start at or after the new one. v3 did not do this; `anime.remove` was explicit. A second `Animate` of the same property on the same target cancels the first. `utils.set` is the opposite: `dist/modules/utils/target.js` forces `composition` to `'none'` before returning the zero-duration `JSAnimation`, so `Set` does not cancel. Do not pass `composition: 'none'` from the interop when the caller omitted it. That would be a v3 behavior shim, which this migration rejects. Callers who want overlapping tweens set composition `'none'` or `'blend'` themselves. The sphere is likely unaffected (intro `strokeDashoffset` / later `draw`, rings `stroke` / `translateX` / `translateY`, breath `JsTarget`) and the travel fade is sequential on `opacity`, but that is not the public contract. README and the risks table state the `replace` default.
 
@@ -90,6 +90,20 @@ Pain that a shim would freeze in place:
 Read path: the engine stores `iterationCount`, not `loop` (`timer.js`). `true` / `Infinity` / negative become `Infinity`; any other number becomes `timerLoop + 1`. There is no `loop` property to read back. `Loop(1)` is therefore `iterationCount === 2`. Store the configured loop on the wrapper at build time (`true` / `Infinity` / negative → `-1`, otherwise the integer that was passed). `toState` reads that stored value. If a path must derive it, use `iterationCount === Infinity ? -1 : iterationCount - 1`. Do not return `iterationCount` as `Loop`. The node test asserts both directions: `loop: 1` is not rewritten to `0` on the way in, and the snapshot `Loop` is `1`, not `2`. `loop: true` reads back as `-1`.
 
 14. **Drop APIs v4 removed, under their v4 replacements where one exists.** Remove `RunningLength` (`anime.running` is gone; do not invent a registry). Remove `ConvertPx` (`utils.get(target, prop, unit)` is already `IAnime.Get`). Remove instance `Tick` (`engine.update()` exists but nothing in the repo calls `Tick`). Replace `SuspendWhenDocumentHidden` with `PauseOnDocumentHidden` (`engine.pauseOnDocumentHidden`). Replace `SetDashoffset` / the `strokeDashoffset` special case with `CreateDrawable`. Replace `GetSvgPath` with `CreateMotionPath`.
+
+15. **A JavaScript export becomes its own package only when it returns a different kind of object.** Core does not reference the satellite projects. Each satellite depends on the same `BlazorAnime` version and the same `animejs` pin, registers one service, and ships `wwwroot/{AssemblyName}.lib.module.js`. That file imports the core module, so the page has one `engine`. `AddBlazorAnimeWaapi()` extends `IServiceCollection`. `IAnime` does not grow a `Waapi` or `Draggable` property.
+
+| Package | Service | v4 export | Returns |
+|---|---|---|---|
+| `BlazorAnime` | `IAnime` | `engine`, `animate`, `createTimer`, `createTimeline`, `utils`, `svg`, `stagger`, easings | The clock, `Animation`, `Timer`, `Timeline`, and the values those calls take |
+| `BlazorAnime.Animatable` | `IAnimatable` | `createAnimatable` | Property getters and setters |
+| `BlazorAnime.Draggable` | `IDraggable` | `createDraggable` | A drag instance |
+| `BlazorAnime.Scope` | `IScope` | `createScope` | A scope that builds the others inside a media query |
+| `BlazorAnime.Scroll` | `IScroll` | `onScroll` | An observer, usually passed to `Autoplay` |
+| `BlazorAnime.Waapi` | `IWaapi` | `waapi.animate` | A browser-timeline animation. It does not follow `engine.speed` |
+| `BlazorAnime.Text` | `IText` | `splitText` | Elements passed to `Targets` |
+
+The core defines `IAnimeHandle` (the JS instance). `Timeline.Sync` accepts that handle, and the WAAPI animation implements it. `Autoplay` accepts a bool or a handle from `IScroll`. `Targets` accepts an element, a selector, or a handle from `Svg.Drawable` and `IText`. `ReleaseEase` accepts the same `Easing` value an animation accepts. One esbuild run in `src/BlazorAnime/anime/` emits the core file and, when a satellite project exists, that satellite’s file. A second esbuild invocation that bundles `animejs` again is a second clock and is rejected. The 1.0.0 PRs emit only the core file.
 
 ## Proposed Design
 
@@ -136,9 +150,9 @@ flowchart LR
         Builder["PropsBuilder<br/>ease, to, loopDelay, alternate"]
         Relays["same three relays"]
     end
-    subgraph iife [one classic IIFE]
-        Interop["window.AnimeJs"]
-        V4["animejs 4.5.0<br/>animate, createTimeline,<br/>stagger, svg, utils, engine"]
+    subgraph module [BlazorAnime.lib.module.js]
+        Interop["globalThis.AnimeJs"]
+        V4["animejs 4.5.0<br/>animate, createTimer, createTimeline,<br/>stagger, svg, utils, engine"]
     end
     Razor --> IAnime --> Builder
     Builder -->|"same marker payload, v4 keys"| Interop
@@ -147,14 +161,9 @@ flowchart LR
     V4 --> DOM["DOM / plain objects"]
 ```
 
-The C# process does not import npm. The Razor SDK still serves `wwwroot/blazor.anime.interop.js`. Consumers keep:
+The C# process does not import npm. The Razor SDK serves `wwwroot/BlazorAnime.lib.module.js`, and Blazor’s startup imports it. Consumers keep `builder.Services.AddBlazorAnime()` and do not add a script tag. Both sample `index.html` files delete the current `_content/BlazorAnime/blazor.anime.interop.js` tag.
 
-```html
-<script src="_framework/blazor.webassembly.js"></script>
-<script src="_content/BlazorAnime/blazor.anime.interop.js"></script>
-```
-
-`scripts/publish-pages.py` rewrites `<base href>` on the two sample hosts and copies `pages/index.html` and `pages/404.html`, substituting `__BASE__`. With `<base href="/blazor-anime/examples/">` the script resolves to `/blazor-anime/examples/_content/BlazorAnime/blazor.anime.interop.js`, and with `<base href="/blazor-anime/travel/">` it resolves to `/blazor-anime/travel/_content/BlazorAnime/blazor.anime.interop.js`. `dotnet publish` already copies the file. The filename stays, so Pages does not need a new path. `pages.yml` builds on every pull request and deploys only for `master` and non-PR runs. The IIFE has no runtime `import`, so the published site does not need `node_modules`.
+`scripts/publish-pages.py` rewrites `<base href>` on the two sample hosts. Blazor’s boot manifest lists the initializer as `_content/BlazorAnime/BlazorAnime.lib.module.js`, and the loader resolves that against the base href, the same way it loads `_framework/blazor.webassembly.js`. `pages.yml` is unchanged. The module is bundled, so the published site does not need `node_modules` and does not fetch `animejs` at runtime.
 
 ### Bundle
 
@@ -171,7 +180,7 @@ Directory `src/BlazorAnime/anime/` (not the repo root):
     "esbuild": "0.25.10"
   },
   "scripts": {
-    "build": "esbuild entry.js --bundle --format=iife --platform=browser --target=es2018 --minify --legal-comments=inline --outfile=../wwwroot/blazor.anime.interop.js"
+    "build": "esbuild entry.js --bundle --format=esm --platform=browser --target=es2018 --minify --legal-comments=inline --outfile=../wwwroot/BlazorAnime.lib.module.js"
   }
 }
 ```
@@ -180,19 +189,19 @@ Pin esbuild exactly when the lockfile is generated (0.25.10 is the line to start
 
 `entry.js` imports only:
 
-- `animate`, `createTimeline`, `engine` from `animejs`
+- `animate`, `createTimer`, `createTimeline`, `engine` from `animejs`
 - `stagger`, `get`, `set`, `remove`, `random`, `round` from `animejs`
 - `createMotionPath`, `createDrawable`, `morphTo` from `animejs` (the `svg` namespace re-exports these; `dist/modules/index.js` exports them as named functions)
 - `spring`, `cubicBezier`, `steps` from `animejs`
 - `./interop.js`
 
-Do not import `waapi`, `createDraggable`, `createTimer`, `createScope`, `createLayout`, `createAnimatable`, `splitText`, `scrambleText`, `onScroll`, or `animejs/adapters/three`. esbuild tree-shakes the rest. The full UMD is 118 KB minified; the shipped file should be smaller. Record the byte size in the PR1 test output. Do not fail the build on a guessed budget.
+Do not import `waapi`, `createDraggable`, `createScope`, `createAnimatable`, `splitText`, `onScroll`, or `animejs/adapters/three` into the core entry. Those belong to the satellite outputs. esbuild tree-shakes them out of `BlazorAnime.lib.module.js`. The full UMD is 118 KB minified; the core file should be smaller. Record the byte size in the PR1 test output. Do not fail the build on a guessed budget.
 
 `globalVersions` (`{ version: '4.5.0' }`) is exported from `dist/modules/core/globals.js` and pushed onto `window.AnimeJS` (capital JS, a different property from `window.AnimeJs`). It is **not** on the package’s public `exports` map (`dist/modules/index.js` exports `globals`, not `globalVersions`). Do not deep-import past `exports`. Inject the version with esbuild `define` from the installed `node_modules/animejs/package.json` `version` field, and have the node test assert `AnimeJs.version() === "4.5.0"`.
 
 The generated wwwroot file is committed so `dotnet pack` and `dotnet build` do not require Node. CI regenerates it and `git diff --exit-code`s the file. esbuild `--legal-comments=inline` keeps the anime.js MIT banner. The hand-written source is `src/BlazorAnime/anime/interop.js`, moved out of the wwwroot file so the minified engine is no longer edited by hand.
 
-esbuild is the bundler because the v4 install docs name it, it emits an IIFE in one command, and it tree-shakes. Rollup is what the anime.js repo itself uses; it is unnecessary weight for a single entry.
+esbuild is the bundler because the v4 install docs name it, it emits a bundled ESM in one command, and it tree-shakes. Rollup is what the anime.js repo itself uses; it is unnecessary weight for this entry. The module body still assigns `globalThis.AnimeJs`. C# keeps calling `AnimeJs.createAnimation` through `IJSRuntime`.
 
 ### Interop behavior that moves forward
 
@@ -517,7 +526,7 @@ Package description becomes “Typed Blazor bindings for anime.js v4.” `Packag
 | `src/BlazorAnime/anime/package-lock.json` | New. Only lockfile in the repo. |
 | `src/BlazorAnime/anime/entry.js` | New. Named imports + `install(...)`. |
 | `src/BlazorAnime/anime/interop.js` | New. Today’s interop section, edited for v4 calls. |
-| `src/BlazorAnime/wwwroot/blazor.anime.interop.js` | Generated IIFE. v3 UMD deleted. |
+| `src/BlazorAnime/wwwroot/BlazorAnime.lib.module.js` | Generated ESM initializer. v3 UMD deleted. `blazor.anime.interop.js` deleted with it. |
 | `src/BlazorAnime/BlazorAnime.csproj` | `Version` 1.0.0, description, release notes. No new content item; `wwwroot` is already a static asset. |
 | `Anime.cs` | `IAnime` shape above. Identifiers stay `AnimeJs.*` except renamed operations (`path` → `createMotionPath`, and so on). |
 | `PropsBuilder.cs` | Key `easing` → `ease`. `To` / `From` / `FromTo`. `Direction` property removed. One `easeFn` marker replaces `EasingCurveProp`. |
@@ -661,21 +670,21 @@ Rejected. The public surface would keep teaching names the v4 docs do not use, w
 
 A `blazor-anime-v4` repo, or `BlazorAnime.V4` beside `BlazorAnime` forever.
 
-Rejected. v4 is the library, not a fork beside a supported v3. 0.0.1 was never published, upstream no longer supports anime.js 3, and every in-repo caller can move. Maintaining two engines would double the Playwright and interop gates for an API that will not ship. The user decision is final: one package, one history, this repo, and the release targets v4 even where that breaks the current surface.
+Rejected. v4 is the library, not a fork beside a supported v3. 0.0.1 was never published, upstream no longer supports anime.js 3, and every in-repo caller can move. Maintaining two engines would double the Playwright and interop gates for an API that will not ship. The user decision is final: one repository, the release targets v4, and the current API may break. Later `BlazorAnime.Waapi`-style packages are optional features in this repo, not a second v3 product.
 
 ### C. Paste `anime.umd.min.js` and append the interop — rejected
 
 The file exists and is a classic script (`const { animate } = anime`). Concatenating it with the interop would avoid esbuild.
 
-Rejected. It vendors 118 KB that includes modules this library will not wrap, it is another pasted blob (the thing being deleted), and the version pin would be a comment instead of a lockfile. The user decision is final: a bundle step from the npm package, one classic script, no pasted UMD.
+Rejected. It vendors 118 KB that includes modules this library will not wrap, it is another pasted blob (the thing being deleted), and the version pin would be a comment instead of a lockfile. The user decision is final: a bundle step from the npm package, one JS initializer, no pasted UMD.
 
-### D. `type="module"` script that imports `animejs` from a CDN — rejected
+### D. A hand-written `<script type="module">` that imports `animejs` from a CDN — rejected
 
-Breaks the documented install snippet, fails offline and on GitHub Pages unless the CDN URL is rewritten into every host page, and cannot `invoke` into a module scope without also attaching `window.AnimeJs`. The IIFE does that attachment.
+Breaks offline use and GitHub Pages unless every host page repeats the CDN URL. The shipped file is a bundled initializer Blazor loads from `_content`, and the module still assigns `globalThis.AnimeJs` so `IJSRuntime` can reach it.
 
 ### E. Chosen approach
 
-`v4` branch in this repo, esbuild IIFE from `animejs@4.5.0` ESM, C# surface rebuilt around v4 (renames and file moves included), one package `BlazorAnime` 1.0.0 as the first publish, samples ported to the v4 docs, merge to `master` only when the gates pass. No v3 release.
+`v4` branch in this repo, esbuild ESM initializer from `animejs@4.5.0`, no host script tag, C# surface rebuilt around v4 (renames and file moves included), core package `BlazorAnime` 1.0.0 as the first publish, satellite packages later for the factories that return a different object, samples ported to the v4 docs, merge to `master` only when the gates pass. No v3 release.
 
 ## Security & Privacy Considerations
 
@@ -687,7 +696,7 @@ This library runs in the user’s browser. It does not add accounts, tokens, or 
 | `Easing.Raw` or a property name used as code | Medium if implemented with `eval` | Do not `eval` or `new Function` on user strings. Named eases go through anime’s `parseEase`. `steps` / `cubicBezier` / `spring` are built from structured numbers. Unknown ease strings become linear inside anime; they do not throw script. |
 | Callback handle leaked across circuits | Medium | Existing `Create` try/catch disposes handles on failure. `DisposeAsync` disposes relays after `pause`. Keep both. Relays are `[JSInvokable]` instance methods, not static, so one component cannot invoke another’s relay without the `DotNetObjectReference`. |
 | `revert()` on dispose restoring hidden content | Low | Do not call `revert()` from `DisposeAsync`. |
-| GitHub Pages serving a module that fetches further code | Low | IIFE is self-contained. `publish-pages.sh` already strips `.br` / `.gz` because Pages would serve them without `Content-Encoding`. Unchanged. |
+| GitHub Pages serving a module that fetches further code | Low | The initializer is bundled. No runtime `import` of `animejs`. `publish-pages.sh` already strips `.br` / `.gz` because Pages would serve them without `Content-Encoding`. Unchanged. |
 
 No personal data is collected. `TargetInfo.Dataset` is whatever the page put on the element; it is not transmitted off the machine. It crosses the JS→.NET boundary once per animation build. Do not add logging of dataset values.
 
@@ -702,7 +711,7 @@ There is no service to alert on. Do not add per-frame `console.log` or a telemet
 - Do not emit anime’s deprecated-ease warning. Construct `steps` / `cubicBezier` via functions so `parseEase` never sees those strings.
 - `Version()` is the support knob: it must return the pinned `4.5.0`. The node test asserts it.
 - Playwright remains the runtime probe: harness ready, seek, geometry. No new dashboards.
-- CI is the alert: `dotnet test`, `node --test`, Playwright, and, from PR2 onward, the `bundle` drift check. PR1’s job builds a spike outfile that is not `wwwroot` and does not claim that check. PR2 points esbuild at `wwwroot/blazor.anime.interop.js`, changes the job to `npm ci --prefix`, rebuilds that file, and `git diff --exit-code`s it. After PR2, a red `bundle` job means the committed script drifted from the lockfile. PR9 does not introduce that check; it only requires the check PR2 already owns.
+- CI is the alert: `dotnet test`, `node --test`, Playwright, and, from PR2 onward, the `bundle` drift check. PR1’s job builds a spike outfile that is not `wwwroot` and does not claim that check. PR2 points esbuild at `wwwroot/BlazorAnime.lib.module.js`, changes the job to `npm ci --prefix`, rebuilds that file, and `git diff --exit-code`s it. After PR2, a red `bundle` job means the committed module drifted from the lockfile. PR9 does not introduce that check; it only requires the check PR2 already owns.
 
 ## Rollout Plan
 
@@ -733,7 +742,7 @@ No staged percentage rollout. The package version is the gate.
 
 ### Node interop tests that break (`anime-interop.test.cjs`)
 
-The file loads `wwwroot/blazor.anime.interop.js` in a `vm` with a stub `document`. Every test calls `createAnimation` / `createTimeline` and several assert `version() === "3.2.2"`.
+The file loads the shipped bundle with a stub `document`. After PR2 that file is `wwwroot/BlazorAnime.lib.module.js`, an ES module, so the test dynamic-imports it and reads `globalThis.AnimeJs` rather than `vm.runInContext` on a classic script. Every test calls `createAnimation` / `createTimeline` and several assert `version() === "3.2.2"` until that assertion moves to `4.5.0`.
 
 | Test | Replacement |
 |---|---|
@@ -819,7 +828,7 @@ Then `samples/PageTransitions`:
 
 | Risk | Severity | Mitigation |
 |---|---|---|
-| ESM bundle loaded as a classic script, or a module import that 404s on GitHub Pages | High | IIFE, `--format=iife`, no runtime imports. Same script URL. CI `bundle` job plus the Playwright harness, which fails if `window.AnimeJs` is missing (`data-ready` never becomes true). |
+| Initializer missing, so `AnimeJs` is undefined | High | File name is exactly `BlazorAnime.lib.module.js`. Samples delete the old script tag in the same PR that switches the file. Playwright fails if `data-ready` never becomes true. The module is bundled, so Pages does not fetch `animejs`. |
 | Ease calling-convention change (`(t) => number` vs `(el, i, total) => fn`) | High | Delete the wrapper. Node test “sampled curve” seeks the midpoint and expects ~0 for samples `[0, 0, 1]`. If the wrapper stays, v4 will call it as an easing and the midpoint will be wrong. |
 | `steps(` / `cubicBezier(` / `spring(` strings silently become linear | High | `easeFn` markers. Node test spies `console.warn`. |
 | Timeline `add` argument order | High | Interop splits `targets` out. Node test: position `0` overlaps; `"+=50"` waits. `TravelHeader` uses `0`. |
@@ -843,7 +852,7 @@ Then `samples/PageTransitions`:
 
 ## Open Questions
 
-None that block implementation. Units, package version, shorthand versus `TranslateX`, the single package id, and “the first release is v4, so the current API may break and move” are decided above. The esbuild patch version is whatever `npm install` resolves inside `src/BlazorAnime/anime/` when the lockfile is first created, then it is pinned; that is an implementation detail, not a product decision.
+None that block implementation. Units, package version, shorthand versus `TranslateX`, the core package id, the satellite map, the JS initializer, and “the first release is v4, so the current API may break and move” are decided above. The esbuild patch version is whatever `npm install` resolves inside `src/BlazorAnime/anime/` when the lockfile is first created, then it is pinned; that is an implementation detail, not a product decision.
 
 ## References
 
@@ -861,7 +870,8 @@ None that block implementation. Units, package version, shorthand versus `Transl
 - Engine: `engine.speed`, `engine.pauseOnDocumentHidden`, `engine.update`, `engine.timeUnit` in `dist/modules/engine/engine.d.ts` and `dist/modules/core/clock.d.ts`. `anime.running` removed (wiki).
 - npm: `animejs@4.5.0` published 2026-06-22, tag `latest`. `5.0.0-beta.2` is tag `beta` only. Package `exports` are ESM/CJS. `jsdelivr` / `unpkg` point at the UMD bundle.
 - 4.5.0 color note and 4.4.0 transform-order note: release text on the npm version page for 4.5.0 and 4.4.0.
-- This repo: `src/BlazorAnime/wwwroot/blazor.anime.interop.js` interop from the `// Interop section` marker, `Anime.cs`, `PropsBuilder.cs`, `PropsBuilderExtensions.cs`, `Easing.cs`, `Animation.cs`, `AnimationState.cs`, `Timeline.cs`, `StaggerBuilder.cs`, `SvgPath.cs`, `CallbackRelay.cs`, `samples/Examples.WebAssembly/DemoCatalog.cs`, `DemoPlayback.cs`, `Components/Docs/DocsShell.razor` (version span only), `Pages/Harness.razor`, `test/interop/anime-interop.test.cjs`, `test/BlazorAnime.UiTests/HarnessTests.cs`, `.github/workflows/ci.yml`, `scripts/publish-pages.sh`, `scripts/publish-pages.py`.
+- This repo: `src/BlazorAnime/wwwroot/blazor.anime.interop.js` (today’s classic script; replaced by `BlazorAnime.lib.module.js`), `Anime.cs`, `PropsBuilder.cs`, `PropsBuilderExtensions.cs`, `Easing.cs`, `Animation.cs`, `AnimationState.cs`, `Timeline.cs`, `StaggerBuilder.cs`, `SvgPath.cs`, `CallbackRelay.cs`, `samples/Examples.WebAssembly/DemoCatalog.cs`, `DemoPlayback.cs`, `Components/Docs/DocsShell.razor` (version span only), `Pages/Harness.razor`, both sample `wwwroot/index.html` script tags, `test/interop/anime-interop.test.cjs`, `test/BlazorAnime.UiTests/HarnessTests.cs`, `.github/workflows/ci.yml`, `scripts/publish-pages.sh`, `scripts/publish-pages.py`.
+- JS initializers: a Razor class library’s `wwwroot/{AssemblyName}.lib.module.js` is imported by Blazor startup. `AddBlazorAnime()` does not render a script tag.
 - 4.5.0 modules cited for the corrections above: `dist/modules/svg/morphto.js`, `drawable.js`, `motionpath.js`, `animation/animation.js`, `timer/timer.js`, `core/helpers.js`, `core/consts.js`, `core/globals.js`, `easings/eases/parser.js`, `easings/spring/index.js`, `utils/target.js`, `timeline/timeline.js`.
 
 ## PR Plan
@@ -873,12 +883,12 @@ All PRs except the last merge into `v4`, not `master`. Each leaves `v4` CI green
 - **Title:** Add the animejs 4.5.0 bundle pipeline without replacing the shipped script
 - **Files:** `src/BlazorAnime/anime/package.json`, `package-lock.json`, `entry.js`, `interop.js` (thin: `createAnimation`, `seek`, `version`, object targets, linear ease), `test/interop/anime-v4-spike.test.cjs`, `.github/workflows/ci.yml` (`bundle` job: `npm ci --prefix src/BlazorAnime/anime`, build to a spike outfile that is not `wwwroot`, run the spike test, assert no root `package.json` / `package-lock.json`). `.gitignore` unchanged (`node_modules/` already ignored).
 - **Dependencies:** none. Start from the existing local branch `v4` at `3d81119`. Do not create the branch. Do not tag `v0.0.1`.
-- **Description:** esbuild IIFE from the ESM entry. The spike sandbox sets `window` and `Date` (the engine clock is `Date.now`). The spike test loads that outfile in `vm`, asserts version `4.5.0`, and seeks a plain object to 100. `wwwroot/blazor.anime.interop.js` stays the 3.2.2 paste only for this PR, so the branch still builds while the bundle toolchain lands. Replacing that paste is PR2, and PR2 is allowed to break every v3 call. This job does not `git diff` the wwwroot file. Record the spike bundle’s byte size in the PR description. Do not import WAAPI, draggable, text, layout, timer, or scope.
+- **Description:** esbuild ESM from the animejs entry. The spike sandbox sets `window` and `Date` (the engine clock is `Date.now`). The spike test dynamic-imports that outfile, asserts version `4.5.0`, and seeks a plain object to 100. `wwwroot/blazor.anime.interop.js` stays the 3.2.2 paste only for this PR, so the branch still builds while the bundle toolchain lands. Replacing that paste is PR2, and PR2 is allowed to break every v3 call. This job does not `git diff` the wwwroot file. Record the spike bundle’s byte size in the PR description. Do not import WAAPI, draggable, text, scroll, animatable, or scope. `createTimer` is a core import.
 
 ### PR 2 — Core animate, playback, callbacks, ease rename
 
 - **Title:** Switch the shipped script to animejs 4.5.0 and rename core animation APIs
-- **Files:** `src/BlazorAnime/anime/interop.js` (full animate path: `attachInstanceApi`, `toState`, `easeFn` markers including `curve`, callbacks, configured `loop` and `alternate` stored on the wrapper, `TargetCount` from `targets.length`), esbuild outfile moved to `src/BlazorAnime/wwwroot/blazor.anime.interop.js` (v3 UMD deleted), `.github/workflows/ci.yml` (the `bundle` job becomes `npm ci --prefix`, rebuild `wwwroot/blazor.anime.interop.js`, `git diff --exit-code` that file; drop `anime-v4-spike.test.cjs`), `Anime.cs` (animate, speed, version, pause-on-hidden rename), `Easing.cs` (v4 names, `OutIn*` kept and renamed, `Spring()` / `Spring(mass, stiffness, damping, velocity)` / `SpringBounce`), `PropsBuilder.cs`, `PropsBuilderExtensions.cs` (ease, loopDelay, alternate, reversed, callback names, `ModifierRound`; stagger `Direction` / `Easing` methods stay until PR3), `Animation.cs`, `AnimationState.cs`, `AnimatedComponent.cs`, `PropsBuilderTests.cs`, `test/interop/anime-interop.test.cjs`, `Harness.razor` (progress × 100, `Ease(Easing.Linear)`), every sample call site of `Easing.Ease*` and `PropsBuilder.Easing` / `Direction` / `Begin` / `Update` / `Complete` so `BlazorAnime.slnx` builds. `HarnessTests.cs` translate parser.
+- **Files:** `src/BlazorAnime/anime/interop.js` (full animate path: `attachInstanceApi`, `toState`, `easeFn` markers including `curve`, callbacks, configured `loop` and `alternate` stored on the wrapper, `TargetCount` from `targets.length`), esbuild outfile moved to `src/BlazorAnime/wwwroot/BlazorAnime.lib.module.js` (v3 file `blazor.anime.interop.js` deleted), both sample `wwwroot/index.html` script tags removed, `.github/workflows/ci.yml` (the `bundle` job becomes `npm ci --prefix`, rebuild `wwwroot/BlazorAnime.lib.module.js`, `git diff --exit-code` that file; drop `anime-v4-spike.test.cjs`), `Anime.cs` (animate, speed, version, pause-on-hidden rename), `Easing.cs` (v4 names, `OutIn*` kept and renamed, `Spring()` / `Spring(mass, stiffness, damping, velocity)` / `SpringBounce`), `PropsBuilder.cs`, `PropsBuilderExtensions.cs` (ease, loopDelay, alternate, reversed, callback names, `ModifierRound`; stagger `Direction` / `Easing` methods stay until PR3), `Animation.cs`, `AnimationState.cs`, `AnimatedComponent.cs`, `PropsBuilderTests.cs`, `test/interop/anime-interop.test.cjs`, `Harness.razor` (progress × 100, `Ease(Easing.Linear)`), every sample call site of `Easing.Ease*` and `PropsBuilder.Easing` / `Direction` / `Begin` / `Update` / `Complete` so `BlazorAnime.slnx` builds. `HarnessTests.cs` translate parser.
 - **Dependencies:** PR 1.
 - **Description:** Public animate surface matches v4. `Loop(true)` still sends `true`. The snapshot `Loop` is the value stored at build (`Loop(1)` reads back as `1`, not `iterationCount` `2`). `Alternate` on the snapshot is the build-time flag and is not updated by `alternate()`, `play()`, or `reverse()`. Progress on the library is 0–1; the harness label stays `100`. `seek(duration)` still drives `OnComplete`. Custom curves are 0–1 functions under `easeFn` / `curve`. Route `propType: "stagger"` through the imported `stagger()` for the no-options form the harness uses, plus `from` / `grid` / `axis`, which keep their names. Update the keyframe node test payload to `to` in this PR (it is hand-built JSON, not C#). C# nested `Value` → `To` stays in PR3. Update the stagger-curve node test to `easeFn` and assert a midpoint near 0 for samples `[0, 0, 1]`, not only the final value `1`. Delete the timeline node tests until PR4. `CreateTimeline` may call a real `createTimeline` or return a no-throw stub; it must not throw from samples that CI does not run. Do not merge this branch to `master`.
 
@@ -927,7 +937,7 @@ All PRs except the last merge into `v4`, not `master`. Each leaves `v4` CI green
 ### PR 9 — Package metadata and README
 
 - **Title:** Mark 1.0.0 as the anime.js v4 binding
-- **Files:** `src/BlazorAnime/BlazorAnime.csproj` (`Version` 1.0.0, description, `PackageReleaseNotes`), `README.md` (usage snippets, installation unchanged, v4 docs link, remove the “live docs are v4 but we ship v3” warning, `ModifierRound`, `CreateTimeline`, `CreateMotionPath`, `CreateDrawable`, `MorphTo` as a function reference, `Spring()` engine defaults, `SpringBounce`, progress 0–1, loop repeat count, milliseconds, `composition: 'replace'` versus `Set`), `samples/Examples.WebAssembly/Components/Docs/DocsShell.razor` (replace the `3.2.2` span with the pinned engine version, or bind `Anime.Version()`). Not the shell layout, Tailwind, or column widths.
+- **Files:** `src/BlazorAnime/BlazorAnime.csproj` (`Version` 1.0.0, description, `PackageReleaseNotes`), `README.md` (usage snippets, installation is `AddBlazorAnime()` with no script tag, v4 docs link, remove the “live docs are v4 but we ship v3” warning, `ModifierRound`, `CreateTimeline`, `CreateMotionPath`, `CreateDrawable`, `MorphTo` as a function reference, `Spring()` engine defaults, `SpringBounce`, progress 0–1, loop repeat count, milliseconds, `composition: 'replace'` versus `Set`), `samples/Examples.WebAssembly/Components/Docs/DocsShell.razor` (replace the `3.2.2` span with the pinned engine version, or bind `Anime.Version()`). Not the shell layout, Tailwind, or column widths.
 - **Dependencies:** PR 7, PR 8.
 - **Description:** Docs match the API that is about to hit `master`. No behavior change. The wwwroot drift check already exists from PR2; this PR does not add it. CI on `v4` is green, including that diff.
 
@@ -936,4 +946,4 @@ All PRs except the last merge into `v4`, not `master`. Each leaves `v4` CI green
 - **Title:** Merge the anime.js v4 line into master
 - **Files:** the merge. No drive-by edits.
 - **Dependencies:** PR 9. No `v0.0.1` tag.
-- **Description:** Fast-forward or merge commit from `v4`. If `master` moved after `3d81119`, it was merged into `v4` first. `pages.yml` deploys the v4 samples because the push is to `master`. After the push, tag `v1.0.0`. Pack `BlazorAnime.1.0.0.nupkg` and publish that as the first NuGet release. Do not publish 0.0.1 and do not publish a second package id. Rollback before that publish is reverting this merge.
+- **Description:** Fast-forward or merge commit from `v4`. If `master` moved after `3d81119`, it was merged into `v4` first. `pages.yml` deploys the v4 samples because the push is to `master`. After the push, tag `v1.0.0`. Pack `BlazorAnime.1.0.0.nupkg` and publish that as the first NuGet release. Do not publish 0.0.1. Do not publish a satellite package in this merge. Rollback before that publish is reverting this merge.
