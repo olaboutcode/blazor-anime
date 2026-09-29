@@ -204,7 +204,7 @@
         Entry is not null && string.Equals(SectionTitle(Entry), "Examples", StringComparison.Ordinal);
 
     private static string SourceUrl(DemoEntry entry) =>
-        "https://github.com/olaboutcode/blazor-anime/blob/master/samples/Examples.WebAssembly/" + entry.Source;
+        "https://github.com/olaboutcode/blazor-anime/blob/master/samples/Examples/" + entry.Source;
 
     private bool IsActive(DemoEntry entry) =>
         Entry is not null && string.Equals(Entry.Slug, entry.Slug, StringComparison.OrdinalIgnoreCase);

@@ -19,7 +19,7 @@ trap 'rm -rf "$tmp"' EXIT
 
 # CompressionEnabled is the static-web-assets switch. GitHub Pages serves .br/.gz
 # as ordinary files, without a Content-Encoding header, so leave them out.
-dotnet publish "$root/samples/Examples.WebAssembly/Examples.WebAssembly.csproj" \
+dotnet publish "$root/samples/Examples/Examples.csproj" \
   --configuration Release \
   -p:CompressionEnabled=false \
   --output "$tmp/examples"

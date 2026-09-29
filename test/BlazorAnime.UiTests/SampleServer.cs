@@ -17,7 +17,7 @@ public sealed class SampleServer : IAsyncLifetime
             return;
 
         var repoRoot = FindRepoRoot();
-        var project = Path.Combine(repoRoot, "samples", "Examples.WebAssembly", "Examples.WebAssembly.csproj");
+        var project = Path.Combine(repoRoot, "samples", "Examples", "Examples.csproj");
         _process = new Process
         {
             StartInfo = new ProcessStartInfo

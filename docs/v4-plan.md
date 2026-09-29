@@ -27,8 +27,8 @@ What ships today:
 - `src/BlazorAnime/BlazorAnime.csproj` — `PackageId` BlazorAnime, `Version` 0.0.1, `Description` “Typed Blazor bindings for anime.js v3.”, `TargetFramework` net10.0. The Razor SDK packs `wwwroot/` as static web assets. There is no explicit script item.
 - `src/BlazorAnime/wwwroot/blazor.anime.interop.js` — lines 1–12 are the anime.js 3.2.2 UMD (`window.anime`). Line 14 onward is the interop (`VALUE_FN`, `transformProps`, `curveEasing`, `makeValueFn`, `attachInstanceApi`, `window.AnimeJs`).
 - C# entry points: `Anime` / `IAnime` (`Anime.cs`), `PropsBuilder` + `PropsBuilderExtensions`, `Animation`, `Timeline`, `Easing`, `Stagger` (`StaggerBuilder.cs`), `SvgPath`, `AnimationState`, `CallbackRelay.cs`, `JsTarget`, `TargetInfo`, `AnimatedComponent`, `ServicesExtensions.AddBlazorAnime`.
-- Tests: `test/BlazorAnime.Tests/PropsBuilderTests.cs` (payload shape), `test/interop/anime-interop.test.cjs` (loads the wwwroot file in a `vm` sandbox and asserts `version() === "3.2.2"`), `test/BlazorAnime.UiTests/HarnessTests.cs` (Playwright against `samples/Examples.WebAssembly` `/harness`).
-- Samples: `samples/Examples.WebAssembly` (docs browser: `DemoCatalog.cs`, `DocsShell`, `DemoPlayback`) and `samples/PageTransitions`.
+- Tests: `test/BlazorAnime.Tests/PropsBuilderTests.cs` (payload shape), `test/interop/anime-interop.test.cjs` (loads the wwwroot file in a `vm` sandbox and asserts `version() === "3.2.2"`), `test/BlazorAnime.UiTests/HarnessTests.cs` (Playwright against `samples/Examples` `/harness`).
+- Samples: `samples/Examples` (docs browser: `DemoCatalog.cs`, `DocsShell`, `DemoPlayback`) and `samples/PageTransitions`.
 - CI: `.github/workflows/ci.yml` (build, `BlazorAnime.Tests`, `node --test test/interop/anime-interop.test.cjs`, Playwright). `.github/workflows/pages.yml` publishes `master` via `scripts/publish-pages.sh`.
 
 Pain that a shim would freeze in place:
@@ -44,7 +44,7 @@ Pain that a shim would freeze in place:
 - Pin `animejs@4.5.0` and ship the core as `wwwroot/BlazorAnime.lib.module.js`, which Blazor loads with no `<script>` tag.
 - Retarget `IAnime`, builders, easings, timeline add, stagger options, SVG helpers, playback, and `AnimationState` to v4 names and v4 behavior. Move and rename files when that surface wants a different layout. The in-repo samples and tests move with the API in the same change. There is no external v3 caller to keep compiling.
 - Keep the load-bearing interop mechanisms: `invokeMethodAsync` only, state snapshots, dispose-pauses, function values computed once per target, `TargetInfo` without a live DOM element, `Loop(true)` forever, millisecond ints at the C# boundary.
-- Port `samples/Examples.WebAssembly` against the official v4 docs, then `samples/PageTransitions`.
+- Port `samples/Examples` against the official v4 docs, then `samples/PageTransitions`.
 - Gate on `test/interop/anime-interop.test.cjs` and `test/BlazorAnime.UiTests`.
 
 ### Non-Goals
@@ -83,7 +83,7 @@ Pain that a shim would freeze in place:
 
 `defaults.composition` is `compositionTypes.replace` (`globals.js`). `getTweenSiblings(target, propName)` in `animation.js` overrides tweens of the same property that start at or after the new one. v3 did not do this; `anime.remove` was explicit. A second `Animate` of the same property on the same target cancels the first. `utils.set` is the opposite: `dist/modules/utils/target.js` forces `composition` to `'none'` before returning the zero-duration `JSAnimation`, so `Set` does not cancel. Do not pass `composition: 'none'` from the interop when the caller omitted it. That would be a v3 behavior shim, which this migration rejects. Callers who want overlapping tweens set composition `'none'` or `'blend'` themselves. The sphere is likely unaffected (intro `strokeDashoffset` / later `draw`, rings `stroke` / `translateX` / `translateY`, breath `JsTarget`) and the travel fade is sequential on `opacity`, but that is not the public contract. README and the risks table state the `replace` default.
 
-12. **Progress is 0–1 on the library, percent only in the harness label.** v4 `animation.progress` is 0–1 (`animation.d.ts` / the animation-properties doc). `AnimationState.Progress`, `GetProgress()`, and `Progress(double)` use that range. `samples/Examples.WebAssembly/Pages/Harness.razor` multiplies by 100 for `#progress`, so Playwright still sees the text `100`. That multiplication is sample formatting, not a library shim.
+12. **Progress is 0–1 on the library, percent only in the harness label.** v4 `animation.progress` is 0–1 (`animation.d.ts` / the animation-properties doc). `AnimationState.Progress`, `GetProgress()`, and `Progress(double)` use that range. `samples/Examples/Pages/Harness.razor` multiplies by 100 for `#progress`, so Playwright still sees the text `100`. That multiplication is sample formatting, not a library shim.
 
 13. **`Loop(true)` stays forever. Numeric `Loop(n)` is a v4 repeat count, not a v3 iteration count.** Write path: pass the integer through. Do not subtract one. v4 accepts `true`, `Infinity`, and any negative as infinite (`loop` playback doc) and the migration guide defines `loop: 1` as “repeat once” (two iterations). Call sites that wanted a single play omit `Loop` or pass `0` (the v4 default).
 
@@ -284,7 +284,7 @@ Seek and complete, verified in `dist/modules/timer/timer.js` and `dist/modules/c
 
 `play()` forces forward (`if (this._reversed) this.alternate(); return this.resume()`). `reverse()` forces backward the same way. Neither toggles. `alternate()` writes `_reversed` and seeks to the mirrored time. It does not change `_alternate`. `resume()` continues in the current direction. `restart()` is `reset().resume()`. `AnimationState.Reversed` follows the public `reversed` getter. `AnimationState.Alternate` is the flag stored at build and does not change when `alternate()`, `play()`, or `reverse()` runs. The C# method `Animation.Alternate()` still calls v4 `alternate()`; that changes `Reversed` only.
 
-`reset()` already pauses. `resetTimerProperties` in `timer.js` sets `paused = true`, and `restart()` is `reset().resume()`. On 4.5.0, treat `reset()` as paused-at-start. `DemoPlayback.Apply` stays `Restart` when a docs card is selected and `Reset` when it is not (`samples/Examples.WebAssembly/DemoPlayback.cs`). Do not add `Pause()` after `Reset`. Do not change `DocsShell` layout. Reopen this only if a later pin makes `reset()` resume.
+`reset()` already pauses. `resetTimerProperties` in `timer.js` sets `paused = true`, and `restart()` is `reset().resume()`. On 4.5.0, treat `reset()` as paused-at-start. `DemoPlayback.Apply` stays `Restart` when a docs card is selected and `Reset` when it is not (`samples/Examples/DemoPlayback.cs`). Do not add `Pause()` after `Reset`. Do not change `DocsShell` layout. Reopen this only if a later pin makes `reset()` resume.
 
 Current values: do not walk private `_head` / `_next` tweens. At build time, record the animated property names on the wrapper. `getCurrentValues` reads them with `utils.get` for DOM nodes and by own-property for plain objects and `JsTarget`. The node test that seeks `{ x: 0 }` to 100 and expects `"100"` keeps working because v4 writes the object property.
 
@@ -541,7 +541,7 @@ Package description becomes “Typed Blazor bindings for anime.js v4.” `Packag
 | `test/BlazorAnime.Tests/PropsBuilderTests.cs` | New keys and names. |
 | `test/interop/anime-interop.test.cjs` | v4 engine assertions. Sandbox extended. |
 | `test/BlazorAnime.UiTests/HarnessTests.cs` | Keep both facts. Parser also accepts `translate(120px, …)` if a browser returns it. |
-| `samples/Examples.WebAssembly/**` | API renames, then docs-port behavior. Not `DocsShell` layout, Tailwind, or column widths. The version span in `DocsShell.razor` is updated in PR9. |
+| `samples/Examples/**` | API renames, then docs-port behavior. Not `DocsShell` layout, Tailwind, or column widths. The version span in `DocsShell.razor` is updated in PR9. |
 | `samples/PageTransitions/**` | API renames, then leave/enter/menu check. |
 | `samples/*/wwwroot/index.html` | No script-tag change. |
 | `README.md` | v4. |
@@ -772,7 +772,7 @@ Add tests that do not exist today and that the migration can get wrong:
 
 ### Playwright (`HarnessTests`)
 
-`SampleServer` runs `samples/Examples.WebAssembly` at `http://127.0.0.1:5161`. Two facts, both required:
+`SampleServer` runs `samples/Examples` at `http://127.0.0.1:5161`. Two facts, both required:
 
 1. `SeekingTheBoxMovesItAndReportsCompletion` — click `#seek-box`. `#box` computed `translateX` is 120 (precision 0). `#progress` text is `100`.
 2. `PartialStaggerSeekMovesTheFirstDotBeforeTheLast` — click `#seek-stagger`. First `#dots .dot` translateX > 40. Third dot translateX < 1.
@@ -870,7 +870,7 @@ None that block implementation. Units, package version, shorthand versus `Transl
 - Engine: `engine.speed`, `engine.pauseOnDocumentHidden`, `engine.update`, `engine.timeUnit` in `dist/modules/engine/engine.d.ts` and `dist/modules/core/clock.d.ts`. `anime.running` removed (wiki).
 - npm: `animejs@4.5.0` published 2026-06-22, tag `latest`. `5.0.0-beta.2` is tag `beta` only. Package `exports` are ESM/CJS. `jsdelivr` / `unpkg` point at the UMD bundle.
 - 4.5.0 color note and 4.4.0 transform-order note: release text on the npm version page for 4.5.0 and 4.4.0.
-- This repo: `src/BlazorAnime/wwwroot/blazor.anime.interop.js` (today’s classic script; replaced by `BlazorAnime.lib.module.js`), `Anime.cs`, `PropsBuilder.cs`, `PropsBuilderExtensions.cs`, `Easing.cs`, `Animation.cs`, `AnimationState.cs`, `Timeline.cs`, `StaggerBuilder.cs`, `SvgPath.cs`, `CallbackRelay.cs`, `samples/Examples.WebAssembly/DemoCatalog.cs`, `DemoPlayback.cs`, `Components/Docs/DocsShell.razor` (version span only), `Pages/Harness.razor`, both sample `wwwroot/index.html` script tags, `test/interop/anime-interop.test.cjs`, `test/BlazorAnime.UiTests/HarnessTests.cs`, `.github/workflows/ci.yml`, `scripts/publish-pages.sh`, `scripts/publish-pages.py`.
+- This repo: `src/BlazorAnime/wwwroot/blazor.anime.interop.js` (today’s classic script; replaced by `BlazorAnime.lib.module.js`), `Anime.cs`, `PropsBuilder.cs`, `PropsBuilderExtensions.cs`, `Easing.cs`, `Animation.cs`, `AnimationState.cs`, `Timeline.cs`, `StaggerBuilder.cs`, `SvgPath.cs`, `CallbackRelay.cs`, `samples/Examples/DemoCatalog.cs`, `DemoPlayback.cs`, `Components/Docs/DocsShell.razor` (version span only), `Pages/Harness.razor`, both sample `wwwroot/index.html` script tags, `test/interop/anime-interop.test.cjs`, `test/BlazorAnime.UiTests/HarnessTests.cs`, `.github/workflows/ci.yml`, `scripts/publish-pages.sh`, `scripts/publish-pages.py`.
 - JS initializers: a Razor class library’s `wwwroot/{AssemblyName}.lib.module.js` is imported by Blazor startup. `AddBlazorAnime()` does not render a script tag.
 - 4.5.0 modules cited for the corrections above: `dist/modules/svg/morphto.js`, `drawable.js`, `motionpath.js`, `animation/animation.js`, `timer/timer.js`, `core/helpers.js`, `core/consts.js`, `core/globals.js`, `easings/eases/parser.js`, `easings/spring/index.js`, `utils/target.js`, `timeline/timeline.js`.
 
@@ -920,10 +920,10 @@ All PRs except the last merge into `v4`, not `master`. Each leaves `v4` CI green
 - **Dependencies:** PR 2.
 - **Description:** `engine.speed`, `engine.pauseOnDocumentHidden`, `utils.get/set/remove/random`. No fake `running` list. `Version()` is the injected `4.5.0`. `Set` ignores the `JSAnimation` that `utils.set` returns. Do not pass `composition: 'none'` from `Animate`. `utils.set` already forces `'none'`; the animate default stays `'replace'`. The README note for that default is PR9.
 
-### PR 7 — Examples.WebAssembly docs port
+### PR 7 — Examples docs port
 
 - **Title:** Port the docs samples to the anime.js v4 examples
-- **Files:** `samples/Examples.WebAssembly/Components/OfficialDocsExamples/*.razor`, `Components/AdditionalFunExamples/*.razor`, `DemoCatalog.cs`. Not `DocsShell.razor` layout, not `wwwroot/css`, not `DemoPlayback.cs`. The version span in `DocsShell.razor` is PR9.
+- **Files:** `samples/Examples/Components/OfficialDocsExamples/*.razor`, `Components/AdditionalFunExamples/*.razor`, `DemoCatalog.cs`. Not `DocsShell.razor` layout, not `wwwroot/css`, not `DemoPlayback.cs`. The version span in `DocsShell.razor` is PR9.
 - **Dependencies:** PR 3, PR 4, PR 5, PR 6.
 - **Description:** Follow the mapping table. Slugs stay. Card text stops describing v3 (`endDelay`, `direction`, `setDashoffset`, `anime.path`, iteration-style `loop`). `Loop(2)` / `Loop(3)` are either replaced with the v4 example’s value or documented as repeat counts. Sphere, easter icons, bicycle, and 404 keep their visuals within v4’s transform order, color blending, and `composition: 'replace'`. `reset()` already pauses, so unselected cards stay at the first frame without an extra `Pause()`. Harness tests still pass.
 
@@ -937,7 +937,7 @@ All PRs except the last merge into `v4`, not `master`. Each leaves `v4` CI green
 ### PR 9 — Package metadata and README
 
 - **Title:** Mark 1.0.0 as the anime.js v4 binding
-- **Files:** `src/BlazorAnime/BlazorAnime.csproj` (`Version` 1.0.0, description, `PackageReleaseNotes`), `README.md` (usage snippets, installation is `AddBlazorAnime()` with no script tag, v4 docs link, remove the “live docs are v4 but we ship v3” warning, `ModifierRound`, `CreateTimeline`, `CreateMotionPath`, `CreateDrawable`, `MorphTo` as a function reference, `Spring()` engine defaults, `SpringBounce`, progress 0–1, loop repeat count, milliseconds, `composition: 'replace'` versus `Set`), `samples/Examples.WebAssembly/Components/Docs/DocsShell.razor` (replace the `3.2.2` span with the pinned engine version, or bind `Anime.Version()`). Not the shell layout, Tailwind, or column widths.
+- **Files:** `src/BlazorAnime/BlazorAnime.csproj` (`Version` 1.0.0, description, `PackageReleaseNotes`), `README.md` (usage snippets, installation is `AddBlazorAnime()` with no script tag, v4 docs link, remove the “live docs are v4 but we ship v3” warning, `ModifierRound`, `CreateTimeline`, `CreateMotionPath`, `CreateDrawable`, `MorphTo` as a function reference, `Spring()` engine defaults, `SpringBounce`, progress 0–1, loop repeat count, milliseconds, `composition: 'replace'` versus `Set`), `samples/Examples/Components/Docs/DocsShell.razor` (replace the `3.2.2` span with the pinned engine version, or bind `Anime.Version()`). Not the shell layout, Tailwind, or column widths.
 - **Dependencies:** PR 7, PR 8.
 - **Description:** Docs match the API that is about to hit `master`. No behavior change. The wwwroot drift check already exists from PR2; this PR does not add it. CI on `v4` is green, including that diff.
 

@@ -1,6 +1,6 @@
 using BlazorAnime;
 
-namespace Examples.WebAssembly;
+namespace Examples;
 
 public static class DemoPlayback
 {

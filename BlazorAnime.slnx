@@ -5,7 +5,7 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/samples/">
-    <Project Path="samples/Examples.WebAssembly/Examples.WebAssembly.csproj" />
+    <Project Path="samples/Examples/Examples.csproj" />
     <Project Path="samples/PageTransitions/PageTransitions.csproj" />
   </Folder>
   <Folder Name="/src/">

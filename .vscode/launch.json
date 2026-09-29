@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Examples.WebAssembly",
+            "name": "Launch Examples",
             "type": "blazorwasm",
             "request": "launch",
-            "cwd": "${workspaceFolder}/samples/Examples.WebAssembly",
+            "cwd": "${workspaceFolder}/samples/Examples",
             "url": "http://localhost:5161",
             "browser": "chrome"
         },
@@ -18,10 +18,10 @@
             "browser": "chrome"
         },
         {
-            "name": "Launch Examples.WebAssembly (https)",
+            "name": "Launch Examples (https)",
             "type": "blazorwasm",
             "request": "launch",
-            "cwd": "${workspaceFolder}/samples/Examples.WebAssembly",
+            "cwd": "${workspaceFolder}/samples/Examples",
             "url": "https://localhost:7241",
             "browser": "chrome"
         }

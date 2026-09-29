@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Examples.WebAssembly;
+using Examples;
 using BlazorAnime;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

@@ -1,4 +1,4 @@
-namespace Examples.WebAssembly;
+namespace Examples;
 
 public sealed record DemoEntry(
     string Slug,

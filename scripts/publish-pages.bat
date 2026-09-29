@@ -41,7 +41,7 @@ mkdir "%TMPDIR%" || exit /b 1
 
 rem CompressionEnabled is the static-web-assets switch. GitHub Pages serves .br/.gz
 rem as ordinary files, without a Content-Encoding header, so leave them out.
-dotnet publish "%ROOT%\samples\Examples.WebAssembly\Examples.WebAssembly.csproj" --configuration Release -p:CompressionEnabled=false --output "%TMPDIR%\examples"
+dotnet publish "%ROOT%\samples\Examples\Examples.csproj" --configuration Release -p:CompressionEnabled=false --output "%TMPDIR%\examples"
 if errorlevel 1 goto :fail
 dotnet publish "%ROOT%\samples\PageTransitions\PageTransitions.csproj" --configuration Release -p:CompressionEnabled=false --output "%TMPDIR%\travel"
 if errorlevel 1 goto :fail
