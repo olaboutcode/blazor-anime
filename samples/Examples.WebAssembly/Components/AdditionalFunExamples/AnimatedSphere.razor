@@ -70,7 +70,7 @@
                 .Prop("stroke", parameter =>
                 {
                     parameter
-                        .Value("rgba(255,75,75,1)", "rgba(80,80,80,.35)")
+                        .FromTo("rgba(255,75,75,1)", "rgba(80,80,80,.35)")
                         .Duration(500);
                 })
                 .TranslateX(2, -4)
@@ -92,7 +92,7 @@
             .StrokeDashoffset(0)
             .Duration(3900)
             .Ease(Easing.InOutCirc)
-            .Delay(Stagger.Create(190, options => options.Direction(Direction.Reverse)))
+            .Delay(Stagger.Create(190, options => options.Reversed(true)))
             .AutoPlay(false));
 
         _shadow = await Anime.Animate(props => props

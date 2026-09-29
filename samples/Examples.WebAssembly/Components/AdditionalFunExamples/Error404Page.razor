@@ -348,12 +348,12 @@
             .Alternate(true)
             .Ease(Easing.InOutSine)
             .Scale(
-                frame => frame.Value(1),
-                frame => frame.Value(1.4),
-                frame => frame.Value(1).Delay(250))
+                frame => frame.To(1),
+                frame => frame.To(1.4),
+                frame => frame.To(1).Delay(250))
             .Prop("rotateY", parameter =>
             {
-                parameter.Value("+=180").Delay(200);
+                parameter.To("+=180").Delay(200);
             }));
     }
 

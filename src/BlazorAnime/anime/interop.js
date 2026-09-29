@@ -140,6 +140,22 @@ export function install(anime) {
         return payload;
     }
 
+    function isWrappedProp(value) {
+        return !!value && typeof value === "object" && !!value.value && !!value.value.propType;
+    }
+
+    function isPropBag(value) {
+        if (!isPlain(value) || isWrappedProp(value)) return false;
+        const keys = Object.keys(value);
+        return keys.length > 0 && keys.every((key) => isWrappedProp(value[key]));
+    }
+
+    function isPercentageMap(value) {
+        if (!isPlain(value)) return false;
+        const keys = Object.keys(value);
+        return keys.length > 0 && keys.every((key) => key.endsWith("%") && isPropBag(value[key]));
+    }
+
     function transformSetter(setterValue) {
         if (Array.isArray(setterValue)) {
             return setterValue.map((item) => {
@@ -148,6 +164,13 @@ export function install(anime) {
                 }
                 return item;
             });
+        }
+        if (isPercentageMap(setterValue)) {
+            const frames = {};
+            for (const key of Object.keys(setterValue)) {
+                frames[key] = transformProps(setterValue[key]);
+            }
+            return frames;
         }
         if (setterValue && typeof setterValue === "object" && !isDomNode(setterValue)) {
             return transformProps(setterValue);
@@ -225,36 +248,51 @@ export function install(anime) {
         };
     }
 
-    async function makeValueFn(marker, targets) {
+    async function makeValueFn(marker, targets, slots) {
         const total = targets.length;
         if (total === 0) return () => undefined;
         const argument = marker.withTarget
             ? targets.map((element, index) => describeTarget(element, index, total))
             : total;
-        const values = await marker.dotNetRef.invokeMethodAsync(marker.callbackName, argument);
-        return (_element, index) => values[index];
+        const slot = {
+            marker,
+            targets,
+            values: await marker.dotNetRef.invokeMethodAsync(marker.callbackName, argument)
+        };
+        slots.push(slot);
+        return (_element, index) => slot.values[index];
     }
 
-    async function materialize(node, targets) {
+    async function materialize(node, targets, slots) {
         if (Array.isArray(node)) {
             for (let i = 0; i < node.length; i++) {
-                if (isMarker(node[i])) node[i] = await makeValueFn(node[i], targets);
-                else await materialize(node[i], targets);
+                if (isMarker(node[i])) node[i] = await makeValueFn(node[i], targets, slots);
+                else await materialize(node[i], targets, slots);
             }
             return;
         }
         if (!isPlain(node) || isDomNode(node)) return;
         for (const key of Object.keys(node)) {
             const value = node[key];
-            if (isMarker(value)) node[key] = await makeValueFn(value, targets);
-            else await materialize(value, targets);
+            if (isMarker(value)) node[key] = await makeValueFn(value, targets, slots);
+            else await materialize(value, targets, slots);
         }
     }
 
-    async function transformPropsAsync(props) {
+    async function transformPropsAsync(props, slots) {
         const transformed = transformProps(props);
-        await materialize(transformed, resolveTargets(transformed.targets));
+        await materialize(transformed, resolveTargets(transformed.targets), slots);
         return transformed;
+    }
+
+    async function refreshValues(slots) {
+        for (const slot of slots) {
+            const total = slot.targets.length;
+            const argument = slot.marker.withTarget
+                ? slot.targets.map((element, index) => describeTarget(element, index, total))
+                : total;
+            slot.values = await slot.marker.dotNetRef.invokeMethodAsync(slot.marker.callbackName, argument);
+        }
     }
 
     function animatedNames(params) {
@@ -267,10 +305,11 @@ export function install(anime) {
         return undefined;
     }
 
-    function attachInstanceApi(instance, params, extra) {
+    function attachInstanceApi(instance, params, extra, slots) {
         const names = animatedNames(params);
         const alternate = !!params.alternate;
         const loop = params.loop;
+        const valueSlots = slots || [];
         return {
             play: () => instance.play(),
             pause: () => instance.pause(),
@@ -284,7 +323,10 @@ export function install(anime) {
             revert: () => instance.revert(),
             alternate: () => instance.alternate(),
             stretch: (duration) => instance.stretch(duration),
-            refresh: () => instance.refresh(),
+            refresh: async () => {
+                await refreshValues(valueSlots);
+                instance.refresh();
+            },
             remove: (targets) => anime.remove(targets, instance),
             getProgress: () => instance.progress,
             setProgress: (progress) => {
@@ -322,14 +364,16 @@ export function install(anime) {
 
     globalThis.AnimeJs = {
         createAnimation: async (props) => {
-            const params = await transformPropsAsync(props);
+            const slots = [];
+            const params = await transformPropsAsync(props, slots);
             const targets = params.targets;
             delete params.targets;
             const animation = anime.animate(targets, params);
-            return attachInstanceApi(animation, params);
+            return attachInstanceApi(animation, params, null, slots);
         },
         createTimeline: async (props) => {
-            const params = await transformPropsAsync(props);
+            const slots = [];
+            const params = await transformPropsAsync(props, slots);
             const playback = {};
             const defaults = {};
             for (const key of Object.keys(params)) {
@@ -341,19 +385,19 @@ export function install(anime) {
             const add = timeline.add.bind(timeline);
             return attachInstanceApi(timeline, params, {
                 add: async (childProps, position) => {
-                    const child = await transformPropsAsync(childProps);
+                    const child = await transformPropsAsync(childProps, slots);
                     const targets = child.targets;
                     delete child.targets;
                     add(targets, child, position);
                 }
-            });
+            }, slots);
         },
         get: (target, propName, unit) =>
             unit !== undefined && unit !== null
                 ? anime.get(target, propName, unit)
                 : anime.get(target, propName),
         set: async (targets, props) => {
-            anime.set(targets, await transformPropsAsync(props));
+            anime.set(targets, await transformPropsAsync(props, []));
         },
         remove: (targets) => {
             anime.remove(targets);

@@ -55,16 +55,16 @@ public sealed class StaggerOptionsBuilder
         return this;
     }
 
-    public StaggerOptionsBuilder Direction(Direction value)
+    public StaggerOptionsBuilder Reversed(bool reversed)
     {
-        _options.Add(new StgOptionProp("direction", value.GetValue()));
+        _options.Add(new StgOptionProp("reversed", reversed));
         return this;
     }
 
-    public StaggerOptionsBuilder Easing(Easing value)
+    public StaggerOptionsBuilder Ease(Easing value)
     {
         ArgumentNullException.ThrowIfNull(value);
-        _options.Add(PropsBuilder.EaseProp("easing", value));
+        _options.Add(PropsBuilder.EaseProp("ease", value));
         return this;
     }
 
@@ -158,17 +158,17 @@ public sealed class StaggerSyntax
         return this;
     }
 
-    public StaggerSyntax Direction(Direction value)
+    public StaggerSyntax Reversed(bool reversed)
     {
         _hasOptions = true;
-        _options.Direction(value);
+        _options.Reversed(reversed);
         return this;
     }
 
-    public StaggerSyntax Easing(Easing value)
+    public StaggerSyntax Ease(Easing value)
     {
         _hasOptions = true;
-        _options.Easing(value);
+        _options.Ease(value);
         return this;
     }
 

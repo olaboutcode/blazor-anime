@@ -22,9 +22,9 @@ public static class DemoCatalog
                 """
                 await Anime.Animate(props => props
                     .Targets(".demo-relative-values .el")
-                    .TranslateX(property => property.Value(Relative.Multiply(2.5)).Duration(1000))
-                    .Width(property => property.Value(Relative.Subtract(20)).Duration(1800))
-                    .Rotate(property => property.Value(Relative.Add("2turn")).Duration(1800))
+                    .TranslateX(property => property.To(Relative.Multiply(2.5)).Duration(1000))
+                    .Width(property => property.To(Relative.Subtract(20)).Duration(1800))
+                    .Rotate(property => property.To(Relative.Add("2turn")).Duration(1800))
                     .Alternate(true)
                     .Loop(true));
                 """,
@@ -80,8 +80,8 @@ public static class DemoCatalog
                 await Anime.Animate(props => props
                     .Targets(".property-keyframes-demo .el")
                     .TranslateX([
-                        step => step.Value(250).Duration(1000),
-                        step => step.Value(0).Duration(500)
+                        step => step.To(250).Duration(1000),
+                        step => step.To(0).Duration(500)
                     ])
                     .Duration(4000)
                     .Loop(true));
@@ -213,10 +213,10 @@ public static class DemoCatalog
                 "Components/OfficialDocsExamples/StaggerFrom.razor"),
             Entry("stagger-direction", "Direction",
                 "Reverse the order the stagger walks.",
-                "Direction on the stagger options is independent of the animation direction. Reverse starts at the last target.",
+                "Reversed on the stagger options starts at the last target.",
                 """
                 .Delay(Stagger.Create(100, stagger => stagger
-                    .Direction(Direction.Reverse)))
+                    .Reversed(true)))
                 """,
                 "Components/OfficialDocsExamples/StaggerDirection.razor"),
             Entry("stagger-easing", "Easing",
@@ -224,7 +224,7 @@ public static class DemoCatalog
                 "The easing on a stagger changes the gap between targets. Easing.Curve works here too, and the curve is passed through without the extra wrapper an animation easing needs.",
                 """
                 .Delay(Stagger.Create(100, stagger => stagger
-                    .Easing(Easing.OutQuad)))
+                    .Ease(Easing.OutQuad)))
                 """,
                 "Components/OfficialDocsExamples/StaggerEasing.razor"),
             Entry("stagger-grid", "Grid",
@@ -314,9 +314,9 @@ public static class DemoCatalog
                 await timeline.AddAsync(props => props
                     .Targets(".easter-demo .gift-icon__egg")
                     .ScaleY([
-                        frame => frame.Value(0.9).Duration(170),
-                        frame => frame.Value(1.1).Duration(170),
-                        frame => frame.Value(1).Duration(170)
+                        frame => frame.To(0.9).Duration(170),
+                        frame => frame.To(1.1).Duration(170),
+                        frame => frame.To(1).Duration(170)
                     ]));
                 """,
                 "Components/AdditionalFunExamples/AnimatedEasterIcons.razor"),
@@ -339,9 +339,9 @@ public static class DemoCatalog
                 await Anime.Animate(props => props
                     .Targets(".error-404-demo #zero")
                     .Rotate([
-                        frame => frame.Value(-8).Duration(300),
-                        frame => frame.Value(8).Duration(600),
-                        frame => frame.Value(0).Duration(300)
+                        frame => frame.To(-8).Duration(300),
+                        frame => frame.To(8).Duration(600),
+                        frame => frame.To(0).Duration(300)
                     ])
                     .Loop(true));
                 """,

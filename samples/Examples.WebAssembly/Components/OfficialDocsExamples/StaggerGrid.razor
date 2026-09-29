@@ -169,11 +169,11 @@
                 .Loop(3)
                 .Scale([
                     props => props
-                        .Value(.1)
+                        .To(.1)
                         .Ease(Easing.OutSine)
                         .Duration(milliseconds: 500),
                     props => props
-                        .Value(1)
+                        .To(1)
                         .Ease(Easing.InOutQuad)
                         .Duration(1200)
                 ])

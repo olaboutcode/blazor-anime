@@ -262,12 +262,12 @@
         _chickJump = await Anime.Animate(props => props
             .Targets(".easter-demo .chick-icon")
             .ScaleY([
-                frame => frame.Value(0.9).Duration(170),
-                frame => frame.Value(1).Duration(170).Delay(120)
+                frame => frame.To(0.9).Duration(170),
+                frame => frame.To(1).Duration(170).Delay(120)
             ])
             .TranslateY([
-                frame => frame.Value(-20).Duration(170).Delay(170),
-                frame => frame.Value(0).Duration(170).Delay(220)
+                frame => frame.To(-20).Duration(170).Delay(170),
+                frame => frame.To(0).Duration(170).Delay(220)
             ])
             .Loop(true)
             .Ease(Easing.Linear));
@@ -297,15 +297,15 @@
         _brush = await Anime.Animate(props => props
             .Targets(".easter-demo .painting-icon__brush")
             .TranslateX([
-                frame => frame.Value(-150).Duration(150),
-                frame => frame.Value(-180).Duration(150).Delay(100),
-                frame => frame.Value(0).Duration(150).Delay(100),
-                frame => frame.Value(0).Duration(150).Delay(1850)
+                frame => frame.To(-150).Duration(150),
+                frame => frame.To(-180).Duration(150).Delay(100),
+                frame => frame.To(0).Duration(150).Delay(100),
+                frame => frame.To(0).Duration(150).Delay(1850)
             ])
             .TranslateY([
-                frame => frame.Value(-160).Duration(150),
-                frame => frame.Value(0).Duration(150).Delay(100),
-                frame => frame.Value(0).Duration(150).Delay(1800)
+                frame => frame.To(-160).Duration(150),
+                frame => frame.To(0).Duration(150).Delay(100),
+                frame => frame.To(0).Duration(150).Delay(1800)
             ])
             .Ease(Easing.Linear)
             .Loop(true));
@@ -313,9 +313,9 @@
         _paint = await Anime.Animate(props => props
             .Targets(".easter-demo .painting-icon__egg-top")
             .Opacity([
-                frame => frame.Value(1).Duration(200).Delay(200),
-                frame => frame.Value(0).Duration(200).Delay(900),
-                frame => frame.Value(0).Duration(150).Delay(1000)
+                frame => frame.To(1).Duration(200).Delay(200),
+                frame => frame.To(0).Duration(200).Delay(900),
+                frame => frame.To(0).Duration(150).Delay(1000)
             ])
             .Ease(Easing.Linear)
             .Loop(true));
@@ -330,10 +330,10 @@
         _rabbit = await Anime.Animate(props => props
             .Targets(".easter-demo .hatch-icon__rabbit")
             .TranslateY([
-                frame => frame.Value(50).Duration(50).Delay(100),
-                frame => frame.Value(-90).Duration(150).Delay(100),
-                frame => frame.Value(0).Duration(100).Delay(100),
-                frame => frame.Value(0).Duration(100).Delay(1200)
+                frame => frame.To(50).Duration(50).Delay(100),
+                frame => frame.To(-90).Duration(150).Delay(100),
+                frame => frame.To(0).Duration(100).Delay(100),
+                frame => frame.To(0).Duration(100).Delay(1200)
             ])
             .Ease(Easing.Linear)
             .Loop(true));

@@ -72,12 +72,44 @@ public sealed class PropsBuilder
         return this;
     }
 
-    public PropsBuilder Direction(Direction direction)
+    public PropsBuilder To(double value) => Prop("to", value);
+
+    public PropsBuilder To(string value) => Prop("to", value);
+
+    public PropsBuilder To(Relative value) => Prop("to", value);
+
+    public PropsBuilder From(double value) => Prop("from", value);
+
+    public PropsBuilder From(string value) => Prop("from", value);
+
+    public PropsBuilder From(Relative value) => Prop("from", value);
+
+    public PropsBuilder FromTo(double from, double to) => Prop("to", from, to);
+
+    public PropsBuilder FromTo(string from, string to) => Prop("to", from, to);
+
+    public PropsBuilder FromTo(object from, object to) => Prop("to", from, to);
+
+    public PropsBuilder Keyframes(IReadOnlyDictionary<string, Func<PropsBuilder, PropsBuilder>> frames)
     {
-        if(direction != null)
-            _props.Add(new GenProp<string>("direction", direction.GetValue()));
+        if (frames == null || frames.Count == 0)
+            return this;
+
+        var map = new Dictionary<string, object>();
+        foreach (var (key, build) in frames)
+        {
+            if (string.IsNullOrWhiteSpace(key) || build == null)
+                continue;
+            var builder = build(Nested());
+            Absorb(builder);
+            map[key] = builder._props.ToObject();
+        }
+
+        if (map.Count > 0)
+            _props.Add(new GenProp<object>("keyframes", map));
         return this;
     }
+
     public PropsBuilder Value(Relative value)
     {
         if(value != null)
@@ -346,12 +378,4 @@ public sealed class Relative
     private readonly string _name;
 }
 
-public sealed class Direction
-{
-    public static Direction Normal { get; } = new("normal");
-    public static Direction Reverse { get; } = new("reverse");
-    public static Direction Alternate { get; } = new("alternate");
-    public string GetValue() => _name;
-    private Direction(string name) { _name = name; }
-    private readonly string _name;
-}
+

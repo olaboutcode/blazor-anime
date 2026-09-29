@@ -46,6 +46,9 @@ public class Animation : IAsyncDisposable
     public async Task Stretch(double duration) =>
         await Js.InvokeVoidAsync("stretch", duration);
 
+    /// <summary>
+    /// Re-reads function values, then refreshes the animation from those values.
+    /// </summary>
     public async Task Refresh() =>
         await Js.InvokeVoidAsync("refresh");
 

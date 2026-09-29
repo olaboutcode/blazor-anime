@@ -53,14 +53,53 @@ public sealed class PropsBuilderTests
     {
         using var root = new Props();
         var built = root.Build(builder => builder.TranslateX(parameter => parameter
-            .Value(250)
+            .To(250)
             .Duration(800)
             .Ease(Easing.InOutQuad)));
 
         var parameter = Setter(built, "translateX");
-        Assert.Equal(250, Setter(parameter, "value").GetDouble());
+        Assert.Equal(250, Setter(parameter, "to").GetDouble());
         Assert.Equal(800, Setter(parameter, "duration").GetInt32());
         Assert.Equal("inOutQuad", Setter(parameter, "ease").GetString());
+    }
+
+    [Fact]
+    public void NestedFromTo_UsesTheToArray()
+    {
+        using var root = new Props();
+        var built = root.Build(builder => builder.TranslateX(parameter => parameter
+            .FromTo(0, 250)));
+
+        var values = Setter(Setter(built, "translateX"), "to")
+            .EnumerateArray()
+            .Select(item => item.GetDouble())
+            .ToArray();
+        Assert.Equal([0, 250], values);
+    }
+
+    [Fact]
+    public void Value_StaysTheAttributeName()
+    {
+        using var root = new Props();
+        var built = root.Build(builder => builder.Value(0, 1000));
+        var values = Setter(built, "value").EnumerateArray().Select(item => item.GetDouble()).ToArray();
+        Assert.Equal([0, 1000], values);
+    }
+
+    [Fact]
+    public void PercentageKeyframes_KeepEachOffset()
+    {
+        using var root = new Props();
+        var built = root.Build(builder => builder.Keyframes(new Dictionary<string, Func<PropsBuilder, PropsBuilder>>
+        {
+            ["0%"] = frame => frame.TranslateX(0).Ease(Easing.Linear),
+            ["100%"] = frame => frame.TranslateX(80)
+        }));
+
+        var frames = Setter(built, "keyframes");
+        Assert.Equal(0, Setter(frames.GetProperty("0%"), "translateX").GetDouble());
+        Assert.Equal("linear", Setter(frames.GetProperty("0%"), "ease").GetString());
+        Assert.Equal(80, Setter(frames.GetProperty("100%"), "translateX").GetDouble());
     }
 
     [Fact]
@@ -87,8 +126,8 @@ public sealed class PropsBuilderTests
             .From(2)
             .Grid([14, 7])
             .Axis(StaggerAxis.X)
-            .Direction(Direction.Reverse)
-            .Easing(Easing.OutQuad)));
+            .Reversed(true)
+            .Ease(Easing.OutQuad)));
 
         var description = StaggerValue(built, "delay");
         Assert.Equal(100, description.GetProperty("value").GetDouble());
@@ -98,8 +137,8 @@ public sealed class PropsBuilderTests
         Assert.Equal(2, Option(options, "from").GetInt32());
         Assert.Equal([14, 7], Option(options, "grid").EnumerateArray().Select(item => item.GetInt32()).ToArray());
         Assert.Equal("x", Option(options, "axis").GetString());
-        Assert.Equal("reverse", Option(options, "direction").GetString());
-        Assert.Equal("outQuad", Option(options, "easing").GetString());
+        Assert.True(Option(options, "reversed").GetBoolean());
+        Assert.Equal("outQuad", Option(options, "ease").GetString());
     }
 
     [Fact]
@@ -152,7 +191,7 @@ public sealed class PropsBuilderTests
         using var root = new Props();
         var built = root.Build(builder => builder
             .Ease(Easing.Curve(t => t, 3))
-            .Delay(stagger => stagger.Value(10).Easing(Easing.Curve(t => t, 4))));
+            .Delay(stagger => stagger.Value(10).Ease(Easing.Curve(t => t, 4))));
 
         var easing = built.GetProperty("ease").GetProperty("value");
         Assert.Equal("easeFn", easing.GetProperty("propType").GetString());
@@ -161,7 +200,7 @@ public sealed class PropsBuilderTests
 
         var staggerEasing = StaggerValue(built, "delay")
             .GetProperty("options")
-            .GetProperty("easing")
+            .GetProperty("ease")
             .GetProperty("value");
         Assert.Equal("easeFn", staggerEasing.GetProperty("propType").GetString());
         Assert.Equal("curve", staggerEasing.GetProperty("value").GetProperty("fn").GetString());

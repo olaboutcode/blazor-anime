@@ -232,6 +232,102 @@ test("target callbacks receive a snapshot of each target", async () => {
     assert.equal(seen[1].total, 2);
 });
 
+test("refresh reads function values again", async () => {
+    const api = await loadAnime();
+    const rows = [
+        api.createObject({ n: 0 }),
+        api.createObject({ n: 0 })
+    ];
+    let calls = 0;
+    let values = [1, 2];
+    const animation = await api.createAnimation({
+        targets: prop("targets", "objectTarget", rows),
+        n: {
+            name: "n",
+            value: {
+                propType: "callback",
+                paramCount: 2,
+                value: {
+                    callback: "InvokeAll",
+                    dotNetRef: {
+                        async invokeMethodAsync(name, total) {
+                            assert.equal(name, "InvokeAll");
+                            assert.equal(total, 2);
+                            calls += 1;
+                            return values.slice();
+                        }
+                    }
+                }
+            }
+        },
+        duration: setter("duration", 10),
+        autoplay: setter("autoplay", false),
+        ease: setter("ease", "linear")
+    });
+
+    animation.seek(10);
+    assert.equal(calls, 1);
+    assert.deepEqual(rows.map((row) => row.target.n), [1, 2]);
+
+    values = [7, 8];
+    await animation.refresh();
+    animation.seek(10);
+    assert.equal(calls, 2);
+    assert.deepEqual(rows.map((row) => row.target.n), [7, 8]);
+});
+
+test("percentage keyframes follow the offset", async () => {
+    const api = await loadAnime();
+    const target = api.createObject({ x: 0 });
+    const animation = await api.createAnimation({
+        targets: prop("targets", "objectTarget", target),
+        keyframes: setter("keyframes", {
+            "0%": {
+                x: setter("x", 0),
+                ease: setter("ease", "linear")
+            },
+            "100%": {
+                x: setter("x", 100)
+            }
+        }),
+        duration: setter("duration", 100),
+        autoplay: setter("autoplay", false)
+    });
+
+    animation.seek(50);
+    assert.ok(Math.abs(target.target.x - 50) < 0.001, `midpoint was ${target.target.x}`);
+    animation.seek(100);
+    assert.equal(target.target.x, 100);
+});
+
+test("reversed stagger starts at the last target", async () => {
+    const api = await loadAnime();
+    const rows = [
+        api.createObject({ n: 0 }),
+        api.createObject({ n: 0 }),
+        api.createObject({ n: 0 })
+    ];
+    const animation = await api.createAnimation({
+        targets: prop("targets", "objectTarget", rows),
+        n: setter("n", 1),
+        duration: setter("duration", 10),
+        autoplay: setter("autoplay", false),
+        ease: setter("ease", "linear"),
+        delay: prop("delay", "stagger", {
+            value: 100,
+            options: {
+                reversed: setter("reversed", true)
+            }
+        })
+    });
+
+    animation.seek(50);
+    assert.equal(rows[0].target.n, 0);
+    assert.equal(rows[2].target.n, 1);
+    animation.seek(animation.getDuration());
+    assert.deepEqual(rows.map((row) => row.target.n), [1, 1, 1]);
+});
+
 test("speed and random use the anime.js helpers", async () => {
     const api = await loadAnime();
     api.setSpeed(2);
