@@ -6,12 +6,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Authors>olaboutcode</Authors>
         <Version>1.0.0</Version>
-        <PackageTags>blazor;anime.js;animation</PackageTags>
-        <Description>Typed Blazor bindings for anime.js v4.</Description>
-        <PackageId>BlazorAnime</PackageId>
+        <PackageTags>blazor;anime.js;animation;animatable</PackageTags>
+        <Description>Animatable bindings for BlazorAnime. Shares the BlazorAnime anime.js engine.</Description>
+        <PackageId>BlazorAnime.Animatable</PackageId>
         <Copyright>olaboutcode</Copyright>
-        <PackageReleaseNotes>First publish. Tracks anime.js 4.5.0. The unpublished v3 surface is not kept.</PackageReleaseNotes>
-        <AssemblyName>BlazorAnime</AssemblyName>
+        <PackageReleaseNotes>createAnimatable for anime.js 4.5.0. Depends on BlazorAnime 1.0.0.</PackageReleaseNotes>
+        <AssemblyName>BlazorAnime.Animatable</AssemblyName>
         <RootNamespace>BlazorAnime</RootNamespace>
     </PropertyGroup>
 
@@ -21,7 +21,10 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="BlazorAnime.Tests"/>
-        <InternalsVisibleTo Include="BlazorAnime.Animatable"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\BlazorAnime\BlazorAnime.csproj" />
     </ItemGroup>
 
     <ItemGroup>

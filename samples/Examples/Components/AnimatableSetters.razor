@@ -1,0 +1,44 @@
+@inherits AnimatableDemo
+
+<div class="demo animatable-setters" @ref="_stage" @onpointermove="Move">
+    <div class="large circle"></div>
+    <span class="animatable-hint">Move cursor</span>
+</div>
+
+@code {
+    private ElementReference _stage;
+    private Animatable? _circle;
+    private readonly double[] _rgb = [164, 255, 79, 1];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _circle = await Create(".animatable-setters .circle", props => props
+            .Property("x", 0)
+            .Property("y", 0)
+            .Property("backgroundColor", 0)
+            .Ease(Easing.OutExpo));
+        await _circle.Set("x", 0, 500, Easing.Out(2));
+        await _circle.Set("y", 0, 500, Easing.Out(3));
+        await _circle.Set("backgroundColor", _rgb, 250);
+    }
+
+    private async Task Move(PointerEventArgs pointer)
+    {
+        await Track(pointer, async next =>
+        {
+            if (_circle is null)
+                return;
+            var point = await Pointer(_stage, next);
+            var halfWidth = point.Width / 2;
+            _rgb[0] = Map(point.X, -halfWidth, halfWidth, 0, 164);
+            _rgb[2] = Map(point.X, -halfWidth, halfWidth, 79, 255);
+            _rgb[3] = 1;
+            await _circle.Set("x", point.X);
+            await _circle.Set("y", point.Y);
+            await _circle.Set("backgroundColor", _rgb);
+        });
+    }
+}

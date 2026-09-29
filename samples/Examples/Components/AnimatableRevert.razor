@@ -1,0 +1,44 @@
+@inherits AnimatableDemo
+
+<div class="demo animatable-revert" @ref="_stage" @onpointermove="Move">
+    <div class="animatable-row">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+    <div class="controls animatable-controls">
+        <button type="button" class="button" disabled="@Reverted" @onclick="OnRevert">Revert</button>
+    </div>
+</div>
+
+@code {
+    private ElementReference _stage;
+    private Animatable? _circles;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _circles = await Create(".animatable-revert .circle", props => props
+            .Property("x", Stagger.Create(50, stagger => stagger.From(StaggerPosition.Center).Start(100)))
+            .Property("y", Stagger.Create(200, stagger => stagger.From(StaggerPosition.Center).Start(200)))
+            .Ease(Easing.Out(4)));
+    }
+
+    private async Task Move(PointerEventArgs pointer)
+    {
+        await Track(pointer, async next =>
+        {
+            if (_circles is null)
+                return;
+            var point = await Pointer(_stage, next);
+            await _circles.Set("x", point.X);
+            await _circles.Set("y", point.Y);
+        });
+    }
+
+    private async Task OnRevert() => await Revert(_circles);
+}

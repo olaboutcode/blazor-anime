@@ -1,0 +1,40 @@
+@inherits AnimatableDemo
+
+<div class="demo animatable-duration" @ref="_stage" @onpointermove="Move">
+    <div class="animatable-row">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+    <span class="animatable-hint">Move cursor</span>
+</div>
+
+@code {
+    private ElementReference _stage;
+    private Animatable? _circles;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _circles = await Create(".animatable-duration .circle", props => props
+            .Property("x", 0)
+            .Property("y", Stagger.Create(200, stagger => stagger.From(StaggerPosition.Center).Start(200)))
+            .Ease(Easing.Out(4)));
+    }
+
+    private async Task Move(PointerEventArgs pointer)
+    {
+        await Track(pointer, async next =>
+        {
+            if (_circles is null)
+                return;
+            var point = await Pointer(_stage, next);
+            await _circles.Set("x", point.X);
+            await _circles.Set("y", point.Y);
+        });
+    }
+}

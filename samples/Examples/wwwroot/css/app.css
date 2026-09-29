@@ -75,6 +75,13 @@ body {
     --hex-current-8: #27262b;
 }
 
+.docs-shell[data-docs-section="animatable"] {
+    --hex-current-1: #f9f640;
+    --hex-current-6: #4a4827;
+    --hex-current-7: #3b3a25;
+    --hex-current-8: #2c2b23;
+}
+
 @media (min-width: 900px) {
     .docs-shell {
         --site-header-height: 4.5rem;
@@ -385,6 +392,7 @@ body {
 .docs-nav > ul > li[data-docs-section="svg"] { --hex-current-1: #05dbe9; }
 .docs-nav > ul > li[data-docs-section="utilities"] { --hex-current-1: #4d9cff; }
 .docs-nav > ul > li[data-docs-section="easings"] { --hex-current-1: #7c85ff; }
+.docs-nav > ul > li[data-docs-section="animatable"] { --hex-current-1: #f9f640; }
 
 .docs-demos {
     position: fixed;
@@ -485,6 +493,94 @@ body {
 .docs-demo .demo-content {
     width: min(100%, 19rem);
     height: auto;
+}
+
+.docs-shell .demo[class*="animatable-"] {
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.docs-shell .clock {
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 0.2rem solid currentColor;
+    flex-shrink: 0;
+}
+
+.docs-shell .clock::after {
+    content: "";
+    position: absolute;
+    top: 0.15rem;
+    left: calc(50% - 0.1rem);
+    width: 0.2rem;
+    height: 0.9rem;
+    border-radius: 0.1rem;
+    background: currentColor;
+}
+
+.animatable-row,
+.animatable-pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.animatable-pair {
+    gap: 1.75rem;
+}
+
+.animatable-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.animatable-caption,
+.animatable-hint {
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.animatable-hint {
+    position: absolute;
+    bottom: 0.15rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.animatable-readout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.animatable-readout .animatable-caption {
+    display: block;
+    text-align: center;
+}
+
+.docs-shell .animatable-controls {
+    opacity: 1;
+    padding: 0;
+}
+
+.docs-shell .animatable-controls button {
+    cursor: pointer;
+    font-size: 0.7rem;
+}
+
+.docs-shell .animatable-controls button:disabled {
+    opacity: 0.4;
+    cursor: default;
 }
 
 .docs-demo .demo-content svg {

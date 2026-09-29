@@ -1,0 +1,48 @@
+@inherits AnimatableDemo
+
+<div class="demo animatable-modifier" @onpointermove="Move">
+    <div class="animatable-pair">
+        <div class="animatable-col">
+            <div class="clock clock-1" @ref="_snappedClock"></div>
+            <span class="animatable-caption">snapped</span>
+        </div>
+        <div class="animatable-col">
+            <div class="clock clock-2" @ref="_invertedClock"></div>
+            <span class="animatable-caption">inverted</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    private ElementReference _snappedClock;
+    private ElementReference _invertedClock;
+    private Animatable? _snapped;
+    private Animatable? _inverted;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _snapped = await Create(".animatable-modifier .clock-1", props => props
+            .Property("rotate", property => property.Unit("rad"))
+            .Duration(0));
+        _inverted = await Create(".animatable-modifier .clock-2", props => props
+            .Property("rotate", property => property.Unit("rad"))
+            .Duration(0));
+    }
+
+    private async Task Move(PointerEventArgs pointer)
+    {
+        await Track(pointer, async next =>
+        {
+            if (_snapped is null || _inverted is null)
+                return;
+            var step = Math.PI / 10;
+            var snapped = Math.Round((await Angle(_snappedClock, next) + Math.PI / 2) / step, MidpointRounding.AwayFromZero) * step;
+            var inverted = -(await Angle(_invertedClock, next) + Math.PI / 2);
+            await _snapped.Set("rotate", snapped);
+            await _inverted.Set("rotate", inverted);
+        });
+    }
+}

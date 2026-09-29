@@ -201,6 +201,122 @@ public static class DemoCatalog
                 """,
                 "Components/TimelineControls.razor"))
         ]),
+        new("animatable", "Animatable",
+        [
+            Leaves(
+            Entry("animatable", "Animatable",
+                "Update x and y as the cursor moves, without creating a new animation each time.",
+                "Property(\"x\", 500) sets that property's duration to 500ms. Ease applies to every property. Set starts a transition toward the cursor. The value is clamped to the demo.",
+                """
+                var square = await Animatable.Create(".square", props => props
+                    .Property("x", 500)
+                    .Property("y", 500)
+                    .Ease(Easing.Out(3)));
+
+                await square.Set("x", x);
+                await square.Set("y", y);
+                """,
+                "Components/AnimatableFollow.razor")),
+            Group("Settings",
+            Entry("animatable-unit", "unit",
+                "Rotate a clock by passing radians.",
+                "Unit(\"rad\") is the CSS unit for that property. Duration(400) applies only to rotate. The angle is unwrapped so the hand does not take the long way around.",
+                """
+                var clock = await Animatable.Create(".clock", props => props
+                    .Property("rotate", property => property.Unit("rad").Duration(400)));
+
+                await clock.Set("rotate", angle);
+                """,
+                "Components/AnimatableUnit.razor"),
+            Entry("animatable-duration", "duration",
+                "Give x no transition and stagger the y duration from the center.",
+                "A number on a property is its duration in milliseconds. 0 jumps to the new value. The y stagger starts at 200ms in the center and adds 200ms toward the ends.",
+                """
+                var circles = await Animatable.Create(".circle", props => props
+                    .Property("x", 0)
+                    .Property("y", Stagger.Create(200, stagger => stagger
+                        .From(StaggerPosition.Center)
+                        .Start(200)))
+                    .Ease(Easing.Out(4)));
+
+                await circles.Set("x", x);
+                await circles.Set("y", y);
+                """,
+                "Components/AnimatableDuration.razor"),
+            Entry("animatable-ease", "ease",
+                "One clock eases in a straight line, the other overshoots.",
+                "Ease on the animatable is the default for every property. Linear keeps a constant rate. OutElastic matches outElastic. Each hand tracks the cursor from its own center.",
+                """
+                var linear = await Animatable.Create(".clock-1", props => props
+                    .Property("rotate", property => property.Unit("rad"))
+                    .Ease(Easing.Linear));
+                var elastic = await Animatable.Create(".clock-2", props => props
+                    .Property("rotate", property => property.Unit("rad"))
+                    .Ease(Easing.OutElastic()));
+                """,
+                "Components/AnimatableEase.razor"),
+            Entry("animatable-modifier", "modifier",
+                "Snap one hand to steps of π/10 and mirror the other.",
+                "Duration 0 writes the number immediately. The snapped hand rounds atan2 plus π/2 to the nearest π/10. The inverted hand uses the negated angle. ModifierRound is the built-in modifier when anime.js should round during a tween.",
+                """
+                var snapped = await Animatable.Create(".clock-1", props => props
+                    .Property("rotate", property => property.Unit("rad"))
+                    .Duration(0));
+
+                var step = Math.PI / 10;
+                var angle = Math.Atan2(y, x) + Math.PI / 2;
+                await snapped.Set("rotate", Math.Round(angle / step) * step);
+                await inverted.Set("rotate", -angle);
+                """,
+                "Components/AnimatableModifier.razor")),
+            Group("Methods",
+            Entry("animatable-getters", "Getters",
+                "Read x and y while the circle follows the cursor.",
+                "Get returns the current number. OnRender runs while the transition is moving, and that is when the readout is refreshed. A color or any other list uses GetValues.",
+                """
+                var circle = await Animatable.Create(".circle", props => props
+                    .Property("x", 500)
+                    .Property("y", 500)
+                    .Ease(Easing.Out(2))
+                    .OnRender(_ => _ = Show()));
+
+                async Task Show()
+                {
+                    var x = await circle.Get("x");
+                    var y = await circle.Get("y");
+                }
+                """,
+                "Components/AnimatableGetters.razor"),
+            Entry("animatable-setters", "Setters",
+                "Override the duration and ease for one call, and pass a color as numbers.",
+                "The first Set calls install 500ms out(2) on x, 500ms out(3) on y, and 250ms on the color. Later calls keep those settings. Red and blue follow the horizontal position. Green stays 255. The fourth number is the alpha, so the circle stays visible.",
+                """
+                await circle.Set("x", 0, 500, Easing.Out(2));
+                await circle.Set("y", 0, 500, Easing.Out(3));
+                await circle.Set("backgroundColor", new[] { 164d, 255, 79, 1 }, 250);
+
+                await circle.Set("x", x);
+                await circle.Set("y", y);
+                await circle.Set("backgroundColor", new[] { red, 255d, blue, 1 });
+                """,
+                "Components/AnimatableSetters.razor"),
+            Entry("animatable-revert", "revert()",
+                "Put the circles back and stop following the cursor.",
+                "Revert restores the original values and removes the property methods. The button calls it once. DisposeAsync pauses instead, and leaves the values where they are.",
+                """
+                var circles = await Animatable.Create(".circle", props => props
+                    .Property("x", Stagger.Create(50, stagger => stagger
+                        .From(StaggerPosition.Center)
+                        .Start(100)))
+                    .Property("y", Stagger.Create(200, stagger => stagger
+                        .From(StaggerPosition.Center)
+                        .Start(200)))
+                    .Ease(Easing.Out(4)));
+
+                await circles.Revert();
+                """,
+                "Components/AnimatableRevert.razor"))
+        ]),
         new("svg", "SVG",
         [
             Leaves(

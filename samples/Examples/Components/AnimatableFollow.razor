@@ -1,0 +1,34 @@
+@inherits AnimatableDemo
+
+<div class="demo animatable-follow" @ref="_stage" @onpointermove="Move">
+    <div class="large square"></div>
+    <span class="animatable-hint">Move cursor</span>
+</div>
+
+@code {
+    private ElementReference _stage;
+    private Animatable? _square;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _square = await Create(".animatable-follow .square", props => props
+            .Property("x", 500)
+            .Property("y", 500)
+            .Ease(Easing.Out(3)));
+    }
+
+    private async Task Move(PointerEventArgs pointer)
+    {
+        await Track(pointer, async next =>
+        {
+            if (_square is null)
+                return;
+            var point = await Pointer(_stage, next);
+            await _square.Set("x", point.X);
+            await _square.Set("y", point.Y);
+        });
+    }
+}
