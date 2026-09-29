@@ -155,7 +155,7 @@ public static class DemoCatalog
                 "Components/OfficialDocsExamples/TimelineBasics.razor"),
             Entry("timeline-offsets", "Offsets",
                 "Place children at a time, or relative to the previous child.",
-                "A number is an absolute time in milliseconds. OffSet.Before and OffSet.After shift from the end of the previous child. The string \"+=500\" is the same idea as OffSet.After(500).",
+                "A number is an absolute time in milliseconds, and 0 starts with the timeline. OffSet.Before and OffSet.After shift from the end of the previous child. \"+=500\" matches OffSet.After(500). \"<\" starts with the previous child, and \"<<\" starts with the child before that.",
                 """
                 await timeline.AddAsync(child => child
                     .Targets(".timeline-offset-demo .el.square")

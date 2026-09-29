@@ -384,6 +384,7 @@ export function install(anime) {
             const timeline = anime.createTimeline({ ...playback, defaults });
             const add = timeline.add.bind(timeline);
             return attachInstanceApi(timeline, params, {
+                defaults: timeline.defaults,
                 add: async (childProps, position) => {
                     const child = await transformPropsAsync(childProps, slots);
                     const targets = child.targets;

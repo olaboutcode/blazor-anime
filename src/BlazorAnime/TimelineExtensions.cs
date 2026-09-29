@@ -3,9 +3,8 @@ namespace BlazorAnime;
 public static class TimelineExtensions
 {
     /// <summary>
-    /// Add Timeline animation props with relative offSet 
+    /// Add a child at the end of the timeline.
     /// </summary>
-    /// <param name="configure"></param>
     public static async Task<Timeline> AddAsync(
         this Task<Timeline> task,
         Func<PropsBuilder, PropsBuilder> configure)
@@ -16,10 +15,8 @@ public static class TimelineExtensions
     }
     
     /// <summary>
-    /// Add Timeline animation props with relative offSet 
+    /// Add a child relative to the end of the previous child.
     /// </summary>
-    /// <param name="configure"></param>
-    /// <param name="offSet"></param>
     public static async Task<Timeline> AddAsync(
         this Task<Timeline> task,
         Func<PropsBuilder, PropsBuilder> configure,
@@ -31,10 +28,8 @@ public static class TimelineExtensions
     }
 
     /// <summary>
-    /// Add Timeline animation props with relative offSet 
+    /// Add a child at an absolute time, in milliseconds.
     /// </summary>
-    /// <param name="configure"></param>
-    /// <param name="offSet"></param>
     public static async Task<Timeline> AddAsync(
         this Task<Timeline> task,
         Func<PropsBuilder, PropsBuilder> configure,
@@ -46,7 +41,7 @@ public static class TimelineExtensions
     }
 
     /// <summary>
-    /// Add an animation at a relative or absolute offset such as "+=500".
+    /// Add a child at a position such as "+=500", "&lt;", or "&lt;&lt;".
     /// </summary>
     public static async Task<Timeline> AddAsync(
         this Task<Timeline> task,

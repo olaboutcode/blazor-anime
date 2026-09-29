@@ -328,6 +328,83 @@ test("reversed stagger starts at the last target", async () => {
     assert.deepEqual(rows.map((row) => row.target.n), [1, 1, 1]);
 });
 
+test("timeline offset waits until the previous child plus the gap", async () => {
+    const api = await loadAnime();
+    const first = api.createObject({ x: 0 });
+    const second = api.createObject({ x: 0 });
+    const timeline = await api.createTimeline({
+        autoplay: setter("autoplay", false)
+    });
+
+    await timeline.add({
+        targets: prop("targets", "objectTarget", first),
+        x: setter("x", 100),
+        duration: setter("duration", 100)
+    });
+    await timeline.add({
+        targets: prop("targets", "objectTarget", second),
+        x: setter("x", 100),
+        duration: setter("duration", 100)
+    }, "+=50");
+
+    assert.equal(timeline.getDuration(), 250);
+    timeline.seek(100);
+    assert.equal(first.target.x, 100);
+    assert.equal(second.target.x, 0);
+    timeline.seek(250);
+    assert.equal(second.target.x, 100);
+});
+
+test("a timeline position of 0 starts with the timeline", async () => {
+    const api = await loadAnime();
+    const first = api.createObject({ x: 0 });
+    const second = api.createObject({ y: 0 });
+    const timeline = await api.createTimeline({
+        autoplay: setter("autoplay", false)
+    });
+
+    await timeline.add({
+        targets: prop("targets", "objectTarget", first),
+        x: setter("x", 100),
+        duration: setter("duration", 100)
+    }, 0);
+    await timeline.add({
+        targets: prop("targets", "objectTarget", second),
+        y: setter("y", 100),
+        duration: setter("duration", 100)
+    }, 0);
+
+    assert.equal(timeline.getDuration(), 100);
+    timeline.seek(100);
+    assert.equal(first.target.x, 100);
+    assert.equal(second.target.y, 100);
+});
+
+test("timeline defaults inherit duration and keep id", async () => {
+    const api = await loadAnime();
+    const target = api.createObject({ x: 0 });
+    const timeline = await api.createTimeline({
+        id: setter("id", "demo"),
+        duration: setter("duration", 100),
+        ease: setter("ease", "linear"),
+        composition: setter("composition", "none"),
+        autoplay: setter("autoplay", false)
+    });
+
+    assert.equal(timeline.defaults.id, "demo");
+    assert.equal(timeline.defaults.composition, "none");
+    await timeline.add({
+        targets: prop("targets", "objectTarget", target),
+        x: setter("x", 100)
+    });
+
+    assert.equal(timeline.getDuration(), 100);
+    timeline.seek(50);
+    assert.ok(Math.abs(target.target.x - 50) < 0.001, `midpoint was ${target.target.x}`);
+    timeline.seek(100);
+    assert.equal(target.target.x, 100);
+});
+
 test("speed and random use the anime.js helpers", async () => {
     const api = await loadAnime();
     api.setSpeed(2);

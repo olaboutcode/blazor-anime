@@ -2,28 +2,32 @@ using Microsoft.JSInterop;
 
 namespace BlazorAnime;
 
+/// <summary>
+/// Plays child animations on one clock.
+/// JavaScript <c>add</c> is <c>add(targets, parameters, position)</c>.
+/// </summary>
 public sealed class Timeline : Animation
 {
     /// <summary>
-    /// Add an animation that starts when the previous child ends.
+    /// Add a child at the end of the timeline.
     /// </summary>
     public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure) =>
         await AddCore(configure, offset: null);
 
     /// <summary>
-    /// Add an animation at an absolute time, in milliseconds.
+    /// Add a child at an absolute time, in milliseconds. <c>0</c> starts with the timeline.
     /// </summary>
     public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure, double offSet) =>
         await AddCore(configure, offSet);
 
     /// <summary>
-    /// Add an animation at a relative or absolute offset such as "+=500" or "-=200".
+    /// Add a child at a position such as <c>+=500</c>, <c>-=200</c>, <c>&lt;</c>, or <c>&lt;&lt;</c>.
     /// </summary>
     public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure, string offSet) =>
         await AddCore(configure, offSet);
 
     /// <summary>
-    /// Add an animation at a relative offset.
+    /// Add a child relative to the end of the previous child.
     /// </summary>
     public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure, OffSet offSet) =>
         await AddCore(configure, offSet.GetValue());

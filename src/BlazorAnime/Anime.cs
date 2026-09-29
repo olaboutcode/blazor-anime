@@ -28,7 +28,8 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     }
 
     /// <summary>
-    /// Create a timeline.
+    /// Create a timeline. Autoplay, loop, and callbacks stay on the timeline.
+    /// Duration, ease, and every other key are child defaults.
     /// </summary>
     /// <param name="setDefaults"></param>
     /// <returns>Timeline</returns>
@@ -39,7 +40,8 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     }
 
     /// <summary>
-    /// Create a timeline.
+    /// Create a timeline. Autoplay, loop, and callbacks stay on the timeline.
+    /// Duration, ease, and every other key are child defaults.
     /// </summary>
     /// <param name="setDefaults"></param>
     /// <returns>Timeline</returns>

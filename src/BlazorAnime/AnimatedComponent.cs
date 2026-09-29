@@ -36,6 +36,10 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
         return animation;
     }
 
+    /// <summary>
+    /// Create a timeline and keep it under <paramref name="id"/>.
+    /// Playback settings stay on the timeline. Other keys are child defaults.
+    /// </summary>
     protected async Task<Timeline> CreateTimelineAsync(
         string id,
         Func<PropsBuilder, PropsBuilder> configure)
@@ -45,6 +49,10 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
         return timeline;
     }
 
+    /// <summary>
+    /// Create a timeline and keep it under <paramref name="id"/>.
+    /// Playback settings stay on the timeline. Other keys are child defaults.
+    /// </summary>
     protected async Task<Timeline> CreateTimelineAsync(
         string id,
         Func<PropsBuilder, Task<PropsBuilder>> configure)
