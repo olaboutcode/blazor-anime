@@ -294,6 +294,9 @@ FakesAssemblies/
 .ntvs_analysis.dat
 node_modules/
 
+# esbuild output for the anime.js spike. The package manifest and lockfile stay tracked.
+src/BlazorAnime/anime/dist/
+
 # Visual Studio 6 build log
 *.plg
 
