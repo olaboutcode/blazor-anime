@@ -250,12 +250,13 @@ public static class DemoCatalog
         new("SVG",
         [
             Entry("svg-line-drawing", "Line drawing",
-                "Draw strokes by animating the dash offset back to zero.",
-                "StrokeDashoffset(0) is the usual line-drawing target. Delay by index so each path starts after the one before it. SetDashoffset can measure a path and set its dash array to that length.",
+                "Draw strokes with a drawable proxy.",
+                "CreateDrawable wraps the paths. Draw(\"0 1\") reveals each stroke. Delay by index so each path starts after the one before it.",
                 """
+                var lines = await Anime.CreateDrawable(".line-drawing-demo .lines path");
                 await Anime.Animate(props => props
-                    .Targets(".line-drawing-demo .lines path")
-                    .StrokeDashoffset(0)
+                    .Targets(lines)
+                    .Draw("0 1")
                     .Ease(Easing.InOutSine)
                     .Duration(1500)
                     .Delay((index, total) => index * 250)
@@ -264,28 +265,28 @@ public static class DemoCatalog
                 """,
                 "Components/OfficialDocsExamples/SvgLineDrawing.razor"),
             Entry("svg-morphing", "Morphing",
-                "Interpolate one path d attribute into another.",
-                "The two path strings need a compatible command structure. Anime.js interpolates the numbers inside the d attribute.",
+                "Tween a polygon through four point lists.",
+                "Each frame is a points string. The first frame moves from the current shape to the next one. Later frames use To. MorphTo returns a function for D or Points when the target is another element.",
                 """
-                await Anime.Animate(props => props
-                    .Targets(".morphing-demo .polymorph")
-                    .D(nextPath)
-                    .Duration(2000)
-                    .Ease(Easing.InOutQuad)
-                    .Alternate(true)
-                    .Loop(true));
+                .Points(
+                    frame => frame.FromTo(
+                        "70 24 119.574 60.369 100.145 117.631 50.855 101.631 3.426 54.369",
+                        "70 41 118.574 59.369 111.145 132.631 60.855 84.631 20.426 60.369"),
+                    frame => frame.To("70 6 119.574 60.369 100.145 117.631 39.855 117.631 55.426 68.369"),
+                    frame => frame.To("70 57 136.574 54.369 89.145 100.631 28.855 132.631 38.426 64.369"),
+                    frame => frame.To("70 24 119.574 60.369 100.145 117.631 50.855 101.631 3.426 54.369"))
                 """,
                 "Components/OfficialDocsExamples/SvgMorphing.razor"),
             Entry("svg-motion-path", "Motion path",
                 "Move an element along an SVG path.",
-                "GetSvgPath reads the path element. The x, y, and angle properties are values anime.js samples along that path. Dispose the SvgPath with the animation.",
+                "CreateMotionPath returns translateX, translateY, and rotate as functions. Offset is 0 to 1, and 0 starts at the beginning of the path. Dispose the MotionPath with the animation.",
                 """
-                var path = await Anime.GetSvgPath(".motion-path-demo path");
-                await Anime.Animate(async props => props
+                var motion = await Anime.CreateMotionPath(".motion-path-demo path");
+                await Anime.Animate(props => props
                     .Targets(".motion-path-demo .el")
-                    .TranslateX(await path.Get("x"))
-                    .TranslateY(await path.Get("y"))
-                    .Rotate(await path.Get("angle"))
+                    .TranslateX(motion.TranslateX)
+                    .TranslateY(motion.TranslateY)
+                    .Rotate(motion.Rotate)
                     .Duration(2000)
                     .Ease(Easing.Linear)
                     .Loop(true));
@@ -298,13 +299,13 @@ public static class DemoCatalog
                 "A wireframe sphere that draws itself, shifts its gradient, and breathes.",
                 "Twenty-one SVG rings share one intro, then a long-running driver seeks a paused animation on each ring. The gradient on the stroke moves on its own timeline.",
                 """
+                var rings = await Anime.CreateDrawable(".animated-sphere-demo .sphere path");
                 await Anime.Animate(props => props
-                    .Targets(".animated-sphere-demo .sphere path")
-                    .StrokeDashoffset(0)
+                    .Targets(rings)
+                    .Draw("0 1")
                     .Duration(3900)
-                    .Delay(Stagger.Create(190))
-                    .Reversed(true)
-                    .Ease(Easing.InOutCirc));
+                    .Ease(Easing.InOutCirc)
+                    .Delay(Stagger.Create(190, options => options.Reversed(true))));
                 """,
                 "Components/AdditionalFunExamples/AnimatedSphere.razor"),
             Entry("easter-icons", "Easter icons",

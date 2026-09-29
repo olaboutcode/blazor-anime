@@ -56,6 +56,7 @@
     private Animation? _breath;
     private Animation? _intro;
     private Animation? _shadow;
+    private DrawableTarget? _strokes;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -87,9 +88,10 @@
             .AutoPlay(false)
             .OnUpdate(OnBreath));
 
+        _strokes = await Anime.CreateDrawable(".animated-sphere-demo .sphere path");
         _intro = await Anime.Animate(props => props
-            .Targets(".animated-sphere-demo .sphere path")
-            .StrokeDashoffset(0)
+            .Targets(_strokes)
+            .Draw("0 1")
             .Duration(3900)
             .Ease(Easing.InOutCirc)
             .Delay(Stagger.Create(190, options => options.Reversed(true)))
@@ -125,6 +127,8 @@
             await _breath.DisposeAsync();
         if (_intro is not null)
             await _intro.DisposeAsync();
+        if (_strokes is not null)
+            await _strokes.DisposeAsync();
         if (_shadow is not null)
             await _shadow.DisposeAsync();
         foreach (var ring in _rings)

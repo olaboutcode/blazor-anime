@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazorAnime;
 
@@ -45,12 +46,18 @@ public static class PropsBuilderExtensions
             ? builder.ObjectTarget("targets", references[0])
             : builder.ObjectTarget("targets", references);
     }
+    public static PropsBuilder Targets(
+        this PropsBuilder builder,
+        DrawableTarget drawable) => builder.ObjectTarget("targets", drawable.Reference);
     public static PropsBuilder Points(
         this PropsBuilder builder,
         Action<PropsBuilder> configure) => builder.Prop("points", configure);
     public static PropsBuilder Points(
         this PropsBuilder builder,
         params Action<PropsBuilder>[] build) => builder.Prop("points", build);
+    public static PropsBuilder Points(
+        this PropsBuilder builder,
+        IJSObjectReference morph) => builder.Prop("points", morph);
     public static PropsBuilder LoopDelay(
         this PropsBuilder builder,
         int milliseconds) => builder.Prop("loopDelay", milliseconds);
@@ -104,6 +111,21 @@ public static class PropsBuilderExtensions
     public static PropsBuilder StrokeDashoffset(
         this PropsBuilder builder,
         int value) => builder.Prop("strokeDashoffset", value);
+    public static PropsBuilder Draw(
+        this PropsBuilder builder,
+        string value) => builder.Prop("draw", value);
+    public static PropsBuilder Draw(
+        this PropsBuilder builder,
+        params string[] values)
+    {
+        if (values is not { Length: > 0 })
+            return builder;
+        if (values.Length == 1)
+            return builder.Prop("draw", values[0]);
+        if (values.Length == 2)
+            return builder.Prop("draw", values[0], values[1]);
+        return builder.Prop("draw", values);
+    }
     public static PropsBuilder Keyframes(
         this PropsBuilder builder,
         Action<PropsBuilder>[] build) => builder.Prop("keyframes", build);
@@ -148,7 +170,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("translateX", target);
     public static PropsBuilder TranslateX(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("translateX", path);
+        IJSObjectReference reference) => builder.Prop("translateX", reference);
     
     public static PropsBuilder TranslateY(
         this PropsBuilder builder,
@@ -176,7 +198,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("translateY", target);
     public static PropsBuilder TranslateY(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("translateY", path);
+        IJSObjectReference reference) => builder.Prop("translateY", reference);
     
     public static PropsBuilder TranslateZ(
         this PropsBuilder builder,
@@ -204,7 +226,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("translateZ", target);
     public static PropsBuilder TranslateZ(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("translateZ", path);
+        IJSObjectReference reference) => builder.Prop("translateZ", reference);
     
     // Rotation: Rotate elements on X, Y, and Z axes (in degrees)
     public static PropsBuilder Rotate(
@@ -233,7 +255,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("rotate", target);
     public static PropsBuilder Rotate(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("rotate", path);
+        IJSObjectReference reference) => builder.Prop("rotate", reference);
     
     public static PropsBuilder RotateX(
         this PropsBuilder builder,
@@ -261,7 +283,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("rotateX", target);
     public static PropsBuilder RotateX(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("rotateX", path);
+        IJSObjectReference reference) => builder.Prop("rotateX", reference);
     
     public static PropsBuilder RotateY(
         this PropsBuilder builder,
@@ -289,7 +311,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("rotateY", target);
     public static PropsBuilder RotateY(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("rotateY", path);
+        IJSObjectReference reference) => builder.Prop("rotateY", reference);
     
     public static PropsBuilder RotateZ(
         this PropsBuilder builder,
@@ -317,7 +339,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("rotateZ", target);
     public static PropsBuilder RotateZ(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("rotateZ", path);
+        IJSObjectReference reference) => builder.Prop("rotateZ", reference);
 
     // Scale: Resize elements uniformly or on individual axes
     public static PropsBuilder Scale(
@@ -346,7 +368,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("scale", target);
     public static PropsBuilder Scale(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("scale", path);
+        IJSObjectReference reference) => builder.Prop("scale", reference);
     public static PropsBuilder Scale(
         this PropsBuilder builder,
         params Func<PropsBuilder, PropsBuilder>[] build) => builder.Prop("scale", build);
@@ -377,7 +399,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("scaleX", target);
     public static PropsBuilder ScaleX(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("scaleX", path);
+        IJSObjectReference reference) => builder.Prop("scaleX", reference);
     
     public static PropsBuilder ScaleY(
         this PropsBuilder builder,
@@ -405,7 +427,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("scaleY", target);
     public static PropsBuilder ScaleY(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("scaleY", path);
+        IJSObjectReference reference) => builder.Prop("scaleY", reference);
     
     public static PropsBuilder ScaleZ(
         this PropsBuilder builder,
@@ -433,7 +455,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("scaleZ", target);
     public static PropsBuilder ScaleZ(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("scaleZ", path);
+        IJSObjectReference reference) => builder.Prop("scaleZ", reference);
     
     // Skew: Slant elements along X and Y axes (in degrees)
     public static PropsBuilder SkewX(
@@ -462,7 +484,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("skewX", target);
     public static PropsBuilder SkewX(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("skewX", path);
+        IJSObjectReference reference) => builder.Prop("skewX", reference);
     
     public static PropsBuilder SkewY(
         this PropsBuilder builder,
@@ -490,7 +512,7 @@ public static class PropsBuilderExtensions
         Func<TargetInfo, double> target) => builder.Prop("skewY", target);
     public static PropsBuilder SkewY(
         this PropsBuilder builder,
-        SvgPathParam path) => builder.Prop("skewY", path);
+        IJSObjectReference reference) => builder.Prop("skewY", reference);
 
     // Color Properties
     // Animatable color values: background, text, and border colors
@@ -1658,6 +1680,7 @@ public static class PropsBuilderExtensions
 
     // SVG attributes used by morphing, line drawing, and shape animation.
     public static PropsBuilder D(this PropsBuilder builder, string value) => builder.Prop("d", value);
+    public static PropsBuilder D(this PropsBuilder builder, IJSObjectReference morph) => builder.Prop("d", morph);
     public static PropsBuilder D(this PropsBuilder builder, string from, string to) => builder.Prop("d", from, to);
     public static PropsBuilder D(this PropsBuilder builder, params Action<PropsBuilder>[] build) => builder.Prop("d", build);
     public static PropsBuilder Fill(this PropsBuilder builder, string value) => builder.Prop("fill", value);

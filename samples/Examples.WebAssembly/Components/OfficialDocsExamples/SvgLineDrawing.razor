@@ -22,14 +22,16 @@
     private bool? _playingApplied;
 
     private Animation? _animation = null;
+    private DrawableTarget? _lines;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            var lines = _lines ??= await Anime.CreateDrawable(".line-drawing-demo .lines path");
             _animation ??= await Anime.Animate(props => props
-                .Targets(".line-drawing-demo .lines path")
-                .StrokeDashoffset(0)
+                .Targets(lines)
+                .Draw("0 1")
                 .Ease(Easing.InOutSine)
                 .Duration(1500)
                 .Delay(DelaySetter)
@@ -54,6 +56,10 @@
         if (_animation is not null)
         {
             await _animation.DisposeAsync();
+        }
+        if (_lines is not null)
+        {
+            await _lines.DisposeAsync();
         }
     }
 }

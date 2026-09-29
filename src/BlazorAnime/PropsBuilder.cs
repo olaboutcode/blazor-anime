@@ -199,10 +199,10 @@ public sealed class PropsBuilder
             _props.Add(new GenProp<ElementReference[]>(property, elements));
         return this;
     }
-    public PropsBuilder Prop(string property, SvgPathParam path)
+    public PropsBuilder Prop(string property, IJSObjectReference reference)
     {
-        if(!string.IsNullOrWhiteSpace(property) && path != null)
-            _props.Add(new SvgProp(property, path.ParamRef));
+        if(!string.IsNullOrWhiteSpace(property) && reference != null)
+            _props.Add(new SvgProp(property, reference));
         return this;
     }
     internal PropsBuilder ObjectTarget(string property, object reference)

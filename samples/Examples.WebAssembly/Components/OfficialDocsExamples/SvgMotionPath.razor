@@ -19,20 +19,19 @@
 
     private bool? _playingApplied;
     private Animation? _animation;
-    private SvgPath? _path;
+    private MotionPath? _path;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var path = _path ??= await Anime.GetSvgPath(".somePath");
+            var path = _path ??= await Anime.CreateMotionPath(".motion-path-demo path");
 
-            _animation ??= await Anime.Animate(
-                async props => props
+            _animation ??= await Anime.Animate(props => props
                 .Targets(".motion-path-demo .el")
-                .TranslateX(await path.Get("x"))
-                .TranslateY(await path.Get("y"))
-                .Rotate(await path.Get("angle"))
+                .TranslateX(path.TranslateX)
+                .TranslateY(path.TranslateY)
+                .Rotate(path.Rotate)
                 .Ease(Easing.Linear)
                 .Duration(2000)
                 .Loop(true)

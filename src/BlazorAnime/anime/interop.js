@@ -415,12 +415,21 @@ export function install(anime) {
         },
         getPauseOnDocumentHidden: () => anime.engine.pauseOnDocumentHidden,
         convertPx: () => 0,
-        setDashoffset: () => 0,
-        path: () => ({
-            path() {
-                return () => 0;
+        createMotionPath: (path, offset = 0) => {
+            const motion = anime.createMotionPath(path, offset);
+            if (!motion) {
+                throw new Error("CreateMotionPath did not find a path, polygon, or polyline");
             }
+            return {
+                getTranslateX: () => motion.translateX,
+                getTranslateY: () => motion.translateY,
+                getRotate: () => motion.rotate
+            };
+        },
+        createDrawable: (target) => ({
+            target: anime.createDrawable(target)
         }),
+        morphTo: (shape, precision = 0.33) => anime.morphTo(shape, precision),
         createObject: (values) => {
             const target = Object.assign({}, values);
             return {

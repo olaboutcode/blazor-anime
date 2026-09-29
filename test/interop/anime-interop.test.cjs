@@ -405,6 +405,34 @@ test("timeline defaults inherit duration and keep id", async () => {
     assert.equal(target.target.x, 100);
 });
 
+test("drawable draw changes a path dash", async () => {
+    const api = await loadAnime();
+    const attrs = {};
+    const element = Object.create(SVGElement.prototype);
+    element.nodeType = 1;
+    element.style = {};
+    element.tagName = "path";
+    element.getAttribute = (name) => (Object.prototype.hasOwnProperty.call(attrs, name) ? attrs[name] : null);
+    element.setAttribute = (name, value) => {
+        attrs[name] = String(value);
+    };
+
+    const drawable = api.createDrawable(element);
+    const hidden = attrs["stroke-dasharray"];
+    const animation = await api.createAnimation({
+        targets: prop("targets", "objectTarget", drawable),
+        draw: setter("draw", "0 1"),
+        duration: setter("duration", 100),
+        autoplay: setter("autoplay", false),
+        ease: setter("ease", "linear")
+    });
+
+    animation.seek(100);
+    assert.notEqual(attrs["stroke-dasharray"], hidden);
+    assert.equal(attrs["stroke-dasharray"], "1000 0");
+    assert.equal(attrs["stroke-dashoffset"], "0");
+});
+
 test("speed and random use the anime.js helpers", async () => {
     const api = await loadAnime();
     api.setSpeed(2);

@@ -52,30 +52,61 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     }
 
     /// <summary>
-    /// Returns an <c>anime.path()</c> for an SVG element. <paramref name="percent"/> is how much of the path to travel (0-100).
+    /// Motion-path functions for an SVG path, polygon, or polyline.
+    /// <paramref name="offset"/> is 0–1 along the length. 0 starts at the beginning.
     /// </summary>
-    public async Task<SvgPath> GetSvgPath(string svgSelector, double percent = 100)
+    public async Task<MotionPath> CreateMotionPath(string svgSelector, double offset = 0)
     {
-        var pathJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
-            IdentifierGetSvgPath,
+        var holder = await JsRuntime.InvokeAsync<IJSObjectReference>(
+            IdentifierCreateMotionPath,
             svgSelector,
-            percent
-        );
-        return new SvgPath(pathJsRef);
+            offset);
+        return await ReadMotionPath(holder);
     }
 
     /// <summary>
-    /// Returns an <c>anime.path()</c> for an SVG element.
+    /// Motion-path functions for an SVG path, polygon, or polyline.
+    /// <paramref name="offset"/> is 0–1 along the length. 0 starts at the beginning.
     /// </summary>
-    public async Task<SvgPath> GetSvgPath(ElementReference element, double percent = 100)
+    public async Task<MotionPath> CreateMotionPath(ElementReference element, double offset = 0)
     {
-        var pathJsRef = await JsRuntime.InvokeAsync<IJSObjectReference>(
-            IdentifierGetSvgPath,
+        var holder = await JsRuntime.InvokeAsync<IJSObjectReference>(
+            IdentifierCreateMotionPath,
             element,
-            percent
-        );
-        return new SvgPath(pathJsRef);
+            offset);
+        return await ReadMotionPath(holder);
     }
+
+    /// <summary>
+    /// Drawable proxies for SVG geometry. Animate them with <c>Draw</c>.
+    /// </summary>
+    public async Task<DrawableTarget> CreateDrawable(string selector)
+    {
+        var reference = await JsRuntime.InvokeAsync<IJSObjectReference>(IdentifierCreateDrawable, selector);
+        return new DrawableTarget(reference);
+    }
+
+    /// <summary>
+    /// Drawable proxies for one SVG element. Animate them with <c>Draw</c>.
+    /// </summary>
+    public async Task<DrawableTarget> CreateDrawable(ElementReference element)
+    {
+        var reference = await JsRuntime.InvokeAsync<IJSObjectReference>(IdentifierCreateDrawable, element);
+        return new DrawableTarget(reference);
+    }
+
+    /// <summary>
+    /// The function <c>morphTo</c> returns. Pass it to <c>D</c> or <c>Points</c>.
+    /// <paramref name="precision"/> 0 copies the target shape. The default is 0.33.
+    /// </summary>
+    public async Task<IJSObjectReference> MorphTo(string shapeSelector, double precision = 0.33) =>
+        await JsRuntime.InvokeAsync<IJSObjectReference>(IdentifierMorphTo, shapeSelector, precision);
+
+    /// <summary>
+    /// The function <c>morphTo</c> returns. Pass it to <c>D</c> or <c>Points</c>.
+    /// </summary>
+    public async Task<IJSObjectReference> MorphTo(ElementReference element, double precision = 0.33) =>
+        await JsRuntime.InvokeAsync<IJSObjectReference>(IdentifierMorphTo, element, precision);
 
     /// <summary>
     /// Creates a JavaScript object whose numeric properties can be animation targets.
@@ -180,18 +211,6 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
         await JsRuntime.InvokeAsync<double>(IdentifierConvertPx, selector, value, unit);
 
     /// <summary>
-    /// Sets <c>stroke-dasharray</c> to the path length and returns that length. This is <c>anime.setDashoffset</c>.
-    /// </summary>
-    public async Task<double> SetDashoffset(ElementReference element) =>
-        await JsRuntime.InvokeAsync<double>(IdentifierSetDashoffset, element);
-
-    /// <summary>
-    /// Sets <c>stroke-dasharray</c> to the path length and returns that length.
-    /// </summary>
-    public async Task<double> SetDashoffset(string selector) =>
-        await JsRuntime.InvokeAsync<double>(IdentifierSetDashoffset, selector);
-
-    /// <summary>
     /// Get the original value of an element.
     /// <para>
     /// Since anime.js uses getComputedStyle to access original CSS, the values are almost always returned in 'px',
@@ -282,6 +301,31 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     public async Task<bool> GetPauseOnDocumentHidden() =>
         await JsRuntime.InvokeAsync<bool>(IdentifierGetPauseOnDocumentHidden);
 
+    private static async Task<MotionPath> ReadMotionPath(IJSObjectReference holder)
+    {
+        IJSObjectReference? translateX = null;
+        IJSObjectReference? translateY = null;
+        IJSObjectReference? rotate = null;
+        try
+        {
+            translateX = await holder.InvokeAsync<IJSObjectReference>("getTranslateX");
+            translateY = await holder.InvokeAsync<IJSObjectReference>("getTranslateY");
+            rotate = await holder.InvokeAsync<IJSObjectReference>("getRotate");
+            return new MotionPath(holder, translateX, translateY, rotate);
+        }
+        catch
+        {
+            if (translateX is not null)
+                await translateX.DisposeAsync();
+            if (translateY is not null)
+                await translateY.DisposeAsync();
+            if (rotate is not null)
+                await rotate.DisposeAsync();
+            await holder.DisposeAsync();
+            throw;
+        }
+    }
+
     private async Task<TInstance> Create<TInstance>(
         string identifier,
         PropsBuilder builder,
@@ -310,7 +354,9 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     private const string IdentifierGetElementValue = "AnimeJs.get";
     private const string IdentifierGetRandomValue = "AnimeJs.random";
     private const string IdentifierGetRunningLength = "AnimeJs.runningLength";
-    private const string IdentifierGetSvgPath = "AnimeJs.path";
+    private const string IdentifierCreateMotionPath = "AnimeJs.createMotionPath";
+    private const string IdentifierCreateDrawable = "AnimeJs.createDrawable";
+    private const string IdentifierMorphTo = "AnimeJs.morphTo";
     private const string IdentifierPauseOnDocumentHidden = "AnimeJs.pauseOnDocumentHidden";
     private const string IdentifierGetPauseOnDocumentHidden = "AnimeJs.getPauseOnDocumentHidden";
     private const string IdentifierRemove = "AnimeJs.remove";
@@ -318,7 +364,6 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     private const string IdentifierSetSpeed = "AnimeJs.setSpeed";
     private const string IdentifierVersion = "AnimeJs.version";
     private const string IdentifierConvertPx = "AnimeJs.convertPx";
-    private const string IdentifierSetDashoffset = "AnimeJs.setDashoffset";
     private const string IdentifierCreateObject = "AnimeJs.createObject";
 }
 
@@ -328,8 +373,12 @@ public interface IAnime
     Task<Animation> Animate(Func<PropsBuilder, Task<PropsBuilder>> configure);
     Task<Timeline> CreateTimeline(Func<PropsBuilder, PropsBuilder> configureDefaults);
     Task<Timeline> CreateTimeline(Func<PropsBuilder, Task<PropsBuilder>> configureDefaults);
-    Task<SvgPath> GetSvgPath(string svgSelector, double percent = 100);
-    Task<SvgPath> GetSvgPath(ElementReference element, double percent = 100);
+    Task<MotionPath> CreateMotionPath(string svgSelector, double offset = 0);
+    Task<MotionPath> CreateMotionPath(ElementReference element, double offset = 0);
+    Task<DrawableTarget> CreateDrawable(string selector);
+    Task<DrawableTarget> CreateDrawable(ElementReference element);
+    Task<IJSObjectReference> MorphTo(string shapeSelector, double precision = 0.33);
+    Task<IJSObjectReference> MorphTo(ElementReference element, double precision = 0.33);
     Task<JsTarget> CreateObject(IReadOnlyDictionary<string, object> values);
     Task Set(string[] targets, Func<PropsBuilder, PropsBuilder> build);
     Task Set(object[] targets, Func<PropsBuilder, PropsBuilder> build);
@@ -348,8 +397,6 @@ public interface IAnime
     Task<string> Version();
     Task<double> ConvertPx(ElementReference element, string value, string unit);
     Task<double> ConvertPx(string selector, string value, string unit);
-    Task<double> SetDashoffset(ElementReference element);
-    Task<double> SetDashoffset(string selector);
     Task PauseOnDocumentHidden(bool value);
     Task<bool> GetPauseOnDocumentHidden();
     Task<int> RunningLength();
