@@ -1,13 +1,15 @@
 # Blazor.Anime
 
-Typed Blazor bindings for [anime.js](https://animejs.com/) v3. The package embeds anime.js 3.2.2 and exposes it through `IAnime`, so animations stay in C# while playback stays in the browser. The live anime.js documentation describes v4, which is a different API. This guide matches the v3 engine shipped in the package.
+Typed Blazor bindings for [anime.js](https://animejs.com/) 4.5.0. The package embeds that engine and exposes it through `IAnime`, so animations stay in C# while playback stays in the browser. Register the service with `AddBlazorAnime()`. Blazor loads the script. Durations are milliseconds.
+
+This guide matches the [anime.js v4 documentation](https://animejs.com/documentation/). The [v3 to v4 migration notes](https://github.com/juliangarnier/anime/wiki/Migrating-from-v3-to-v4) describe the engine this package binds.
 
 ## Features
 
-- **anime.js v3 API** — targets, properties, keyframes, stagger, timelines, SVG, and easings
+- **anime.js 4.5.0** — targets, properties, keyframes, stagger, timelines, SVG, and easings
 - **Strongly typed** — IntelliSense for transforms, colors, dimensions, and SVG attributes
 - **Function parameters** — per-target values from an index or a `TargetInfo` snapshot, including lambdas and ordinary methods
-- **Playback** — play, pause, seek, progress, restart, and a task that completes when the animation finishes
+- **Playback** — play, pause, resume, seek, restart, reverse, alternate, and a task that completes when the animation finishes
 - **Object targets** — animate a plain JavaScript object and read the values back
 
 ## Contents
@@ -37,27 +39,13 @@ Typed Blazor bindings for [anime.js](https://animejs.com/) v3. The package embed
 dotnet add package BlazorAnime
 ```
 
-Register the service:
+Register the service. That call does not inject a script tag. Blazor imports `BlazorAnime.lib.module.js` from the package when the app starts.
 
 ```csharp
 builder.Services.AddBlazorAnime();
 ```
 
-Load the interop script **after** the Blazor framework script.
-
-WebAssembly, in `wwwroot/index.html`:
-
-```html
-<script src="_framework/blazor.webassembly.js"></script>
-<script src="_content/BlazorAnime/blazor.anime.interop.js"></script>
-```
-
-Blazor Web App, in `Components/App.razor` (or the host page):
-
-```html
-<script src="_framework/blazor.web.js"></script>
-<script src="_content/BlazorAnime/blazor.anime.interop.js"></script>
-```
+WebAssembly hosts keep the framework script in `wwwroot/index.html`. Blazor Web App hosts keep it in `Components/App.razor`. Do not add an anime.js script beside either one.
 
 Add the namespace in `_Imports.razor`:
 
@@ -87,7 +75,7 @@ Add the namespace in `_Imports.razor`:
                 .TranslateX(250)
                 .Rotate(360)
                 .Duration(1500)
-                .Easing(Easing.EaseInOutQuad)
+                .Ease(Easing.InOutQuad)
                 .AutoPlay(false));
         }
     }
@@ -168,6 +156,8 @@ var progress = await target.GetNumber("progress");
 
 Any CSS property, DOM attribute, or SVG attribute can be animated. Typed methods cover the common names. Anything else goes through `Prop`.
 
+A second `Animate` of the same property on the same target cancels the tween already running. That is anime.js `composition: 'replace'`, the default. `Set` does not cancel, because `utils.set` forces `composition: 'none'`.
+
 CSS properties:
 
 ```csharp
@@ -176,7 +166,7 @@ await Anime.Animate(props => props
     .Left(250)
     .BackgroundColor("#FFF")
     .BorderRadius("0%", "50%")
-    .Easing(Easing.EaseInOutQuad)
+    .Ease(Easing.InOutQuad)
     .AutoPlay(true));
 ```
 
@@ -191,36 +181,36 @@ await Anime.Animate(props => props
     .AutoPlay(true));
 ```
 
-DOM attributes:
+DOM attributes. `Value` is the HTML attribute named `value`. Tween destinations use `To`, not `Value`.
 
 ```csharp
 await Anime.Animate(props => props
     .Targets("input")
     .Value(0, 1000)
-    .Round(1)
-    .Easing(Easing.EaseInOutExpo)
+    .ModifierRound(0)
+    .Ease(Easing.InOutExpo)
     .AutoPlay(true));
 ```
+
+`ModifierRound(0)` rounds to an integer. `ModifierRound(1)` keeps one decimal place. The argument is the number of decimal places.
 
 SVG attributes. `points` is set through a property parameter because `Points` takes a builder:
 
 ```csharp
 await Anime.Animate(props => props
     .Targets(".svg-attributes-demo polygon")
-    .Points(shape => shape.Value("64 128 8.574 96 8.574 32 64 0 119.426 32 119.426 96"))
+    .Points(shape => shape.To("64 128 8.574 96 8.574 32 64 0 119.426 32 119.426 96"))
     .Prop("baseFrequency", 0)
     .Scale(1)
     .Loop(true)
-    .Direction(Direction.Alternate)
-    .Easing(Easing.EaseInOutExpo)
+    .Alternate(true)
+    .Ease(Easing.InOutExpo)
     .AutoPlay(true));
 ```
 
 ### Property parameters
 
-Duration, delay, end delay, easing, and round can apply to the whole animation or to one property.
-
-Duration, delay, and easing:
+Duration, delay, loop delay, ease, and `ModifierRound` can apply to the whole animation or to one property. `Duration`, `Delay`, and `LoopDelay` are milliseconds.
 
 ```csharp
 await Anime.Animate(props => props
@@ -228,29 +218,29 @@ await Anime.Animate(props => props
     .TranslateX(250)
     .Duration(3000)
     .Delay(1000)
-    .EndDelay(1000)
-    .Easing(Easing.EaseInOutExpo)
-    .Round(10) // 1 rounds to an integer, 10 to one decimal, 100 to two
+    .LoopDelay(1000)
+    .Ease(Easing.InOutExpo)
+    .ModifierRound(1)
     .AutoPlay(true));
 ```
 
-Per-property timing:
+Per-property timing. `To` is the destination:
 
 ```csharp
 await Anime.Animate(props => props
     .Targets(".element")
     .TranslateX(property => property
-        .Value(250)
+        .To(250)
         .Duration(800))
     .Rotate(property => property
-        .Value(360)
+        .To(360)
         .Duration(1800)
-        .Easing(Easing.EaseInOutExpo))
+        .Ease(Easing.InOutExpo))
     .Scale(property => property
-        .Value(2)
+        .To(2)
         .Duration(1600)
         .Delay(800)
-        .Easing(Easing.EaseInOutQuart))
+        .Ease(Easing.InOutQuart))
     .Delay(250)
     .AutoPlay(true));
 ```
@@ -261,10 +251,10 @@ Function parameters receive the target index and the target count. Lambdas and o
 await Anime.Animate(props => props
     .Targets(".element")
     .TranslateX(270)
-    .Direction(Direction.Alternate)
+    .Alternate(true)
     .Loop(true)
     .Delay((index, total) => index * 100)
-    .EndDelay((index, total) => (total - index) * 100)
+    .LoopDelay((index, total) => (total - index) * 100)
     .AutoPlay(true));
 ```
 
@@ -276,28 +266,30 @@ public double SetDelay(int index, int total) => index * 100;
 
 ### Animation parameters
 
-Direction is `Direction.Normal`, `Direction.Reverse`, or `Direction.Alternate`.
+`Alternate(true)` flips direction on each repeat. `Reversed(true)` plays backward from the start.
 
 ```csharp
 await Anime.Animate(props => props
     .Targets(".element")
     .TranslateX(100)
-    .Direction(Direction.Alternate)
+    .Alternate(true)
     .Loop(true)
     .AutoPlay(true));
 ```
 
-`Loop(true)` repeats forever. `Loop(3)` plays the animation three times.
+`Loop(true)` repeats forever. A number is a repeat count: `Loop(2)` plays once, then repeats twice more. Omit `Loop`, or pass `0`, for a single play. On the snapshot, `Loop` is the value stored at build, and it is `-1` when the animation loops forever.
 
 ```csharp
 await Anime.Animate(props => props
     .Targets(".element")
     .TranslateX(100)
-    .Loop(3)
+    .Loop(2)
     .AutoPlay(true));
 ```
 
 `AutoPlay(false)` creates the animation in a paused state. Call `Play` when you want it to start. An infinite loop never finishes, so `Finished()` does not complete for `Loop(true)`.
+
+If you omit `Ease`, anime.js uses `out(2)`.
 
 ### Values
 
@@ -326,7 +318,7 @@ await Anime.Animate(props => props
 
 `Relative.Add`, `Relative.Subtract`, and `Relative.Multiply` take a number or a string.
 
-Function-based values use `(index, total) => ...` or a `TargetInfo`. `TargetInfo` is a snapshot taken when the animation is built: `Index`, `Total`, `Id`, `TagName`, and `Dataset`. A `data-x` attribute is `Dataset["x"]`. The function is not called again on later frames.
+Function-based values use `(index, total) => ...` or a `TargetInfo`. `TargetInfo` is a snapshot taken when the animation is built: `Index`, `Total`, `Id`, `TagName`, and `Dataset`. A `data-x` attribute is `Dataset["x"]`. The function is not called again on later frames. `Refresh()` reads function values again.
 
 ```csharp
 await Anime.Animate(props => props
@@ -338,7 +330,7 @@ await Anime.Animate(props => props
 
 ### Keyframes
 
-Pass each step as an array of builders. A comma-separated list of lambdas binds to the `TargetInfo` overload instead of a keyframe sequence.
+Pass each step as an array of builders. A comma-separated list of lambdas binds to the `TargetInfo` overload instead of a keyframe sequence. Each step uses `To`. A step can set its own duration, delay, and ease.
 
 Animation keyframes:
 
@@ -346,40 +338,40 @@ Animation keyframes:
 await Anime.Animate(props => props
     .Targets(".element")
     .TranslateX([
-        step => step.Value(250).Duration(1000).Delay(500),
-        step => step.Value(0).Duration(1000).Delay(500)
+        step => step.To(250).Duration(1000).Delay(500),
+        step => step.To(0).Duration(1000).Delay(500)
     ])
     .TranslateY([
-        step => step.Value(-40).Duration(500),
-        step => step.Value(40).Duration(500).Delay(1000),
-        step => step.Value(0).Duration(500).Delay(1000)
+        step => step.To(-40).Duration(500),
+        step => step.To(40).Duration(500).Delay(1000),
+        step => step.To(0).Duration(500).Delay(1000)
     ])
     .ScaleX([
-        step => step.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
-        step => step.Value(1).Duration(900),
-        step => step.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
-        step => step.Value(1).Duration(900)
+        step => step.To(4).Duration(100).Delay(500).Ease(Easing.OutExpo),
+        step => step.To(1).Duration(900),
+        step => step.To(4).Duration(100).Delay(500).Ease(Easing.OutExpo),
+        step => step.To(1).Duration(900)
     ])
     .ScaleY([
-        step => step.Value(1.75, 1).Duration(500),
-        step => step.Value(2).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
-        step => step.Value(1).Duration(450),
-        step => step.Value(1.75).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
-        step => step.Value(1).Duration(450)
+        step => step.FromTo(1.75, 1).Duration(500),
+        step => step.To(2).Duration(50).Delay(1000).Ease(Easing.OutExpo),
+        step => step.To(1).Duration(450),
+        step => step.To(1.75).Duration(50).Delay(1000).Ease(Easing.OutExpo),
+        step => step.To(1).Duration(450)
     ])
-    .Easing(Easing.EaseOutElastic(1, .8))
+    .Ease(Easing.OutElastic(1, .8))
     .Loop(true)
     .AutoPlay(true));
 ```
 
-Property keyframes are the same array on a single property:
+Property keyframes are the same array on a single property. Ease on the animation covers steps that leave ease unset.
 
 ```csharp
 await Anime.Animate(props => props
     .Targets(".element")
     .TranslateX([
-        step => step.Value(250).Duration(1000),
-        step => step.Value(0).Duration(500)
+        step => step.To(250).Duration(1000),
+        step => step.To(0).Duration(500)
     ])
     .Duration(4000)
     .AutoPlay(true));
@@ -403,20 +395,20 @@ Start offset:
 .Delay(stagger => stagger.Value(100).Start(500))
 ```
 
-`From` is `StaggerFrom.First`, `StaggerFrom.Last`, `StaggerFrom.Center`, or an index:
+`From` is `StaggerPosition.First`, `StaggerPosition.Last`, `StaggerPosition.Center`, or an index:
 
 ```csharp
-.Delay(stagger => stagger.Value(100).From(StaggerFrom.Center))
+.Delay(stagger => stagger.Value(100).From(StaggerPosition.Center))
 .Delay(stagger => stagger.Value(100).From(3))
 ```
 
-Direction and easing:
+`Reversed(true)` starts at the last target. `Ease` changes the gap between targets:
 
 ```csharp
 .Delay(stagger => stagger
     .Value(100)
-    .Direction(Direction.Reverse)
-    .Easing(Easing.EaseOutQuad))
+    .Reversed(true)
+    .Ease(Easing.OutQuad))
 ```
 
 Grid is `[columns, rows]`. `Axis` is `StaggerAxis.X` or `StaggerAxis.Y`.
@@ -425,20 +417,25 @@ Grid is `[columns, rows]`. `Axis` is `StaggerAxis.X` or `StaggerAxis.Y`.
 .Delay(stagger => stagger
     .Value(100)
     .Grid(14, 7)
-    .From(StaggerFrom.Center)
+    .From(StaggerPosition.Center)
     .Axis(StaggerAxis.X))
 ```
 
-`Stagger.Create` builds the same value when you want to pass it to a property directly, for example `.TranslateX(Stagger.Create(10, 40, options => options.From(StaggerFrom.Center)))`.
+`Stagger.Create` builds the same value when you want to pass it to a property directly:
+
+```csharp
+.TranslateX(Stagger.Create(10, 40, options => options.From(StaggerPosition.Center)))
+.Delay(Stagger.Create(100, options => options.Reversed(true).Ease(Easing.OutQuad)))
+```
 
 ### Timeline
 
-Defaults on the timeline apply to each child that does not set its own.
+`CreateTimeline` plays child animations on one clock. Duration and ease set on the timeline become defaults for each child that does not set its own. `AutoPlay(false)` is playback on the timeline, not a default copied onto each child.
 
 ```csharp
-var timeline = await Anime.Timeline(props => props
+var timeline = await Anime.CreateTimeline(props => props
     .Duration(750)
-    .Easing(Easing.EaseOutExpo)
+    .Ease(Easing.OutExpo)
     .AutoPlay(false));
 
 await timeline.AddAsync(child => child
@@ -452,7 +449,7 @@ await timeline.AddAsync(child => child
 await timeline.Play();
 ```
 
-Offsets are a number of milliseconds, a relative string, or `OffSet`:
+A position places the child. A number is an absolute time in milliseconds, and `0` starts with the timeline. `"<"` starts with the previous child. `"<<"` starts with the child before that. `"+=500"` and `"-=200"` shift from the end of the previous child. `OffSet.After(500)` is the same as `"+=500"`. `OffSet.Before(200)` is `"-=200"`.
 
 ```csharp
 await timeline.AddAsync(child => child
@@ -465,18 +462,22 @@ await timeline.AddAsync(child => child
 
 await timeline.AddAsync(child => child
     .Targets(".el3")
-    .TranslateX(250), 2000);
+    .TranslateX(250), 0);
 
 await timeline.AddAsync(child => child
     .Targets(".el4")
+    .TranslateX(250), "<");
+
+await timeline.AddAsync(child => child
+    .Targets(".el5")
     .TranslateX(250), OffSet.Before(200));
 ```
 
-`OffSet.After(500)` is the same as `"+=500"`. A `Timeline` is an `Animation`, so play, pause, seek, restart, reverse, and dispose are the same methods.
+A `Timeline` is an `Animation`, so play, pause, seek, restart, reverse, and dispose are the same methods.
 
 ### Controls
 
-Every control method is asynchronous.
+Every control method is asynchronous. `Seek` takes milliseconds. `Progress` takes a value from 0 to 1. `Resume` continues in the current direction. `Alternate` mirrors the current time and flips direction. `Complete` seeks to the end and removes the animation from the engine. `Finished` completes when playback ends. It does not complete while `Loop(true)` is set.
 
 ```csharp
 var animation = await Anime.Animate(props => props
@@ -486,130 +487,141 @@ var animation = await Anime.Animate(props => props
 
 await animation.Play();
 await animation.Pause();
+await animation.Resume();
 await animation.Restart();
 await animation.Reverse();
+await animation.Alternate();
 await animation.Reset();
 await animation.Seek(1500);
-await animation.Progress(50);
+await animation.Progress(0.5);
 await animation.Complete();
 await animation.Finished();
 ```
 
-`Seek` and `Progress` take milliseconds and a percentage from 0 to 100. `Complete` jumps to the end. `Finished` completes when playback ends. It does not complete while `Loop(true)` is set.
-
-`animation.Remove(".element")` drops that target from this instance. `Anime.Remove` drops it from every running instance.
+`animation.Remove(".element")` drops that target from this instance. `Anime.Remove` drops it from running animations.
 
 ### Callbacks
 
-Begin, update, complete, loop, and change callbacks take `Action<AnimationState>`. Lambdas and ordinary methods both work. The argument is a snapshot of the instance at that frame, and the callback returns `void`.
+`OnBegin`, `OnUpdate`, `OnLoop`, and `OnComplete` take `Action<AnimationState>`. Lambdas and ordinary methods both work. The argument is a snapshot, not the live instance, and the callback returns `void`.
+
+`OnBegin` runs after the delay. `OnUpdate` runs each frame and reports `Progress` from 0 to 1. `OnLoop` runs when a repeat begins. `OnComplete` runs after the repeats finish.
 
 ```csharp
 await Anime.Animate(props => props
     .Targets(".element")
     .TranslateX(250)
-    .Begin(state => Console.WriteLine($"Started at {state.CurrentTime}ms"))
-    .Update(state => Console.WriteLine($"Progress: {state.Progress}%"))
-    .Complete(state => Console.WriteLine("Animation completed"))
-    .Loop(true)
-    .LoopBegin(state => Console.WriteLine($"{state.Remaining} loops left"))
+    .Delay(500)
+    .Alternate(true)
+    .OnBegin(state => Console.WriteLine($"Started at {state.CurrentTime}ms"))
+    .OnUpdate(state => Console.WriteLine($"Progress: {state.Progress:0.00}"))
+    .OnLoop(state => Console.WriteLine($"Repeat {state.CurrentIteration}"))
+    .OnComplete(state => Console.WriteLine("Animation completed"))
+    .Loop(2)
     .AutoPlay(true));
 ```
 
-The same hooks exist for `LoopComplete`, `Change`, `ChangeBegin`, and `ChangeComplete`.
+`OnRender`, `OnPause`, and `OnBeforeUpdate` use the same snapshot.
 
-`AnimationState` also carries `Began`, `Completed`, `Paused`, `Reversed`, `Duration`, `Delay`, `EndDelay`, `Direction`, `Loop`, and `Remaining`. `Loop` and `Remaining` are `-1` when the animation loops forever.
+`AnimationState` also carries `Began`, `Completed`, `Paused`, `Reversed`, `Backwards`, `Alternate`, `Duration`, `Delay`, `LoopDelay`, `CurrentTime`, `IterationProgress`, `CurrentIteration`, and `Loop`. `Loop` is `-1` when the animation loops forever. `Alternate` on the snapshot is the flag stored at build.
 
 ### SVG
 
-Line drawing:
+Line drawing. `CreateDrawable` wraps the geometry, and `Draw` animates the stroke. `Draw("0 0", "0 1", "1 1")` draws the stroke on, then carries the dash off the end.
 
 ```csharp
+var lines = await Anime.CreateDrawable(".line-drawing path");
 await Anime.Animate(props => props
-    .Targets(".line-drawing path")
-    .StrokeDashoffset(0)
-    .Easing(Easing.EaseInOutSine)
-    .Duration(1500)
-    .Delay((index, total) => index * 250)
-    .Direction(Direction.Alternate)
+    .Targets(lines)
+    .Draw("0 0", "0 1", "1 1")
+    .Ease(Easing.InOutQuad)
+    .Duration(2000)
+    .Delay(Stagger.Create(100))
     .Loop(true)
     .AutoPlay(true));
 ```
 
-`Anime.SetDashoffset` sets `stroke-dasharray` to the path length and returns that length:
+Dispose the `DrawableTarget` with the animation.
+
+Morphing. `MorphTo` returns the function anime.js builds for another shape. Pass that reference to `D` or `Points`. Do not pass a string array to `D`. Precision defaults to `0.33`. `0` copies the target shape. A path string can still be assigned with `D(string)` when you are not morphing toward an element.
 
 ```csharp
-var length = await Anime.SetDashoffset(".line-drawing path");
-```
-
-Morphing:
-
-```csharp
+var morph = await Anime.MorphTo(".target-shape");
 await Anime.Animate(props => props
     .Targets(".morphing path")
-    .D("M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80")
+    .D(morph)
     .Duration(2000)
-    .Easing(Easing.EaseInOutQuad)
+    .Ease(Easing.InOutQuad)
     .AutoPlay(true));
 ```
 
-Motion path. `GetSvgPath` accepts a selector or an `ElementReference`. The optional percent argument is how much of the path to travel, from 0 to 100.
+Motion path. `CreateMotionPath` accepts a selector or an `ElementReference`. Offset is 0 to 1 along the path, and the default `0` starts at the beginning. The three fields are functions. Pass them to the matching transforms.
 
 ```csharp
-var path = await Anime.GetSvgPath(".motion-path path");
-await Anime.Animate(async props => props
+var motion = await Anime.CreateMotionPath(".motion-path path");
+await Anime.Animate(props => props
     .Targets(".motion-path .el")
-    .TranslateX(await path.Get("x"))
-    .TranslateY(await path.Get("y"))
-    .Rotate(await path.Get("angle"))
+    .TranslateX(motion.TranslateX)
+    .TranslateY(motion.TranslateY)
+    .Rotate(motion.Rotate)
     .Duration(2000)
-    .Easing(Easing.Linear)
+    .Ease(Easing.Linear)
     .Loop(true)
     .AutoPlay(true));
 ```
 
-Dispose the `SvgPath` with the animation. `"x"`, `"y"`, and `"angle"` are the path properties anime.js exposes.
+Dispose the `MotionPath` with the animation.
 
 ### Easings
 
-Named curves are properties on `Easing`:
+Named curves drop the `ease` prefix. They are properties on `Easing`:
 
 - `Linear`
-- `EaseInSine`, `EaseOutSine`, `EaseInOutSine`, `EaseOutInSine`
-- `EaseInQuad`, `EaseOutQuad`, `EaseInOutQuad`, `EaseOutInQuad`
-- `EaseInCubic`, `EaseOutCubic`, `EaseInOutCubic`, `EaseOutInCubic`
-- `EaseInQuart`, `EaseOutQuart`, `EaseInOutQuart`, `EaseOutInQuart`
-- `EaseInQuint`, `EaseOutQuint`, `EaseInOutQuint`, `EaseOutInQuint`
-- `EaseInExpo`, `EaseOutExpo`, `EaseInOutExpo`, `EaseOutInExpo`
-- `EaseInCirc`, `EaseOutCirc`, `EaseInOutCirc`, `EaseOutInCirc`
-- `EaseInBack`, `EaseOutBack`, `EaseInOutBack`, `EaseOutInBack`
-- `EaseInBounce`, `EaseOutBounce`, `EaseInOutBounce`, `EaseOutInBounce`
+- `InSine`, `OutSine`, `InOutSine`, `OutInSine`
+- `InQuad`, `OutQuad`, `InOutQuad`, `OutInQuad`
+- `InCubic`, `OutCubic`, `InOutCubic`, `OutInCubic`
+- `InQuart`, `OutQuart`, `InOutQuart`, `OutInQuart`
+- `InQuint`, `OutQuint`, `InOutQuint`, `OutInQuint`
+- `InExpo`, `OutExpo`, `InOutExpo`, `OutInExpo`
+- `InCirc`, `OutCirc`, `InOutCirc`, `OutInCirc`
+- `InBack`, `OutBack`, `InOutBack`, `OutInBack`
+- `InBounce`, `OutBounce`, `InOutBounce`, `OutInBounce`
 
-Elastic easing is a method, because amplitude and period are optional. The defaults are `1` and `0.5`.
+`In(power)`, `Out(power)`, and `InOut(power)` build a curve from a number. `out(2)` is the ease anime.js uses when a call omits one.
+
+Elastic easing is a method. Amplitude defaults to `1` and period defaults to `0.3`.
 
 ```csharp
-.Easing(Easing.EaseOutElastic(1, .6))
+.Ease(Easing.OutElastic(1, .6))
 ```
 
-`EaseInElastic`, `EaseInOutElastic`, and `EaseOutInElastic` take the same arguments.
+`InElastic`, `InOutElastic`, and `OutInElastic` take the same arguments.
 
-Cubic Bézier, spring, and steps:
+`Spring()` uses the anime.js defaults: mass `1`, stiffness `100`, damping `10`, and velocity `0`. The four-argument method sets those values. `SpringBounce` takes a bounce from -1 to 1 and a duration in milliseconds.
 
 ```csharp
-.Easing(Easing.CubicBezier(.5, .05, .1, .3))
-.Easing(Easing.Spring(1, 80, 10, 0))
-.Easing(Easing.Steps(5))
+.Ease(Easing.Spring())
+.Ease(Easing.Spring(1, 80, 10, 0))
+.Ease(Easing.SpringBounce(0.5, 600))
 ```
 
-`Easing.Spring()` with no arguments is anime.js `spring`. `Easing.Raw("easeInElastic(1, .5)")` passes an expression through unchanged.
-
-A C# function can be the easing. `Easing.Curve` samples it from 0 to 1 (64 samples by default, at least 2) and the browser interpolates that table on each frame. The same call works on a stagger.
+Cubic Bézier, steps, and a raw expression the v4 parser accepts:
 
 ```csharp
-.Easing(Easing.Curve(t => t * t))
-.Delay(stagger => stagger.Value(100).Easing(Easing.Curve(t => t * t, samples: 32)))
+.Ease(Easing.CubicBezier(.5, .05, .1, .3))
+.Ease(Easing.Steps(5))
+.Ease(Easing.Raw("inElastic(1, .5)"))
+```
+
+A C# function can be the ease. `Easing.Curve` samples it from 0 to 1 (64 samples by default, at least 2) and the browser interpolates that table on each frame. The same call works on a stagger.
+
+```csharp
+.Ease(Easing.Curve(t => t * t))
+.Delay(stagger => stagger.Value(100).Ease(Easing.Curve(t => t * t, samples: 32)))
 ```
 
 ### Helpers
+
+`Random`, `Get`, `Set`, and `Remove` are `utils`. Speed and `PauseOnDocumentHidden` are the engine. `Version()` is the pinned anime.js build, `4.5.0`.
 
 `Random` is asynchronous. Read it before you build the animation:
 
@@ -621,7 +633,7 @@ await Anime.Animate(props => props
     .AutoPlay(true));
 ```
 
-`Get` uses computed style, so the result is usually in pixels unless you pass a unit.
+`Get` reads computed style. Without a unit the result is a string, usually in pixels. The unit overload converts it and returns a number. `Set` writes immediately and does not cancel other tweens.
 
 ```csharp
 var value = await Anime.Get(".element", "translateX");
@@ -636,18 +648,17 @@ await Anime.Set(element, props => props.TranslateX(250).Rotate(45));
 await Anime.Remove(".element");
 ```
 
-Other engine helpers:
+Engine helpers:
 
 ```csharp
 await Anime.SetSpeed(1.5);
 var speed = await Anime.GetSpeed();
 var version = await Anime.Version();
-var converted = await Anime.ConvertPx(element, "16px", "rem");
-await Anime.SuspendWhenDocumentHidden(false);
-var running = await Anime.RunningLength();
+await Anime.PauseOnDocumentHidden(false);
+var pauses = await Anime.GetPauseOnDocumentHidden();
 ```
 
-`Version` is the embedded anime.js version. `SuspendWhenDocumentHidden(true)` is the anime.js default: playback pauses while the tab is hidden.
+`PauseOnDocumentHidden(true)` is the anime.js default: playback pauses while the tab is hidden.
 
 ## Samples
 
