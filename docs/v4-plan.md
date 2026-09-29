@@ -14,9 +14,9 @@
 
 BlazorAnime is a Razor class library that embeds anime.js 3.2.2 as a minified UMD global and exposes it through a typed C# builder. Call sites build a `PropsBuilder`, the library serializes that to a marker payload, and `src/BlazorAnime/wwwroot/blazor.anime.interop.js` turns the markers into an `anime({...})` call. Blazor loads that file as a classic script (`_content/BlazorAnime/blazor.anime.interop.js`), not as a module.
 
-anime.js v4 is a different API (`animate(targets, parameters)`, `ease`, `createTimeline`, `svg.createDrawable`, an `engine` module) and the package is ESM-first. This plan stays in this repository. Local branch `v4` already exists at `3d81119` (the same commit as `master`). It ships one NuGet package whose public C# surface uses v4 names. A bundler step, rooted at `src/BlazorAnime/anime/` so a root `package-lock.json` is never produced, emits one classic IIFE that is still that same script URL. The interop style (marker payload, `invokeMethodAsync` relays, one-shot function values, `TargetInfo` snapshots) is kept. v3 parameter names are not translated back inside JavaScript.
+anime.js v4 is a different API (`animate(targets, parameters)`, `ease`, `createTimeline`, `svg.createDrawable`, an `engine` module) and the package is ESM-first. anime.js 3 is no longer the supported engine upstream. BlazorAnime 0.0.1 has not been published, so there is no consumer to keep on the current C# surface. This plan stays in this repository. Local branch `v4` already exists at `3d81119` (the same commit as `master`). The first release is one NuGet package, **BlazorAnime 1.0.0**, whose public C# surface uses v4 names. Breaking, renaming, and moving the current types is expected. A bundler step, rooted at `src/BlazorAnime/anime/` so a root `package-lock.json` is never produced, emits one classic IIFE that is still that same script URL. The interop style worth keeping is the mechanism (marker payload, `invokeMethodAsync` relays, one-shot function values, `TargetInfo` snapshots), not the v3 parameter names. Those names are not translated back inside JavaScript.
 
-`master` keeps 3.2.2 until the `v4` branch’s samples, node interop tests, and Playwright harness pass. The cutover is one merge, package version **1.0.0**.
+`master` stays on the current tree only so GitHub Pages does not deploy a half-migrated demo. That is a release gate, not support for v3. The cutover is one merge, package version **1.0.0**. Do not tag or publish 0.0.1.
 
 ## Background & Motivation
 
@@ -35,15 +35,15 @@ Pain that a shim would freeze in place:
 
 - v3 names (`easing`, `endDelay`, `direction`, `anime.timeline().add(props, offset)`, `anime.path`, `anime.setDashoffset`, `anime.running`) do not appear in the v4 docs the samples are supposed to track.
 - The engine is a pasted blob. Upgrading it means hand-editing a minified line. The 4.5.0 package already publishes `dist/bundles/anime.umd.min.js` (118,043 bytes, global `anime` with named exports), but pasting that file repeats the current failure mode and pulls in WAAPI, draggable, text, layout, and scroll that this library does not wrap.
-- 0.0.1 has no stability promise. Keeping a parallel v3 API “for compatibility” costs a second surface to document and test, which is the outcome already rejected.
+- 0.0.1 has never been published, and upstream no longer supports anime.js 3. Keeping a parallel v3 API “for compatibility” would protect a release that does not exist.
 
 ## Goals & Non-Goals
 
 ### Goals
 
 - Pin `animejs@4.5.0` and ship it as one classic script at the existing URL.
-- Retarget `IAnime`, builders, easings, timeline add, stagger options, SVG helpers, playback, and `AnimationState` to v4 names and v4 behavior.
-- Keep the load-bearing interop: `invokeMethodAsync` only, state snapshots, dispose-pauses, function values computed once per target, `TargetInfo` without a live DOM element, `Loop(true)` forever, millisecond ints at the C# boundary.
+- Retarget `IAnime`, builders, easings, timeline add, stagger options, SVG helpers, playback, and `AnimationState` to v4 names and v4 behavior. Move and rename files when that surface wants a different layout. The in-repo samples and tests move with the API in the same change. There is no external v3 caller to keep compiling.
+- Keep the load-bearing interop mechanisms: `invokeMethodAsync` only, state snapshots, dispose-pauses, function values computed once per target, `TargetInfo` without a live DOM element, `Loop(true)` forever, millisecond ints at the C# boundary.
 - Port `samples/Examples.WebAssembly` against the official v4 docs, then `samples/PageTransitions`.
 - Gate on `test/interop/anime-interop.test.cjs` and `test/BlazorAnime.UiTests`.
 
@@ -57,9 +57,9 @@ Pain that a shim would freeze in place:
 
 ## Key Decisions
 
-1. **One repository, branch `v4`.** v4 is the next major of this library. Local branch `v4` already exists at `3d81119` (`Merge pull request #3 from olaboutcode/docs`), the same commit as `master`. Do not run `git checkout -b v4`. `master` stays on the vendored 3.2.2 file until the branch is green. Tag commit `3d81119` as annotated `v0.0.1` before the merge so that snapshot stays buildable. If `master` later moves, do not retag; merge `master` into `v4`. Do not open a second remote.
+1. **One repository, branch `v4`, and the first release is v4.** v4 is this library’s supported API, not a migration beside a supported v3. Local branch `v4` already exists at `3d81119` (`Merge pull request #3 from olaboutcode/docs`), the same commit as `master`. Do not run `git checkout -b v4`. Do not tag that commit `v0.0.1`. BlazorAnime has not been published, and anime.js 3 is no longer supported upstream, so breaking the current C# API is the work, not a cost to avoid. Move types, split files, and rewrite call sites when the v4 shape needs it. `master` stays on the current tree only so `pages.yml` does not deploy a half-migrated demo. If `master` later moves, merge it into `v4`. Do not open a second remote.
 
-2. **One package id, version 1.0.0.** `BlazorAnime` 0.0.1 has no compatibility promise and this repo has no downstream lockfile that requires a side-by-side id. NuGet immutability already keeps a published 0.0.1 on the v3 bits; 1.0.0 will not restore onto it. A 0.2.0 bump would also be semver-legal and would read as “still a preview of the v3 binding.” 1.0.0 is the version that says the supported API is the v4 surface. No `BlazorAnime.V3` package.
+2. **One package id, version 1.0.0, and that is the first publish.** `BlazorAnime` 0.0.1 is the number in `BlazorAnime.csproj`. It has not been pushed to NuGet. Do not publish it, and do not tell anyone to pin it to stay on v3. A 0.2.0 bump would read as “still a preview of the v3 binding.” 1.0.0 is the version that says the supported API is the v4 surface. No `BlazorAnime.V3` package.
 
 3. **Bundle from the ESM entry. Do not paste the UMD.** `animejs@4.5.0` is `"type": "module"` with `module` `./dist/modules/index.js`. It also publishes `dist/bundles/anime.umd.min.js` (confirmed HTTP 200, 118,043 bytes, header `Anime.js - UMD minified bundle`, global `anime`). The UMD is not the integration. esbuild bundles the modules this library calls, plus the interop, into one IIFE assigned to `window.AnimeJs`. Blazor’s script tag does not change and does not become `type="module"`. A module would break the existing tags in `samples/Examples.WebAssembly/wwwroot/index.html` and `samples/PageTransitions/wwwroot/index.html`, and a bare ESM import would 404 on GitHub Pages.
 
@@ -661,7 +661,7 @@ Rejected. The public surface would keep teaching names the v4 docs do not use, w
 
 A `blazor-anime-v4` repo, or `BlazorAnime.V4` beside `BlazorAnime` forever.
 
-Rejected. v4 is the next major of the same library, not a fork. Two package ids are justified only if both engines must stay installable after v4 ships. 0.0.1 has no stability promise, no support commitment, and no in-repo consumer that cannot move. Tagging `v0.0.1` preserves the sources. A published 0.0.1 nupkg, if one exists on NuGet, remains installable because versions are immutable. Maintaining two engines would double the Playwright and interop gates. The user decision is final: one package, one history, this repo.
+Rejected. v4 is the library, not a fork beside a supported v3. 0.0.1 was never published, upstream no longer supports anime.js 3, and every in-repo caller can move. Maintaining two engines would double the Playwright and interop gates for an API that will not ship. The user decision is final: one package, one history, this repo, and the release targets v4 even where that breaks the current surface.
 
 ### C. Paste `anime.umd.min.js` and append the interop — rejected
 
@@ -675,7 +675,7 @@ Breaks the documented install snippet, fails offline and on GitHub Pages unless 
 
 ### E. Chosen approach
 
-`v4` branch in this repo, esbuild IIFE from `animejs@4.5.0` ESM, C# surface renamed to v4, one package `BlazorAnime` 1.0.0, samples ported to the v4 docs, merge to `master` only when the gates pass.
+`v4` branch in this repo, esbuild IIFE from `animejs@4.5.0` ESM, C# surface rebuilt around v4 (renames and file moves included), one package `BlazorAnime` 1.0.0 as the first publish, samples ported to the v4 docs, merge to `master` only when the gates pass. No v3 release.
 
 ## Security & Privacy Considerations
 
@@ -706,14 +706,14 @@ There is no service to alert on. Do not add per-frame `console.log` or a telemet
 
 ## Rollout Plan
 
-1. Local branch `v4` already exists at `3d81119`, the same commit as `master`. Tag that commit `v0.0.1` (annotated). Push the tag when the branch is pushed. Do not retag if `master` later moves; merge `master` into `v4` instead. Do not run `git checkout -b v4`. This tag is the v3 snapshot. Do it before the merge PR, not after.
-2. All implementation PRs merge into that existing `v4` branch only.
-3. `master` CI and `pages.yml` stay on 3.2.2. `pages.yml` deploys only `master`, so the public docs site does not flip early. PRs against `v4` still run `.github/workflows/ci.yml` if the workflow’s `pull_request` trigger is not branch-filtered (it is not; `on.push.branches` is only `master`, but `pull_request` is unfiltered). Add `v4` to `on.push.branches` so branch pushes are tested before the PR.
-4. The `v4` branch is mergeable to `master` only when `dotnet test` (unit + Playwright), `node --test`, and the bundle diff are green, and both samples have been ported. Intermediate PRs are not merged to `master`. A half-migrated public API must not ship.
-5. The merge PR sets `Version` to `1.0.0` if PR9 has not already. Squash or merge as the repo prefers; the tag is what matters.
+1. Local branch `v4` already exists at `3d81119`, the same commit as `master`. Do not tag it `v0.0.1`. Do not run `git checkout -b v4`. If `master` later moves, merge `master` into `v4`.
+2. All implementation PRs merge into that existing `v4` branch only. A PR may break the current v3 C# API, delete v3 tests, and move files. It updates every in-repo caller it breaks so the solution still builds.
+3. `master` and `pages.yml` stay on the current tree until the v4 release merge. `pages.yml` deploys only `master`, so the public docs site does not flip to a half-migrated demo. That is the only reason `master` waits. PRs against `v4` still run `.github/workflows/ci.yml` if the workflow’s `pull_request` trigger is not branch-filtered (it is not; `on.push.branches` is only `master`, but `pull_request` is unfiltered). Add `v4` to `on.push.branches` so branch pushes are tested before the PR.
+4. The `v4` branch is mergeable to `master` only when `dotnet test` (unit + Playwright), `node --test`, and the bundle diff are green, and both samples have been ported. Intermediate PRs are not merged to `master`. The release that ships is the v4 API.
+5. The merge PR sets `Version` to `1.0.0` if PR9 has not already.
 6. After the merge lands on `master`, tag `v1.0.0`. `pages.yml` publishes the v4 docs on that push.
-7. `dotnet pack src/BlazorAnime/BlazorAnime.csproj -c Release` produces the nupkg. There is no NuGet publish workflow in `.github/workflows`. Publishing 1.0.0 to nuget.org stays a manual step, same as 0.0.1. Do not republish 0.0.1.
-8. Rollback: revert the merge commit on `master` and redeploy Pages. Consumers who installed 1.0.0 cannot be unpublished; they pin `< 1.0.0` or `0.0.1` to stay on v3. Document that in the 1.0.0 release notes. There is no in-app flag.
+7. `dotnet pack src/BlazorAnime/BlazorAnime.csproj -c Release` produces the nupkg. There is no NuGet publish workflow in `.github/workflows`. Publishing 1.0.0 to nuget.org is the first publish, and it is manual. Do not publish 0.0.1.
+8. Rollback before 1.0.0 is published: revert the merge commit on `master` and redeploy Pages. After 1.0.0 is on NuGet, that version is the v4 release and is not unpublished. There is no v3 package to pin. There is no in-app flag.
 
 No staged percentage rollout. The package version is the gate.
 
@@ -838,12 +838,12 @@ Then `samples/PageTransitions`:
 | Second animate of the same property cancels the first (`composition: 'replace'`) | Medium | Keep the v4 default. Do not inject `'none'`. README states it. `Set` still does not cancel. |
 | Page-transition `Finished()` never completes | High for that sample | `then()` resolves when `completed` is set. Fade is finite and not looped. PR8 runs the travel sample and navigates once. |
 | Empty root `package-lock.json` committed again | Medium (process) | `--prefix` only. CI `test ! -e package-lock.json` from the repo root. |
-| Half-migrated API merged to `master` | High | PR2–PR9 target `v4` only. Merge PR is last, after CI is green. |
+| Half-migrated demo deployed from `master` | High | PR2–PR9 target `v4` only. Merge PR is last, after CI is green. This protects the public sample site, not a v3 package. |
 | `X()` confused with v4’s `x` shorthand | Low today (no callers) | Leave `X()` as attribute `x`. Typed transforms stay `TranslateX`. |
 
 ## Open Questions
 
-None that block implementation. Units, package version, shorthand versus `TranslateX`, and the single package id are decided above. The esbuild patch version is whatever `npm install` resolves inside `src/BlazorAnime/anime/` when the lockfile is first created, then it is pinned; that is an implementation detail, not a product decision.
+None that block implementation. Units, package version, shorthand versus `TranslateX`, the single package id, and “the first release is v4, so the current API may break and move” are decided above. The esbuild patch version is whatever `npm install` resolves inside `src/BlazorAnime/anime/` when the lockfile is first created, then it is pinned; that is an implementation detail, not a product decision.
 
 ## References
 
@@ -866,16 +866,14 @@ None that block implementation. Units, package version, shorthand versus `Transl
 
 ## PR Plan
 
-All PRs except the last merge into `v4`, not `master`. Each leaves `v4` CI green: `dotnet build BlazorAnime.slnx`, unit tests, node interop, Playwright harness. That forces every PR that renames a public symbol to update call sites in the same PR so the solution compiles. Runtime of a docs card can be wrong until the PR that owns that feature; the harness and the node tests that exist on that commit must pass. None of PR2–PR9 is safe to merge to `master` alone. PR1 does not change the shipped script, so it would not break v3, but it still lands only on `v4` so `master` does not grow an unused toolchain.
-
-Tag commit `3d81119` as `v0.0.1` before opening the merge PR. The tag is not a code PR. If `master` moves after that tag, merge `master` into `v4`. Do not move the tag.
+All PRs except the last merge into `v4`, not `master`. Each leaves `v4` CI green: `dotnet build BlazorAnime.slnx`, unit tests, node interop, Playwright harness. Breaking the current v3 API inside a PR is expected. That PR updates every in-repo caller, test, and moved file so the solution compiles. Runtime of a docs card can be wrong until the PR that owns that feature; the harness and the node tests that exist on that commit must pass. None of PR2–PR9 merges to `master` alone, because the public sample site should not deploy a half-migrated demo. There is no v3 release to preserve, and no `v0.0.1` tag. If `master` moves, merge `master` into `v4`.
 
 ### PR 1 — Bundle pipeline and a v4 interop spike behind node tests
 
 - **Title:** Add the animejs 4.5.0 bundle pipeline without replacing the shipped script
 - **Files:** `src/BlazorAnime/anime/package.json`, `package-lock.json`, `entry.js`, `interop.js` (thin: `createAnimation`, `seek`, `version`, object targets, linear ease), `test/interop/anime-v4-spike.test.cjs`, `.github/workflows/ci.yml` (`bundle` job: `npm ci --prefix src/BlazorAnime/anime`, build to a spike outfile that is not `wwwroot`, run the spike test, assert no root `package.json` / `package-lock.json`). `.gitignore` unchanged (`node_modules/` already ignored).
-- **Dependencies:** none. Start from the existing local branch `v4` at `3d81119`. Tag that commit `v0.0.1`. Do not create the branch.
-- **Description:** esbuild IIFE from the ESM entry. The spike sandbox sets `window` and `Date` (the engine clock is `Date.now`). The spike test loads that outfile in `vm`, asserts version `4.5.0`, and seeks a plain object to 100. `wwwroot/blazor.anime.interop.js` is still the 3.2.2 paste, so existing node tests, samples, and Playwright stay on v3. This job does not `git diff` the wwwroot file. Record the spike bundle’s byte size in the PR description. Do not import WAAPI, draggable, text, layout, timer, or scope.
+- **Dependencies:** none. Start from the existing local branch `v4` at `3d81119`. Do not create the branch. Do not tag `v0.0.1`.
+- **Description:** esbuild IIFE from the ESM entry. The spike sandbox sets `window` and `Date` (the engine clock is `Date.now`). The spike test loads that outfile in `vm`, asserts version `4.5.0`, and seeks a plain object to 100. `wwwroot/blazor.anime.interop.js` stays the 3.2.2 paste only for this PR, so the branch still builds while the bundle toolchain lands. Replacing that paste is PR2, and PR2 is allowed to break every v3 call. This job does not `git diff` the wwwroot file. Record the spike bundle’s byte size in the PR description. Do not import WAAPI, draggable, text, layout, timer, or scope.
 
 ### PR 2 — Core animate, playback, callbacks, ease rename
 
@@ -936,6 +934,6 @@ Tag commit `3d81119` as `v0.0.1` before opening the merge PR. The tag is not a c
 ### PR 10 — Merge `v4` into `master`
 
 - **Title:** Merge the anime.js v4 line into master
-- **Files:** the merge. No drive-by edits. Commit `3d81119` must already carry tag `v0.0.1`.
-- **Dependencies:** PR 9. The `v0.0.1` tag points at `3d81119`, not at whatever `master` happens to be on merge day.
-- **Description:** Fast-forward or merge commit from `v4`. If `master` moved after `3d81119`, it was merged into `v4` first and the `v0.0.1` tag was not moved. `pages.yml` deploys the v4 samples because the push is to `master`. After the push, tag `v1.0.0`. Pack `BlazorAnime.1.0.0.nupkg`. Do not publish a second package id. Rollback is reverting this merge; 1.0.0, once pushed to NuGet, stays the v4 release, and `0.0.1` stays the v3 release.
+- **Files:** the merge. No drive-by edits.
+- **Dependencies:** PR 9. No `v0.0.1` tag.
+- **Description:** Fast-forward or merge commit from `v4`. If `master` moved after `3d81119`, it was merged into `v4` first. `pages.yml` deploys the v4 samples because the push is to `master`. After the push, tag `v1.0.0`. Pack `BlazorAnime.1.0.0.nupkg` and publish that as the first NuGet release. Do not publish 0.0.1 and do not publish a second package id. Rollback before that publish is reverting this merge.
