@@ -28,7 +28,7 @@ public static class DemoCatalog
                     .Alternate(true)
                     .Loop(true));
                 """,
-                "Components/OfficialDocsExamples/RelativeValues.razor"),
+                "Components/RelativeValues.razor"),
             Entry("function-based-values", "Function based values",
                 "Each target gets its own value from its index or its data attributes.",
                 "TargetInfo is a snapshot taken when the animation is built. data-x becomes Dataset[\"x\"]. Index callbacks receive the target index and the target count. The functions are not called again on later frames.",
@@ -41,7 +41,7 @@ public static class DemoCatalog
                     .Alternate(true)
                     .Loop(true));
                 """,
-                "Components/OfficialDocsExamples/FunctionBasedValues.razor"),
+                "Components/FunctionBasedValues.razor"),
             Entry("function-based-parameters", "Function based parameters",
                 "Delay can be a function of the target index.",
                 "Lambdas and ordinary methods both work. The function runs once per target while the animation is created, then anime.js uses the returned number.",
@@ -54,7 +54,7 @@ public static class DemoCatalog
                     .Alternate(true)
                     .Loop(true));
                 """,
-                "Components/OfficialDocsExamples/FunctionBasedParameters.razor"),
+                "Components/FunctionBasedParameters.razor"),
             Entry("keyframes", "Keyframes",
                 "One property walks through several steps.",
                 "Pass the steps as an array of builders. A comma-separated list of lambdas binds to the target-info overload instead of a keyframe sequence.",
@@ -72,7 +72,7 @@ public static class DemoCatalog
                     .Ease(Easing.OutElastic(1, .8))
                     .Loop(true));
                 """,
-                "Components/OfficialDocsExamples/Keyframes.razor"),
+                "Components/Keyframes.razor"),
             Entry("property-keyframes", "Property keyframes",
                 "Keyframes can live on a single property.",
                 "Each step uses To. A step can set its own duration, delay, and ease. Ease on the animation covers steps that leave ease unset.",
@@ -90,7 +90,7 @@ public static class DemoCatalog
                     .Ease(Easing.OutElastic(1, .8))
                     .Loop(true));
                 """,
-                "Components/OfficialDocsExamples/PropertyKeyframes.razor"),
+                "Components/PropertyKeyframes.razor"),
             Entry("callbacks", "Callbacks",
                 "Begin, update, loop, and complete receive a snapshot.",
                 "OnBegin runs after the delay. OnUpdate reports progress from 0 to 1. OnLoop runs when a repeat begins. Loop(2) is two extra repeats, and Alternate(true) flips direction between them. OnComplete runs after those repeats finish.",
@@ -107,7 +107,7 @@ public static class DemoCatalog
                     .OnComplete(state => Show("Complete"))
                     .Loop(2));
                 """,
-                "Components/OfficialDocsExamples/AnimationCallbacks.razor"),
+                "Components/AnimationCallbacks.razor"),
             Entry("controls", "Controls",
                 "Play, pause, resume, seek, restart, reverse, alternate, and complete.",
                 "AutoPlay(false) leaves the animation paused. Seek takes milliseconds. Progress is 0 to 1. Resume continues in the current direction. Alternate mirrors the current time and flips direction. Complete seeks to the end and removes the animation from the engine. Finished does not complete while Loop(true) is set.",
@@ -126,7 +126,7 @@ public static class DemoCatalog
                 await animation.Restart();
                 await animation.Complete();
                 """,
-                "Components/OfficialDocsExamples/AnimationControls.razor"),
+                "Components/AnimationControls.razor"),
             Entry("easings", "Easings",
                 "A named ease, a spring, and a sampled C# curve.",
                 "InOutExpo is a built-in name. Spring() uses the default spring. Curve samples a C# function from 0 to 1, and the browser interpolates that table.",
@@ -147,7 +147,7 @@ public static class DemoCatalog
                     .Ease(Easing.Curve(t => t * t))
                     .Loop(true));
                 """,
-                "Components/OfficialDocsExamples/AnimationEasings.razor"),
+                "Components/AnimationEasings.razor"),
             Entry("helpers", "Helpers",
                 "Random, get, set, and remove are utils. Speed is the engine.",
                 "Get reads computed style, and the unit overload converts it. Set writes immediately and does not cancel other tweens. Version is the pinned anime.js build. PauseOnDocumentHidden is engine.pauseOnDocumentHidden.",
@@ -159,7 +159,7 @@ public static class DemoCatalog
                 var version = await Anime.Version();
                 await Anime.SetSpeed(1);
                 """,
-                "Components/OfficialDocsExamples/AnimationHelpers.razor")
+                "Components/AnimationHelpers.razor")
         ]),
         new("Timeline",
         [
@@ -175,7 +175,7 @@ public static class DemoCatalog
                     .Targets(".timeline-basics-demo .el.square")
                     .TranslateX(250));
                 """,
-                "Components/OfficialDocsExamples/TimelineBasics.razor"),
+                "Components/TimelineBasics.razor"),
             Entry("timeline-offsets", "Offsets",
                 "Place children at a time, or relative to the previous child.",
                 "A number is an absolute time in milliseconds, and 0 starts with the timeline. OffSet.Before and OffSet.After shift from the end of the previous child. \"+=500\" matches OffSet.After(500). \"<\" starts with the previous child, and \"<<\" starts with the child before that.",
@@ -190,7 +190,7 @@ public static class DemoCatalog
                     .Targets(".timeline-offset-demo .el.triangle")
                     .TranslateX(250), 400);
                 """,
-                "Components/OfficialDocsExamples/TimelineOffset.razor"),
+                "Components/TimelineOffset.razor"),
             Entry("timeline-inheritance", "Inheritance",
                 "Children inherit duration and ease, and one child can override them.",
                 "The square inherits 750ms and OutExpo. The circle starts at the same time, position 0, and overrides the ease with Linear.",
@@ -207,7 +207,7 @@ public static class DemoCatalog
                     .TranslateX(250)
                     .Ease(Easing.Linear), 0);
                 """,
-                "Components/OfficialDocsExamples/TimelineInheritance.razor"),
+                "Components/TimelineInheritance.razor"),
             Entry("timeline-controls", "Controls",
                 "A timeline pauses, seeks, and restarts as one animation.",
                 "Call Play, Pause, Seek, or Restart on the timeline. AutoPlay(false) is playback on the timeline, not a default copied onto each child.",
@@ -222,7 +222,7 @@ public static class DemoCatalog
                     .TranslateX(250));
                 await timeline.Play();
                 """,
-                "Components/OfficialDocsExamples/TimelineControls.razor")
+                "Components/TimelineControls.razor")
         ]),
         new("Stagger",
         [
@@ -237,7 +237,7 @@ public static class DemoCatalog
                     .Duration(1000)
                     .Loop(true));
                 """,
-                "Components/OfficialDocsExamples/StaggerFrom.razor"),
+                "Components/StaggerFrom.razor"),
             Entry("stagger-direction", "Reversed",
                 "Start the stagger at the last target.",
                 "Reversed(true) walks from the last target back to the first.",
@@ -245,7 +245,7 @@ public static class DemoCatalog
                 .Delay(Stagger.Create(100, stagger => stagger
                     .Reversed(true)))
                 """,
-                "Components/OfficialDocsExamples/StaggerDirection.razor"),
+                "Components/StaggerDirection.razor"),
             Entry("stagger-easing", "Ease",
                 "Ease the gaps between staggered targets.",
                 "Ease on the stagger changes the gap between targets.",
@@ -253,7 +253,7 @@ public static class DemoCatalog
                 .Delay(Stagger.Create(100, stagger => stagger
                     .Ease(Easing.OutQuad)))
                 """,
-                "Components/OfficialDocsExamples/StaggerEasing.razor"),
+                "Components/StaggerEasing.razor"),
             Entry("stagger-grid", "Grid",
                 "Stagger across columns and rows.",
                 "Grid takes columns first, then rows. The targets are laid out in that order, left to right. Loop(3) is three extra repeats of the scale.",
@@ -262,7 +262,7 @@ public static class DemoCatalog
                     .Grid(14, 5)
                     .From(StaggerPosition.Center)))
                 """,
-                "Components/OfficialDocsExamples/StaggerGrid.razor"),
+                "Components/StaggerGrid.razor"),
             Entry("stagger-axis", "Axis",
                 "Limit a grid stagger to one axis.",
                 "Axis is StaggerAxis.X or StaggerAxis.Y. Combined with From, the wave starts at the center and travels along that axis. Loop(3) is three extra repeats.",
@@ -272,7 +272,7 @@ public static class DemoCatalog
                     .From(StaggerPosition.Center)
                     .Axis(StaggerAxis.X)))
                 """,
-                "Components/OfficialDocsExamples/StaggerAxisDemo.razor")
+                "Components/StaggerAxisDemo.razor")
         ]),
         new("SVG",
         [
@@ -289,7 +289,7 @@ public static class DemoCatalog
                     .Delay(Stagger.Create(100))
                     .Loop(true));
                 """,
-                "Components/OfficialDocsExamples/SvgLineDrawing.razor"),
+                "Components/SvgLineDrawing.razor"),
             Entry("svg-morphing", "Morphing",
                 "Tween a polygon through four point lists.",
                 "Each frame is a points string. The first frame moves from the current shape to the next one. Later frames use To. MorphTo returns a function for D or Points when the target is another element.",
@@ -302,7 +302,7 @@ public static class DemoCatalog
                     frame => frame.To("70 57 136.574 54.369 89.145 100.631 28.855 132.631 38.426 64.369"),
                     frame => frame.To("70 24 119.574 60.369 100.145 117.631 50.855 101.631 3.426 54.369"))
                 """,
-                "Components/OfficialDocsExamples/SvgMorphing.razor"),
+                "Components/SvgMorphing.razor"),
             Entry("svg-motion-path", "Motion path",
                 "Move an element along an SVG path.",
                 "CreateMotionPath returns translateX, translateY, and rotate as functions. Offset is 0 to 1, and 0 starts at the beginning of the path. Dispose the MotionPath with the animation.",
@@ -317,62 +317,7 @@ public static class DemoCatalog
                     .Ease(Easing.Linear)
                     .Loop(true));
                 """,
-                "Components/OfficialDocsExamples/SvgMotionPath.razor")
-        ]),
-        new("Examples",
-        [
-            Entry("animated-sphere", "Animated sphere",
-                "A wireframe sphere that draws itself, shifts its gradient, and breathes.",
-                "Twenty-one SVG rings share one intro, then a long-running driver seeks a paused animation on each ring. The gradient on the stroke moves on its own timeline.",
-                """
-                var rings = await Anime.CreateDrawable(".animated-sphere-demo .sphere path");
-                await Anime.Animate(props => props
-                    .Targets(rings)
-                    .Draw("0 1")
-                    .Duration(3900)
-                    .Ease(Easing.InOutCirc)
-                    .Delay(Stagger.Create(190, options => options.Reversed(true))));
-                """,
-                "Components/AdditionalFunExamples/AnimatedSphere.razor"),
-            Entry("easter-icons", "Easter icons",
-                "Five icons play in sequence, then each one can be replayed.",
-                "A timeline draws the egg, chick, basket, brush, and rabbit. Complete callbacks restart the shiver loops, and the buttons start a single icon again.",
-                """
-                await timeline.AddAsync(props => props
-                    .Targets(".easter-demo .gift-icon__egg")
-                    .ScaleY([
-                        frame => frame.To(0.9).Duration(170),
-                        frame => frame.To(1.1).Duration(170),
-                        frame => frame.To(1).Duration(170)
-                    ]));
-                """,
-                "Components/AdditionalFunExamples/AnimatedEasterIcons.razor"),
-            Entry("pedaling-bicycle", "Pedaling bicycle",
-                "The wheels, pedals, and road loop together.",
-                "One timeline rotates both tyres, turns the pedal, and slides the road marks. Transform boxes are set to fill-box so the SVG parts spin around themselves.",
-                """
-                await timeline.AddAsync(props => props
-                    .Targets(".bicycle-demo #tyre1, .bicycle-demo #tyre2")
-                    .Rotate(360)
-                    .Duration(1000)
-                    .Ease(Easing.Linear)
-                    .Loop(true));
-                """,
-                "Components/AdditionalFunExamples/PedalingBicycle.razor"),
-            Entry("error-404", "404 page",
-                "The digits, astronaut, and hair of a lost page keep moving.",
-                "Each layer is its own looping animation: the zero swings, the astronaut floats, and the hair uses a short keyframe sequence. Razor writes the keyframe name as @@keyframes.",
-                """
-                await Anime.Animate(props => props
-                    .Targets(".error-404-demo #zero")
-                    .Rotate([
-                        frame => frame.To(-8).Duration(300),
-                        frame => frame.To(8).Duration(600),
-                        frame => frame.To(0).Duration(300)
-                    ])
-                    .Loop(true));
-                """,
-                "Components/AdditionalFunExamples/Error404Page.razor")
+                "Components/SvgMotionPath.razor")
         ])
     ];
 

@@ -1,0 +1,37 @@
+@page "/{Slug}"
+
+<PageTitle>@Title</PageTitle>
+
+@switch (Slug)
+{
+    case "animated-sphere":
+        <AnimatedSphere />
+        break;
+    case "easter-icons":
+        <AnimatedEasterIcons />
+        break;
+    case "pedaling-bicycle":
+        <PedalingBicycle />
+        break;
+    case "error-404":
+        <Error404Page />
+        break;
+    default:
+        <h1>Not in this sample</h1>
+        <p>That address is not one of the fun examples.</p>
+        break;
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; } = "";
+
+    private string Title => Slug switch
+    {
+        "animated-sphere" => "Animated sphere",
+        "easter-icons" => "Easter icons",
+        "pedaling-bicycle" => "Pedaling bicycle",
+        "error-404" => "404 page",
+        _ => "Fun examples"
+    };
+}

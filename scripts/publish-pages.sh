@@ -23,14 +23,19 @@ dotnet publish "$root/samples/Examples/Examples.csproj" \
   --configuration Release \
   -p:CompressionEnabled=false \
   --output "$tmp/examples"
+dotnet publish "$root/samples/FunExamples/FunExamples.csproj" \
+  --configuration Release \
+  -p:CompressionEnabled=false \
+  --output "$tmp/fun"
 dotnet publish "$root/samples/PageTransitions/PageTransitions.csproj" \
   --configuration Release \
   -p:CompressionEnabled=false \
   --output "$tmp/travel"
 
 rm -rf "$out"
-mkdir -p "$out/examples" "$out/travel"
+mkdir -p "$out/examples" "$out/fun" "$out/travel"
 cp -a "$tmp/examples/wwwroot/." "$out/examples/"
+cp -a "$tmp/fun/wwwroot/." "$out/fun/"
 cp -a "$tmp/travel/wwwroot/." "$out/travel/"
 find "$out" -type f \( -name '*.br' -o -name '*.gz' \) -delete
 : > "$out/.nojekyll"

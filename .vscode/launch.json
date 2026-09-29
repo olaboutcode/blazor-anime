@@ -10,6 +10,14 @@
             "browser": "chrome"
         },
         {
+            "name": "Launch FunExamples",
+            "type": "blazorwasm",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/samples/FunExamples",
+            "url": "http://localhost:5181",
+            "browser": "chrome"
+        },
+        {
             "name": "Launch PageTransitions",
             "type": "blazorwasm",
             "request": "launch",

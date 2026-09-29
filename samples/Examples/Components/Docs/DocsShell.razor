@@ -14,7 +14,7 @@
                 <span class="tw:text-xs tw:text-white/45">4.5.0</span>
             </a>
         </div>
-        <div class="tw:hidden tw:min-w-0 tw:flex-1 tw:items-center tw:px-4 tw:lg:flex tw:lg:border-l tw:lg:border-white/10 @(IsShowcase ? "" : "tw:lg:max-w-[464px]")">
+        <div class="tw:hidden tw:min-w-0 tw:flex-1 tw:items-center tw:px-4 tw:lg:flex tw:lg:border-l tw:lg:border-white/10 tw:lg:max-w-[464px]">
             <label class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:text-white/40">
                 <span class="tw:text-[11px] tw:uppercase tw:tracking-[0.14em]">Search</span>
                 <input class="tw:w-full tw:bg-transparent tw:text-sm tw:text-[#eceae6] tw:outline-none tw:placeholder:text-white/30"
@@ -64,9 +64,7 @@
             }
         </aside>
 
-        @if (!IsShowcase)
-        {
-            <section class="docs-stage-scroll tw:flex tw:h-[42vh] tw:shrink-0 tw:flex-col tw:gap-3 tw:overflow-y-auto tw:border-b tw:border-white/10 tw:bg-[#1c1a14] tw:p-3 tw:lg:h-auto tw:lg:w-[464px] tw:lg:shrink-0 tw:lg:border-b-0 tw:lg:border-r">
+        <section class="docs-stage-scroll tw:flex tw:h-[42vh] tw:shrink-0 tw:flex-col tw:gap-3 tw:overflow-y-auto tw:border-b tw:border-white/10 tw:bg-[#1c1a14] tw:p-3 tw:lg:h-auto tw:lg:w-[464px] tw:lg:shrink-0 tw:lg:border-b-0 tw:lg:border-r">
                 @foreach (var item in ActiveSectionEntries)
                 {
                     var active = IsActive(item);
@@ -84,30 +82,13 @@
                         </div>
                     </div>
                 }
-            </section>
-        }
+        </section>
 
         <article class="tw:min-h-0 tw:flex-1 tw:overflow-y-auto tw:px-6 tw:py-8 tw:lg:px-10">
             @if (Entry is null)
             {
                 <h1 class="tw:text-4xl tw:font-semibold tw:text-[#e6c35c]">Not in this sample</h1>
                 <p class="tw:mt-4 tw:max-w-xl tw:text-white/70">That address is not one of the bundled examples.</p>
-            }
-            else if (IsShowcase)
-            {
-                <p class="tw:text-[11px] tw:uppercase tw:tracking-[0.16em] tw:text-white/40">Examples</p>
-                <h1 class="tw:mt-2 tw:text-4xl tw:font-semibold tw:tracking-tight tw:text-[#e6c35c] tw:lg:text-5xl">@Entry.Title</h1>
-                <p class="tw:mt-4 tw:max-w-3xl tw:text-xl tw:leading-snug tw:text-white/80">@Entry.Summary</p>
-                <p class="tw:mt-4 tw:max-w-3xl tw:text-[15px] tw:leading-7 tw:text-[#c9c3b8]">@Entry.Details</p>
-                <p class="tw:mt-4">
-                    <a class="tw:text-sm tw:text-[#e6c35c] tw:underline tw:underline-offset-4 tw:hover:text-white"
-                       href="@SourceUrl(Entry)">View the sample code</a>
-                </p>
-                <div class="docs-preview docs-preview-large tw:mt-8 tw:flex tw:min-h-[840px] tw:items-center tw:justify-center tw:overflow-auto tw:rounded-lg tw:border tw:border-white/10 tw:bg-[#1c1a14] tw:p-6">
-                    <div @key="Entry.Slug" class="tw:m-auto tw:w-full">
-                        <DemoView Slug="@Entry.Slug" />
-                    </div>
-                </div>
             }
             else
             {
@@ -163,7 +144,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (Entry is null || IsShowcase || _scrolledSlug == Entry.Slug)
+        if (Entry is null || _scrolledSlug == Entry.Slug)
             return;
 
         _scrolledSlug = Entry.Slug;
@@ -199,12 +180,6 @@
             || entry.Title.Contains(_query, StringComparison.OrdinalIgnoreCase)
             || entry.Summary.Contains(_query, StringComparison.OrdinalIgnoreCase);
     }
-
-    private bool IsShowcase =>
-        Entry is not null && string.Equals(SectionTitle(Entry), "Examples", StringComparison.Ordinal);
-
-    private static string SourceUrl(DemoEntry entry) =>
-        "https://github.com/olaboutcode/blazor-anime/blob/master/samples/Examples/" + entry.Source;
 
     private bool IsActive(DemoEntry entry) =>
         Entry is not null && string.Equals(Entry.Slug, entry.Slug, StringComparison.OrdinalIgnoreCase);

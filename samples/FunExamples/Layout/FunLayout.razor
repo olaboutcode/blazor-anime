@@ -1,0 +1,89 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject NavigationManager Navigation
+
+<div class="fun-shell tw:flex tw:h-full tw:min-h-0 tw:flex-col tw:bg-[#141414] tw:text-[#eceae6]">
+    <header class="tw:flex tw:h-14 tw:shrink-0 tw:items-center tw:border-b tw:border-white/10">
+        <div class="tw:flex tw:w-full tw:items-center tw:gap-3 tw:px-4 tw:lg:w-[232px] tw:lg:shrink-0 tw:lg:px-5">
+            <button type="button"
+                    class="tw:rounded tw:border tw:border-white/15 tw:px-2 tw:py-1 tw:text-xs tw:uppercase tw:tracking-wider tw:lg:hidden"
+                    @onclick="() => _navOpen = !_navOpen">
+                Menu
+            </button>
+            <a href="" class="tw:flex tw:items-baseline tw:gap-2 tw:no-underline">
+                <span class="tw:text-[1.35rem] tw:font-semibold tw:tracking-tight">blazor<span class="tw:text-[#e6c35c]">.</span>anime</span>
+                <span class="tw:text-xs tw:text-white/45">4.5.0</span>
+            </a>
+        </div>
+        <nav class="tw:ml-auto tw:flex tw:items-center tw:gap-5 tw:px-4 tw:text-[11px] tw:uppercase tw:tracking-[0.16em] tw:text-white/70 tw:lg:flex-1 tw:lg:border-l tw:lg:border-white/10">
+            <span class="tw:text-[#e6c35c]">Fun</span>
+            <a class="tw:hover:text-white tw:no-underline" href="https://github.com/olaboutcode/blazor-anime">GitHub</a>
+        </nav>
+    </header>
+
+    <div class="tw:relative tw:flex tw:min-h-0 tw:flex-1 tw:flex-col tw:lg:flex-row">
+        <aside class="fun-menu @(_navOpen ? "tw:absolute tw:inset-0 tw:z-20 tw:flex" : "tw:hidden") tw:lg:static tw:lg:z-0 tw:lg:flex tw:w-full tw:shrink-0 tw:flex-col tw:overflow-y-auto tw:border-white/10 tw:bg-[#161616] tw:px-4 tw:py-4 tw:lg:w-[232px] tw:lg:border-r tw:lg:px-0">
+            <div class="tw:mb-4">
+                <p class="tw:px-5 tw:text-[11px] tw:uppercase tw:tracking-[0.16em] tw:text-[#e6c35c]">Fun</p>
+                <ul class="tw:mt-1 tw:ml-5 tw:border-l tw:border-white/15">
+                    @foreach (var item in Items)
+                    {
+                        <li>
+                            <a href="@item.Slug"
+                               class="tw:block tw:py-1 tw:pl-3 tw:text-sm tw:no-underline"
+                               aria-current="@(IsActive(item) ? "page" : null)"
+                               @onclick="() => _navOpen = false">
+                                @item.Title
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </aside>
+
+        <section class="tw:min-h-0 tw:min-w-0 tw:flex-1 tw:overflow-y-auto tw:bg-[#1c1a14] tw:px-6 tw:py-8">
+            @Body
+        </section>
+    </div>
+</div>
+
+@code {
+    private static readonly (string Slug, string Title)[] Items =
+    [
+        ("animated-sphere", "Animated sphere"),
+        ("easter-icons", "Easter icons"),
+        ("pedaling-bicycle", "Pedaling bicycle"),
+        ("error-404", "404 page")
+    ];
+
+    private bool _navOpen;
+
+    protected override void OnInitialized() => Navigation.LocationChanged += OnLocationChanged;
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs args)
+    {
+        _navOpen = false;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private bool IsActive((string Slug, string Title) item)
+    {
+        var slug = CurrentSlug;
+        if (string.IsNullOrEmpty(slug))
+            return item.Slug == "animated-sphere";
+
+        return string.Equals(slug, item.Slug, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private string CurrentSlug
+    {
+        get
+        {
+            var relative = Navigation.ToBaseRelativePath(Navigation.Uri);
+            var path = relative.Split('?', '#')[0].Trim('/');
+            return path;
+        }
+    }
+
+    public void Dispose() => Navigation.LocationChanged -= OnLocationChanged;
+}

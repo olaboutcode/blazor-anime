@@ -791,7 +791,7 @@ Mechanical renames (`Ease`, `InOutQuad`, `Alternate(true)`, `OnUpdate`, `CreateT
 
 | Catalog id | Component | v4 doc to follow |
 |---|---|---|
-| Animation / `relative-values` | `OfficialDocsExamples/RelativeValues.razor` | Tween value types, relative values (`+=`, `-=`, `*=`). `Direction.Alternate` → `Alternate(true)`. |
+| Animation / `relative-values` | `RelativeValues.razor` | Tween value types, relative values (`+=`, `-=`, `*=`). `Direction.Alternate` → `Alternate(true)`. |
 | `function-based-values` | `FunctionBasedValues.razor` | Function-based values. C# still receives index and `TargetInfo`, not the element. |
 | `function-based-parameters` | `FunctionBasedParameters.razor` | Function-based delay. |
 | `keyframes` | `Keyframes.razor` | Duration-based keyframes. Elastic `(1, .8)` stays explicit. |
@@ -812,7 +812,7 @@ Mechanical renames (`Ease`, `InOutQuad`, `Alternate(true)`, `OnUpdate`, `CreateT
 | SVG / `svg-line-drawing` | `SvgLineDrawing.razor` | `svg.createDrawable`, property `draw`. |
 | `svg-morphing` | `SvgMorphing.razor` | Retarget the four `points` strings with `To`, or add real target shapes and pass `morphTo`’s `IJSObjectReference` as `points`. Do not pass `string[]` to `D`. |
 | `svg-motion-path` | `SvgMotionPath.razor` | `createMotionPath` functions kept as `IJSObjectReference`s on `translateX`, `translateY`, `rotate`. Default offset `0`. |
-| Examples / `animated-sphere` | `AdditionalFunExamples/AnimatedSphere.razor` | Not an official v4 page. Keep the visual: intro draws strokes (drawable `draw`, not `strokeDashoffset`), stagger `Reversed(true)`, breath driver stays `Duration(int.MaxValue)` on a `JsTarget` and `Seek`s each ring from `OnUpdate`. The stroke color pair is `FromTo` of the two rgba strings (PR3), not `.Value(...)`. Gradient shift stays a normal animate. |
+| Fun examples / `animated-sphere` | `samples/FunExamples/Components/AnimatedSphere.razor` | Not an official v4 page. Keep the visual: intro draws strokes (drawable `draw`, not `strokeDashoffset`), stagger `Reversed(true)`, breath driver stays `Duration(int.MaxValue)` on a `JsTarget` and `Seek`s each ring from `OnUpdate`. The stroke color pair is `FromTo` of the two rgba strings (PR3), not `.Value(...)`. Gradient shift stays a normal animate. |
 | `easter-icons` | `AnimatedEasterIcons.razor` | Timeline + keyframe `To`. `Loop(true)` unchanged. |
 | `pedaling-bicycle` | `PedalingBicycle.razor` | `Reversed(true)` / `Alternate(true)` instead of `Direction`. Fixed v4 transform order may change the look of combined rotate and translate; accept v4’s order rather than compensating. |
 | `error-404` | `Error404Page.razor` | `Alternate(true)`, keyframe `To`. |
@@ -923,7 +923,7 @@ All PRs except the last merge into `v4`, not `master`. Each leaves `v4` CI green
 ### PR 7 — Examples docs port
 
 - **Title:** Port the docs samples to the anime.js v4 examples
-- **Files:** `samples/Examples/Components/OfficialDocsExamples/*.razor`, `Components/AdditionalFunExamples/*.razor`, `DemoCatalog.cs`. Not `DocsShell.razor` layout, not `wwwroot/css`, not `DemoPlayback.cs`. The version span in `DocsShell.razor` is PR9.
+- **Files:** `samples/Examples/Components/*.razor` (the official docs demos), `samples/FunExamples/Components/*.razor`, `DemoCatalog.cs`. Not `DocsShell.razor` layout, not `wwwroot/css`, not `DemoPlayback.cs`. The version span in `DocsShell.razor` is PR9.
 - **Dependencies:** PR 3, PR 4, PR 5, PR 6.
 - **Description:** Follow the mapping table. Slugs stay. Card text stops describing v3 (`endDelay`, `direction`, `setDashoffset`, `anime.path`, iteration-style `loop`). `Loop(2)` / `Loop(3)` are either replaced with the v4 example’s value or documented as repeat counts. Sphere, easter icons, bicycle, and 404 keep their visuals within v4’s transform order, color blending, and `composition: 'replace'`. `reset()` already pauses, so unselected cards stay at the first frame without an extra `Pause()`. Harness tests still pass.
 
