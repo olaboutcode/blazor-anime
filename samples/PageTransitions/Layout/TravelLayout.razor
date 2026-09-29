@@ -58,7 +58,7 @@
             .Targets("#travel-page")
             .Opacity(from, to)
             .Duration(250)
-            .Easing(Easing.EaseOutSine));
+            .Ease(Easing.OutSine));
         await animation.Finished();
         await animation.DisposeAsync();
     }

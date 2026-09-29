@@ -21,10 +21,10 @@
     {
         if (firstRender)
         {
-            _timeline ??= await Anime.Timeline(
+            _timeline ??= await Anime.CreateTimeline(
                 props => props
                 .Duration(750)
-                .Easing(Easing.EaseOutExpo)
+                .Ease(Easing.OutExpo)
                 .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             )
             .AddAsync(

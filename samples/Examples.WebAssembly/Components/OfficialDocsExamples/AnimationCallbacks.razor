@@ -26,9 +26,9 @@
                 .BorderRadius("10%", "50%")
                 .Delay(SetDelay)
                 .Duration(500)
-                .Direction(Direction.Alternate)
-                .Easing(Easing.EaseInOutCirc)
-                .Update(OnUpdate)
+                .Alternate(true)
+                .Ease(Easing.InOutCirc)
+                .OnUpdate(OnUpdate)
                 .Loop(2)
                 .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             );

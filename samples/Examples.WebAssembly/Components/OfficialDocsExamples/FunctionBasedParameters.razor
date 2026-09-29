@@ -27,7 +27,7 @@
                 .TranslateX(180)
                 .Delay((index, total) => index * 120)
                 .Duration(750)
-                .Direction(Direction.Alternate)
+                .Alternate(true)
                 .Loop(true)
                 .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             );

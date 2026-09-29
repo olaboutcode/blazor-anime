@@ -376,23 +376,23 @@
             .TranslateY(-7)
             .Duration(1000)
             .Delay((int index, int _) => index * 250)
-            .Easing(Easing.EaseInOutSine)
-            .Direction(Direction.Alternate)
+            .Ease(Easing.InOutSine)
+            .Alternate(true)
             .Loop(true)));
 
         _animations.Add(await Anime.Animate(props => props
             .Targets(".bicycle-demo #tyre1, .bicycle-demo #tyre2")
             .Rotate(360)
-            .Easing(Easing.Linear)
-            .Direction(Direction.Reverse)
+            .Ease(Easing.Linear)
+            .Reversed(true)
             .Loop(true)));
 
         _animations.Add(await Anime.Animate(props => props
             .Targets(".bicycle-demo #padel")
             .Rotate(360)
             .Duration(3000)
-            .Easing(Easing.Linear)
-            .Direction(Direction.Reverse)
+            .Ease(Easing.Linear)
+            .Reversed(true)
             .Loop(true)));
     }
 

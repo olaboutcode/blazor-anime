@@ -24,10 +24,30 @@ public class Animation : IAsyncDisposable
         await Js.InvokeVoidAsync("restart");
 
     /// <summary>
-    /// Reverses the direction of an animation.
+    /// Plays the animation backward from its current time.
     /// </summary>
     public async Task Reverse() =>
         await Js.InvokeVoidAsync("reverse");
+
+    /// <summary>Continues playback in the current direction.</summary>
+    public async Task Resume() =>
+        await Js.InvokeVoidAsync("resume");
+
+    /// <summary>Mirrors the current time and flips <see cref="Reversed"/>.</summary>
+    public async Task Alternate() =>
+        await Js.InvokeVoidAsync("alternate");
+
+    public async Task Cancel() =>
+        await Js.InvokeVoidAsync("cancel");
+
+    public async Task Revert() =>
+        await Js.InvokeVoidAsync("revert");
+
+    public async Task Stretch(double duration) =>
+        await Js.InvokeVoidAsync("stretch", duration);
+
+    public async Task Refresh() =>
+        await Js.InvokeVoidAsync("refresh");
 
     /// <summary>
     /// Returns the animation to its initial values and pauses it.
@@ -42,28 +62,22 @@ public class Animation : IAsyncDisposable
         await Js.InvokeVoidAsync("seek", time);
 
     /// <summary>
-    /// Jump to a progress percentage between 0 and 100.
+    /// Jump to a progress value between 0 and 1.
     /// </summary>
     public async Task Progress(double progress) =>
         await Js.InvokeVoidAsync("setProgress", progress);
 
     /// <summary>
-    /// Seeks to the end of the animation.
+    /// Seeks to the end and removes the instance from the engine.
     /// </summary>
     public async Task Complete() =>
-        await Js.InvokeVoidAsync("finish");
+        await Js.InvokeVoidAsync("complete");
 
     /// <summary>
     /// Resolves when the animation finishes. An infinite loop never resolves.
     /// </summary>
     public async Task Finished() =>
         await Js.InvokeAsync<object?>("whenFinished");
-
-    /// <summary>
-    /// Plays an animation using an external requestAnimationFrame timestamp.
-    /// </summary>
-    public async Task Tick(double time) =>
-        await Js.InvokeVoidAsync("tick", time);
 
     /// <summary>
     /// Removes targets from this animation.
@@ -77,36 +91,6 @@ public class Animation : IAsyncDisposable
     public async Task Remove(ElementReference target) =>
         await Js.InvokeVoidAsync("remove", target);
 
-    /// <summary>
-    /// Returns the original value of an element.
-    /// </summary>
-    public async Task<string> Get(string targets, string propName, string cssUnit) =>
-        await Js.InvokeAsync<string>("get", targets, propName, cssUnit);
-
-    /// <summary>
-    /// Returns the original value of an element.
-    /// </summary>
-    public async Task<string> Get(ElementReference target, string propName) =>
-        await Js.InvokeAsync<string>("get", target, propName, null);
-
-    /// <summary>
-    /// Immediately sets values on the specified targets.
-    /// </summary>
-    public async Task Set(string targets, Func<PropsBuilder, PropsBuilder> build) =>
-        await Js.InvokeVoidAsync("set", targets, build(new PropsBuilder()).Build().ToObject());
-
-    /// <summary>
-    /// Immediately sets values on an element.
-    /// </summary>
-    public async Task Set(ElementReference target, Func<PropsBuilder, PropsBuilder> build) =>
-        await Js.InvokeVoidAsync("set", target, build(new PropsBuilder()).Build().ToObject());
-
-    /// <summary>
-    /// Returns a random integer in the inclusive range.
-    /// </summary>
-    public async Task<int> Random(int minValue, int maxValue) =>
-        await Js.InvokeAsync<int>("random", minValue, maxValue);
-
     public async Task<double> GetProgress() =>
         await Js.InvokeAsync<double>("getProgress");
 
@@ -116,26 +100,20 @@ public class Animation : IAsyncDisposable
     public async Task<bool> Completed() =>
         ToBool(await Js.InvokeAsync<int>("hasCompleted"));
 
-    public async Task<bool> ChangeBegan() =>
-        ToBool(await Js.InvokeAsync<int>("changeHasBegun"));
-
-    public async Task<bool> ChangeCompleted() =>
-        ToBool(await Js.InvokeAsync<int>("changeHasCompleted"));
-
-    public async Task<bool> LoopBegan() =>
-        ToBool(await Js.InvokeAsync<int>("loopHasBegun"));
-
     public async Task<bool> Paused() =>
         ToBool(await Js.InvokeAsync<int>("isPaused"));
 
     public async Task<bool> Reversed() =>
         ToBool(await Js.InvokeAsync<int>("isReversed"));
 
-    public async Task<bool> ReversePlayback() =>
-        await Js.InvokeAsync<bool>("isReversePlayback");
+    public async Task<bool> Backwards() =>
+        ToBool(await Js.InvokeAsync<int>("isBackwards"));
 
-    public async Task<int> Id() =>
-        await Js.InvokeAsync<int>("getId");
+    public async Task<bool> IsAlternate() =>
+        ToBool(await Js.InvokeAsync<int>("isAlternate"));
+
+    public async Task<string> Id() =>
+        await Js.InvokeAsync<string>("getId");
 
     /// <summary>
     /// Configured loop count. -1 means the animation loops forever.
@@ -143,26 +121,23 @@ public class Animation : IAsyncDisposable
     public async Task<int> Loop() =>
         await Js.InvokeAsync<int>("getLoop");
 
-    /// <summary>
-    /// Loops still left to play. -1 means the animation loops forever.
-    /// </summary>
-    public async Task<int> Remaining() =>
-        await Js.InvokeAsync<int>("getRemaining");
-
     public async Task<double> Duration() =>
         await Js.InvokeAsync<double>("getDuration");
 
     public async Task<double> Delay() =>
         await Js.InvokeAsync<double>("getDelay");
 
-    public async Task<double> EndDelay() =>
-        await Js.InvokeAsync<double>("getEndDelay");
+    public async Task<double> LoopDelay() =>
+        await Js.InvokeAsync<double>("getLoopDelay");
 
     public async Task<double> CurrentTime() =>
         await Js.InvokeAsync<double>("getCurrentTime");
 
-    public async Task<string> Direction() =>
-        await Js.InvokeAsync<string>("getDirection");
+    public async Task<double> IterationProgress() =>
+        await Js.InvokeAsync<double>("getIterationProgress");
+
+    public async Task<int> CurrentIteration() =>
+        await Js.InvokeAsync<int>("getCurrentIteration");
 
     public async Task<int> TargetCount() =>
         await Js.InvokeAsync<int>("getTargetCount");

@@ -32,7 +32,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="setDefaults"></param>
     /// <returns>Timeline</returns>
-    public async Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> setDefaults)
+    public async Task<Timeline> CreateTimeline(Func<PropsBuilder, PropsBuilder> setDefaults)
     {
         var builder = setDefaults(new PropsBuilder());
         return await Create(IdentifierCreateTimeline, builder, static (js, callbacks) => new Timeline(js, callbacks));
@@ -43,7 +43,7 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// </summary>
     /// <param name="setDefaults"></param>
     /// <returns>Timeline</returns>
-    public async Task<Timeline> Timeline(Func<PropsBuilder, Task<PropsBuilder>> setDefaults)
+    public async Task<Timeline> CreateTimeline(Func<PropsBuilder, Task<PropsBuilder>> setDefaults)
     {
         var builder = await setDefaults(new PropsBuilder());
         return await Create(IdentifierCreateTimeline, builder, static (js, callbacks) => new Timeline(js, callbacks));
@@ -269,16 +269,16 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     /// <br/>like a video or an audio track that can continuously plays in the background.
     /// </summary>
     /// <param name="value"></param>
-    public async Task SuspendWhenDocumentHidden(bool value)
+    public async Task PauseOnDocumentHidden(bool value)
     {
-        await JsRuntime.InvokeVoidAsync(IdentifierSuspendWhenDocHidden, value);
+        await JsRuntime.InvokeVoidAsync(IdentifierPauseOnDocumentHidden, value);
     }
 
     /// <summary>
     /// Whether animations pause while the document is hidden. anime.js defaults this to true.
     /// </summary>
-    public async Task<bool> GetSuspendWhenDocumentHidden() =>
-        await JsRuntime.InvokeAsync<bool>(IdentifierGetSuspendWhenDocHidden);
+    public async Task<bool> GetPauseOnDocumentHidden() =>
+        await JsRuntime.InvokeAsync<bool>(IdentifierGetPauseOnDocumentHidden);
 
     private async Task<TInstance> Create<TInstance>(
         string identifier,
@@ -309,8 +309,8 @@ public class Anime(IJSRuntime jSRuntime) : IAnime
     private const string IdentifierGetRandomValue = "AnimeJs.random";
     private const string IdentifierGetRunningLength = "AnimeJs.runningLength";
     private const string IdentifierGetSvgPath = "AnimeJs.path";
-    private const string IdentifierSuspendWhenDocHidden = "AnimeJs.suspendWhenDocumentHidden";
-    private const string IdentifierGetSuspendWhenDocHidden = "AnimeJs.getSuspendWhenDocumentHidden";
+    private const string IdentifierPauseOnDocumentHidden = "AnimeJs.pauseOnDocumentHidden";
+    private const string IdentifierGetPauseOnDocumentHidden = "AnimeJs.getPauseOnDocumentHidden";
     private const string IdentifierRemove = "AnimeJs.remove";
     private const string IdentifierGetSpeed = "AnimeJs.getSpeed";
     private const string IdentifierSetSpeed = "AnimeJs.setSpeed";
@@ -324,8 +324,8 @@ public interface IAnime
 {
     Task<Animation> Animate(Func<PropsBuilder, PropsBuilder> configure);
     Task<Animation> Animate(Func<PropsBuilder, Task<PropsBuilder>> configure);
-    Task<Timeline> Timeline(Func<PropsBuilder, PropsBuilder> configureDefaults);
-    Task<Timeline> Timeline(Func<PropsBuilder, Task<PropsBuilder>> configureDefaults);
+    Task<Timeline> CreateTimeline(Func<PropsBuilder, PropsBuilder> configureDefaults);
+    Task<Timeline> CreateTimeline(Func<PropsBuilder, Task<PropsBuilder>> configureDefaults);
     Task<SvgPath> GetSvgPath(string svgSelector, double percent = 100);
     Task<SvgPath> GetSvgPath(ElementReference element, double percent = 100);
     Task<JsTarget> CreateObject(IReadOnlyDictionary<string, object> values);
@@ -348,8 +348,8 @@ public interface IAnime
     Task<double> ConvertPx(string selector, string value, string unit);
     Task<double> SetDashoffset(ElementReference element);
     Task<double> SetDashoffset(string selector);
-    Task SuspendWhenDocumentHidden(bool value);
-    Task<bool> GetSuspendWhenDocumentHidden();
+    Task PauseOnDocumentHidden(bool value);
+    Task<bool> GetPauseOnDocumentHidden();
     Task<int> RunningLength();
 }
 

@@ -132,13 +132,13 @@
             .Opacity(0)
             .Scale(1.1)
             .Duration(400)
-            .Easing(Easing.EaseOutSine));
+            .Ease(Easing.OutSine));
         var enter = Anime.Animate(props => props
             .Targets($".header-{next}")
             .Opacity(1)
             .Scale(1)
             .Duration(400)
-            .Easing(Easing.EaseOutSine));
+            .Ease(Easing.OutSine));
         var animations = await Task.WhenAll(leave, enter);
         await Task.WhenAll(animations.Select(animation => animation.Finished()));
         foreach (var animation in animations)
@@ -149,7 +149,7 @@
     {
         Trip.ToggleMenu();
         var opening = Trip.MenuOpen;
-        var timeline = await Anime.Timeline(props => props.AutoPlay(false).Easing(opening ? Easing.EaseOutSine : Easing.EaseInSine));
+        var timeline = await Anime.CreateTimeline(props => props.AutoPlay(false).Ease(opening ? Easing.OutSine : Easing.InSine));
         await timeline.AddAsync(props => props
             .Targets(".menu-dot.first")
             .TranslateX(opening ? 18 : 0)
@@ -175,30 +175,30 @@
 
         var saving = !Trip.Saved;
         Trip.ToggleSaved();
-        var timeline = await Anime.Timeline(props => props.AutoPlay(false));
+        var timeline = await Anime.CreateTimeline(props => props.AutoPlay(false));
         await timeline.AddAsync(props => props
             .Targets(".plus")
             .Rotate(saving ? -360 : 0)
             .Duration(750)
-            .Easing(Easing.EaseOutExpo), 0);
+            .Ease(Easing.OutExpo), 0);
         await timeline.AddAsync(props => saving
-            ? props.Targets(".line2").Prop("x1", 6).Prop("y1", 12).Prop("x2", 11).Prop("y2", 17).Duration(700).Easing(Easing.EaseOutExpo)
-            : props.Targets(".line2").Prop("x1", 12).Prop("y1", 0).Prop("x2", 12).Prop("y2", 24).Duration(700).Easing(Easing.EaseOutExpo), 0);
+            ? props.Targets(".line2").Prop("x1", 6).Prop("y1", 12).Prop("x2", 11).Prop("y2", 17).Duration(700).Ease(Easing.OutExpo)
+            : props.Targets(".line2").Prop("x1", 12).Prop("y1", 0).Prop("x2", 12).Prop("y2", 24).Duration(700).Ease(Easing.OutExpo), 0);
         await timeline.AddAsync(props => saving
-            ? props.Targets(".line1").Prop("x1", 11).Prop("y1", 17).Prop("x2", 20).Prop("y2", 7).Duration(700).Easing(Easing.EaseOutExpo)
-            : props.Targets(".line1").Prop("x1", 0).Prop("y1", 12).Prop("x2", 24).Prop("y2", 12).Duration(700).Easing(Easing.EaseOutBack), 0);
+            ? props.Targets(".line1").Prop("x1", 11).Prop("y1", 17).Prop("x2", 20).Prop("y2", 7).Duration(700).Ease(Easing.OutExpo)
+            : props.Targets(".line1").Prop("x1", 0).Prop("y1", 12).Prop("x2", 24).Prop("y2", 12).Duration(700).Ease(Easing.OutBack), 0);
         if (saving)
         {
             await timeline.AddAsync(props => props
                 .Targets(".saveinfo")
                 .Opacity(0, 1)
                 .Duration(500)
-                .Easing(Easing.EaseOutSine), 0);
+                .Ease(Easing.OutSine), 0);
             await timeline.AddAsync(props => props
                 .Targets(".saveinfo")
                 .Opacity(0)
                 .Duration(400)
-                .Easing(Easing.EaseInExpo), 1000);
+                .Ease(Easing.InExpo), 1000);
         }
 
         await timeline.Play();

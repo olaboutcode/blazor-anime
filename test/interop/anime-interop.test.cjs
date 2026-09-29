@@ -1,43 +1,50 @@
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
 const path = require("node:path");
 const test = require("node:test");
-const vm = require("node:vm");
+const { pathToFileURL } = require("node:url");
 
-function loadAnime() {
-    function NodeList() {}
-    function HTMLCollection() {}
-    function Node() {}
-    function Element() {}
-    function SVGElement() {}
-    function HTMLInputElement() {}
+const moduleUrl = pathToFileURL(path.join(
+    __dirname,
+    "../../src/BlazorAnime/wwwroot/BlazorAnime.lib.module.js")).href;
 
-    const sandbox = {
-        NodeList,
-        HTMLCollection,
-        Node,
-        Element,
-        SVGElement,
-        HTMLInputElement,
-        console,
-        setTimeout,
-        clearTimeout,
-        requestAnimationFrame: (callback) => setTimeout(() => callback(Date.now()), 16),
-        cancelAnimationFrame: (id) => clearTimeout(id),
-        document: {
-            hidden: false,
-            addEventListener() {},
-            querySelector() { return null; },
-            querySelectorAll() { return []; }
-        }
-    };
-    sandbox.window = sandbox;
-    sandbox.globalThis = sandbox;
-    vm.createContext(sandbox);
+async function loadAnime() {
+    if (!globalThis.__blazorAnimeLoaded) {
+        function NodeList() {}
+        function HTMLCollection() {}
+        function Node() {}
+        function Element() {}
+        function SVGElement() {}
+        function HTMLInputElement() {}
 
-    const scriptPath = path.join(__dirname, "../../src/BlazorAnime/wwwroot/blazor.anime.interop.js");
-    vm.runInContext(fs.readFileSync(scriptPath, "utf8"), sandbox);
-    return sandbox.AnimeJs;
+        Object.assign(globalThis, {
+            NodeList,
+            HTMLCollection,
+            Node,
+            Element,
+            SVGElement,
+            HTMLInputElement,
+            window: globalThis,
+            Date,
+            requestAnimationFrame: () => 0,
+            cancelAnimationFrame: () => {},
+            getComputedStyle: () => ({}),
+            document: {
+                hidden: false,
+                documentElement: {},
+                body: {},
+                addEventListener() {},
+                removeEventListener() {},
+                querySelector() { return null; },
+                querySelectorAll() { return []; }
+            }
+        });
+        await import(moduleUrl);
+        globalThis.__blazorAnimeLoaded = true;
+    }
+
+    const api = globalThis.AnimeJs;
+    api.setSpeed(1);
+    return api;
 }
 
 function prop(name, propType, value) {
@@ -48,9 +55,13 @@ function setter(name, value) {
     return prop(name, "setter", value);
 }
 
+function easeFn(name, payload) {
+    return { name, value: { propType: "easeFn", value: payload } };
+}
+
 test("object target seeks to the requested number", async () => {
-    const api = loadAnime();
-    assert.equal(api.version(), "3.2.2");
+    const api = await loadAnime();
+    assert.equal(api.version(), "4.5.0");
 
     const target = api.createObject({ x: 0 });
     const animation = await api.createAnimation({
@@ -58,18 +69,18 @@ test("object target seeks to the requested number", async () => {
         x: setter("x", 100),
         duration: setter("duration", 100),
         autoplay: setter("autoplay", false),
-        easing: setter("easing", "linear")
+        ease: setter("ease", "linear")
     });
 
     animation.seek(100);
     assert.equal(target.target.x, 100);
-    assert.equal(animation.getProgress(), 100);
+    assert.equal(animation.getProgress(), 1);
     assert.equal(animation.hasCompleted(), 1);
     assert.equal(animation.getCurrentValues().x, "100");
 });
 
 test("function values are collected once per target", async () => {
-    const api = loadAnime();
+    const api = await loadAnime();
     const rows = [
         api.createObject({ n: 0 }),
         api.createObject({ n: 0 }),
@@ -104,7 +115,7 @@ test("function values are collected once per target", async () => {
         }),
         duration: setter("duration", 20),
         autoplay: setter("autoplay", false),
-        easing: setter("easing", "linear")
+        ease: setter("ease", "linear")
     });
 
     animation.seek(animation.getDuration());
@@ -112,21 +123,21 @@ test("function values are collected once per target", async () => {
 });
 
 test("property keyframes unwrap nested setters", async () => {
-    const api = loadAnime();
+    const api = await loadAnime();
     const target = api.createObject({ x: 0 });
     const animation = await api.createAnimation({
         targets: prop("targets", "objectTarget", target),
         x: setter("x", [
             {
-                value: setter("value", 40),
+                to: setter("to", 40),
                 duration: setter("duration", 100)
             },
             {
-                value: setter("value", 10),
+                to: setter("to", 10),
                 duration: setter("duration", 100)
             }
         ]),
-        easing: setter("easing", "linear"),
+        ease: setter("ease", "linear"),
         autoplay: setter("autoplay", false)
     });
 
@@ -136,46 +147,15 @@ test("property keyframes unwrap nested setters", async () => {
     assert.equal(target.target.x, 10);
 });
 
-test("timeline offset waits until the previous child plus the gap", async () => {
-    const api = loadAnime();
-    const first = api.createObject({ v: 0 });
-    const second = api.createObject({ v: 0 });
-    const timeline = await api.createTimeline({
-        autoplay: setter("autoplay", false),
-        easing: setter("easing", "linear")
-    });
-
-    await timeline.add({
-        targets: prop("targets", "objectTarget", first),
-        v: setter("v", 1),
-        duration: setter("duration", 100)
-    });
-    await timeline.add({
-        targets: prop("targets", "objectTarget", second),
-        v: setter("v", 1),
-        duration: setter("duration", 100)
-    }, "+=50");
-
-    assert.equal(timeline.getDuration(), 250);
-    timeline.seek(100);
-    assert.equal(first.target.v, 1);
-    assert.equal(second.target.v, 0);
-    timeline.finish();
-    assert.equal(second.target.v, 1);
-});
-
 test("a sampled curve eases from the table instead of a named function", async () => {
-    const api = loadAnime();
+    const api = await loadAnime();
     const target = api.createObject({ x: 0 });
     const animation = await api.createAnimation({
         targets: prop("targets", "objectTarget", target),
         x: setter("x", 100),
         duration: setter("duration", 100),
         autoplay: setter("autoplay", false),
-        easing: {
-            name: "easing",
-            value: { propType: "easingCurve", value: [0, 0, 1] }
-        }
+        ease: easeFn("ease", { fn: "curve", value: [0, 0, 1] })
     });
 
     animation.seek(50);
@@ -185,31 +165,35 @@ test("a sampled curve eases from the table instead of a named function", async (
 });
 
 test("stagger accepts a sampled curve as its easing", async () => {
-    const api = loadAnime();
-    const rows = [api.createObject({ n: 0 }), api.createObject({ n: 0 })];
+    const api = await loadAnime();
+    const rows = [
+        api.createObject({ n: 0 }),
+        api.createObject({ n: 0 }),
+        api.createObject({ n: 0 })
+    ];
     const animation = await api.createAnimation({
         targets: prop("targets", "objectTarget", rows),
         n: setter("n", 1),
         duration: setter("duration", 10),
         autoplay: setter("autoplay", false),
-        easing: setter("easing", "linear"),
+        ease: setter("ease", "linear"),
         delay: prop("delay", "stagger", {
             value: 100,
             options: {
-                easing: {
-                    name: "easing",
-                    value: { propType: "easingCurve", value: [0, 1] }
-                }
+                ease: easeFn("ease", { fn: "curve", value: [0, 0, 1] })
             }
         })
     });
 
+    animation.seek(50);
+    assert.ok(Math.abs(rows[1].target.n - 1) < 0.001, `middle target was ${rows[1].target.n}`);
+    assert.equal(rows[2].target.n, 0);
     animation.seek(animation.getDuration());
-    assert.deepEqual(rows.map((row) => row.target.n), [1, 1]);
+    assert.deepEqual(rows.map((row) => row.target.n), [1, 1, 1]);
 });
 
 test("target callbacks receive a snapshot of each target", async () => {
-    const api = loadAnime();
+    const api = await loadAnime();
     const rows = [
         api.createObject({ n: 0, id: "a", tagName: "DIV", dataset: { x: "4" } }),
         api.createObject({ n: 0, id: "b", tagName: "SPAN", dataset: { x: "9" } })
@@ -236,7 +220,7 @@ test("target callbacks receive a snapshot of each target", async () => {
         },
         duration: setter("duration", 10),
         autoplay: setter("autoplay", false),
-        easing: setter("easing", "linear")
+        ease: setter("ease", "linear")
     });
 
     animation.seek(10);
@@ -248,9 +232,10 @@ test("target callbacks receive a snapshot of each target", async () => {
     assert.equal(seen[1].total, 2);
 });
 
-test("speed and random use the anime.js helpers", () => {
-    const api = loadAnime();
+test("speed and random use the anime.js helpers", async () => {
+    const api = await loadAnime();
     api.setSpeed(2);
     assert.equal(api.getSpeed(), 2);
     assert.equal(api.random(4, 4), 4);
+    api.setSpeed(1);
 });

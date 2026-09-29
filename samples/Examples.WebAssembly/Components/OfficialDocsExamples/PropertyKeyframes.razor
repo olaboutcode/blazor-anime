@@ -33,19 +33,19 @@
                     kf => kf.Value(0).Duration(500).Delay(1000)
                 ])
                 .ScaleX([
-                    kf => kf.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
+                    kf => kf.Value(4).Duration(100).Delay(500).Ease(Easing.OutExpo),
                     kf => kf.Value(1).Duration(900),
-                    kf => kf.Value(4).Duration(100).Delay(500).Easing(Easing.EaseOutExpo),
+                    kf => kf.Value(4).Duration(100).Delay(500).Ease(Easing.OutExpo),
                     kf => kf.Value(1).Duration(900)
                 ])
                 .ScaleY([
                     kf => kf.Value(1.75, 1).Duration(500),
-                    kf => kf.Value(2).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
+                    kf => kf.Value(2).Duration(50).Delay(1000).Ease(Easing.OutExpo),
                     kf => kf.Value(1).Duration(450),
-                    kf => kf.Value(1.75).Duration(50).Delay(1000).Easing(Easing.EaseOutExpo),
+                    kf => kf.Value(1.75).Duration(50).Delay(1000).Ease(Easing.OutExpo),
                     kf => kf.Value(1).Duration(450)
                 ])
-                .Easing(Easing.EaseOutElastic(1, .8))
+                .Ease(Easing.OutElastic(1, .8))
                 .Loop(true)
                 .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             );

@@ -216,9 +216,9 @@
             .Targets(targets)
             .TranslateY(distance, 0)
             .Opacity(0, 1)
-            .Easing(Easing.EaseOutElastic())
+            .Ease(Easing.OutElastic())
             .Delay(Stagger.Create(stagger))
-            .Complete(complete));
+            .OnComplete(complete));
 
     private void OnGiftComplete(AnimationState state) => _ = StartGiftShiver();
 
@@ -250,7 +250,7 @@
                 frame => frame.Rotate(0)
             ])
             .Loop(true)
-            .Easing(Easing.Linear)
+            .Ease(Easing.Linear)
             .Duration(1200));
     }
 
@@ -270,7 +270,7 @@
                 frame => frame.Value(0).Duration(170).Delay(220)
             ])
             .Loop(true)
-            .Easing(Easing.Linear));
+            .Ease(Easing.Linear));
     }
 
     private async Task StartEggs()
@@ -282,7 +282,7 @@
             .Targets(".easter-demo .basket-icon__egg-1, .easter-demo .basket-icon__egg-2")
             .TranslateY(50, 0)
             .Opacity(0, 1)
-            .Easing(Easing.EaseOutElastic())
+            .Ease(Easing.OutElastic())
             .Delay(Stagger.Create(150))
             .Loop(true));
     }
@@ -307,7 +307,7 @@
                 frame => frame.Value(0).Duration(150).Delay(100),
                 frame => frame.Value(0).Duration(150).Delay(1800)
             ])
-            .Easing(Easing.Linear)
+            .Ease(Easing.Linear)
             .Loop(true));
 
         _paint = await Anime.Animate(props => props
@@ -317,7 +317,7 @@
                 frame => frame.Value(0).Duration(200).Delay(900),
                 frame => frame.Value(0).Duration(150).Delay(1000)
             ])
-            .Easing(Easing.Linear)
+            .Ease(Easing.Linear)
             .Loop(true));
     }
 
@@ -335,7 +335,7 @@
                 frame => frame.Value(0).Duration(100).Delay(100),
                 frame => frame.Value(0).Duration(100).Delay(1200)
             ])
-            .Easing(Easing.Linear)
+            .Ease(Easing.Linear)
             .Loop(true));
     }
 

@@ -33,16 +33,16 @@
             .Targets(_box)
             .TranslateX(120)
             .Duration(400)
-            .Easing(Easing.Linear)
+            .Ease(Easing.Linear)
             .AutoPlay(false)
-            .Complete(OnComplete));
+            .OnComplete(OnComplete));
 
         _staggerAnimation = await Anime.Animate(props => props
             .Targets("#dots .dot")
             .TranslateX(80)
             .Duration(200)
             .Delay(Stagger.Create(100))
-            .Easing(Easing.Linear)
+            .Ease(Easing.Linear)
             .AutoPlay(false));
 
         _ready = true;
@@ -55,7 +55,7 @@
 
     private void OnComplete(AnimationState state)
     {
-        _progress = state.Progress;
+        _progress = state.Progress * 100;
         StateHasChanged();
     }
 

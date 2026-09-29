@@ -25,7 +25,7 @@ public static class DemoCatalog
                     .TranslateX(property => property.Value(Relative.Multiply(2.5)).Duration(1000))
                     .Width(property => property.Value(Relative.Subtract(20)).Duration(1800))
                     .Rotate(property => property.Value(Relative.Add("2turn")).Duration(1800))
-                    .Direction(Direction.Alternate)
+                    .Alternate(true)
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/RelativeValues.razor"),
@@ -38,7 +38,7 @@ public static class DemoCatalog
                     .TranslateX(target => double.Parse(target.Dataset.GetValueOrDefault("x", "0")))
                     .TranslateY((index, count) => 50 + (-50 * index))
                     .Scale((index, count) => (count - index) + .25)
-                    .Direction(Direction.Alternate)
+                    .Alternate(true)
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/FunctionBasedValues.razor"),
@@ -51,7 +51,7 @@ public static class DemoCatalog
                     .TranslateX(180)
                     .Delay((index, total) => index * 120)
                     .Duration(750)
-                    .Direction(Direction.Alternate)
+                    .Alternate(true)
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/FunctionBasedParameters.razor"),
@@ -69,7 +69,7 @@ public static class DemoCatalog
                         step => step.TranslateY(0)
                     ])
                     .Duration(4000)
-                    .Easing(Easing.EaseOutElastic(1, .8))
+                    .Ease(Easing.OutElastic(1, .8))
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/Keyframes.razor"),
@@ -94,9 +94,9 @@ public static class DemoCatalog
                 await Anime.Animate(props => props
                     .Targets(".animation-callbacks-demo .el")
                     .TranslateX(250)
-                    .Begin(state => Log("began", state))
-                    .Update(state => Log("update", state))
-                    .Complete(state => Log("complete", state))
+                    .OnBegin(state => Log("began", state))
+                    .OnUpdate(state => Log("update", state))
+                    .OnComplete(state => Log("complete", state))
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/AnimationCallbacks.razor"),
@@ -122,8 +122,8 @@ public static class DemoCatalog
                     .Targets(".animation-easings-demo .el")
                     .TranslateX(220)
                     .Duration(900)
-                    .Easing(Easing.EaseInOutExpo)
-                    .Direction(Direction.Alternate)
+                    .Ease(Easing.InOutExpo)
+                    .Alternate(true)
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/AnimationEasings.razor"),
@@ -144,9 +144,9 @@ public static class DemoCatalog
                 "A timeline plays child animations with shared defaults.",
                 "Duration and easing set on the timeline apply to each child that does not set its own. AddAsync appends a child. The timeline is itself an animation, so play, pause, and dispose are the same methods.",
                 """
-                var timeline = await Anime.Timeline(props => props
+                var timeline = await Anime.CreateTimeline(props => props
                     .Duration(750)
-                    .Easing(Easing.EaseOutExpo));
+                    .Ease(Easing.OutExpo));
 
                 await timeline.AddAsync(child => child
                     .Targets(".timeline-basics-demo .el.square")
@@ -172,9 +172,9 @@ public static class DemoCatalog
                 "Children inherit duration and easing from the timeline.",
                 "Set the shared timing on the timeline. A child can still override a single property, such as its own easing or duration, without repeating the rest.",
                 """
-                var timeline = await Anime.Timeline(props => props
+                var timeline = await Anime.CreateTimeline(props => props
                     .Duration(750)
-                    .Easing(Easing.EaseOutExpo));
+                    .Ease(Easing.OutExpo));
 
                 await timeline.AddAsync(child => child
                     .Targets(".timeline-inheritance-demo .el.square")
@@ -185,9 +185,9 @@ public static class DemoCatalog
                 "A timeline pauses, seeks, and restarts as one animation.",
                 "Call Play, Pause, Seek, or Restart on the timeline. Children added with AddAsync stay on that same instance.",
                 """
-                var timeline = await Anime.Timeline(props => props
+                var timeline = await Anime.CreateTimeline(props => props
                     .Duration(750)
-                    .Easing(Easing.EaseOutExpo)
+                    .Ease(Easing.OutExpo)
                     .AutoPlay(false));
 
                 await timeline.AddAsync(child => child
@@ -224,7 +224,7 @@ public static class DemoCatalog
                 "The easing on a stagger changes the gap between targets. Easing.Curve works here too, and the curve is passed through without the extra wrapper an animation easing needs.",
                 """
                 .Delay(Stagger.Create(100, stagger => stagger
-                    .Easing(Easing.EaseOutQuad)))
+                    .Easing(Easing.OutQuad)))
                 """,
                 "Components/OfficialDocsExamples/StaggerEasing.razor"),
             Entry("stagger-grid", "Grid",
@@ -256,10 +256,10 @@ public static class DemoCatalog
                 await Anime.Animate(props => props
                     .Targets(".line-drawing-demo .lines path")
                     .StrokeDashoffset(0)
-                    .Easing(Easing.EaseInOutSine)
+                    .Ease(Easing.InOutSine)
                     .Duration(1500)
                     .Delay((index, total) => index * 250)
-                    .Direction(Direction.Alternate)
+                    .Alternate(true)
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/SvgLineDrawing.razor"),
@@ -271,8 +271,8 @@ public static class DemoCatalog
                     .Targets(".morphing-demo .polymorph")
                     .D(nextPath)
                     .Duration(2000)
-                    .Easing(Easing.EaseInOutQuad)
-                    .Direction(Direction.Alternate)
+                    .Ease(Easing.InOutQuad)
+                    .Alternate(true)
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/SvgMorphing.razor"),
@@ -287,7 +287,7 @@ public static class DemoCatalog
                     .TranslateY(await path.Get("y"))
                     .Rotate(await path.Get("angle"))
                     .Duration(2000)
-                    .Easing(Easing.Linear)
+                    .Ease(Easing.Linear)
                     .Loop(true));
                 """,
                 "Components/OfficialDocsExamples/SvgMotionPath.razor")
@@ -303,8 +303,8 @@ public static class DemoCatalog
                     .StrokeDashoffset(0)
                     .Duration(3900)
                     .Delay(Stagger.Create(190))
-                    .Direction(Direction.Reverse)
-                    .Easing(Easing.EaseInOutCirc));
+                    .Reversed(true)
+                    .Ease(Easing.InOutCirc));
                 """,
                 "Components/AdditionalFunExamples/AnimatedSphere.razor"),
             Entry("easter-icons", "Easter icons",
@@ -328,7 +328,7 @@ public static class DemoCatalog
                     .Targets(".bicycle-demo #tyre1, .bicycle-demo #tyre2")
                     .Rotate(360)
                     .Duration(1000)
-                    .Easing(Easing.Linear)
+                    .Ease(Easing.Linear)
                     .Loop(true));
                 """,
                 "Components/AdditionalFunExamples/PedalingBicycle.razor"),

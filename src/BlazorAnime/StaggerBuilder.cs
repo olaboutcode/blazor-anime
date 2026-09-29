@@ -64,9 +64,7 @@ public sealed class StaggerOptionsBuilder
     public StaggerOptionsBuilder Easing(Easing value)
     {
         ArgumentNullException.ThrowIfNull(value);
-        _options.Add(value.IsCurve
-            ? new EasingCurveProp("easing", value.Samples)
-            : new StgOptionProp("easing", value.GetValue()));
+        _options.Add(PropsBuilder.EaseProp("easing", value));
         return this;
     }
 

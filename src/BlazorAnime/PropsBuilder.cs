@@ -12,15 +12,66 @@ public sealed class PropsBuilder
     private PropsBuilder(List<IDisposable> callbackHandles) => CallbackHandles = callbackHandles;
 
     private PropsBuilder Nested() => new(CallbackHandles);
-    public PropsBuilder Easing(Easing easing)
+    public PropsBuilder Ease(Easing easing)
     {
         if (easing == null)
             return this;
-        _props.Add(easing.IsCurve
-            ? new EasingCurveProp("easing", easing.Samples)
-            : new GenProp<string>("easing", easing.GetValue()));
+        _props.Add(EaseProp("ease", easing));
         return this;
     }
+
+    internal static Prop EaseProp(string name, Easing easing)
+    {
+        if (easing.IsCurve)
+        {
+            return new EaseFnProp(name, new
+            {
+                fn = "curve",
+                value = easing.Samples
+            });
+        }
+
+        if (easing.IsFunction)
+        {
+            var spec = easing.FunctionSpec;
+            return new EaseFnProp(name, spec.Fn switch
+            {
+                "steps" => new { fn = "steps", steps = spec.A },
+                "cubicBezier" => new { fn = "cubicBezier", x1 = spec.A, y1 = spec.B, x2 = spec.C, y2 = spec.D },
+                "spring" when spec.Bounce is not null => new { fn = "spring", bounce = spec.Bounce, duration = spec.Duration },
+                "spring" when spec.A is not null => new
+                {
+                    fn = "spring",
+                    mass = spec.A,
+                    stiffness = spec.B,
+                    damping = spec.C,
+                    velocity = spec.D
+                },
+                _ => new { fn = spec.Fn }
+            });
+        }
+
+        return new GenProp<string>(name, easing.GetValue());
+    }
+
+    public PropsBuilder ModifierRound(int decimalPlaces)
+    {
+        _props.Add(new EaseFnProp("modifier", new { fn = "round", decimals = decimalPlaces }));
+        return this;
+    }
+
+    public PropsBuilder Alternate(bool alternate)
+    {
+        _props.Add(new GenProp<bool>("alternate", alternate));
+        return this;
+    }
+
+    public PropsBuilder Reversed(bool reversed)
+    {
+        _props.Add(new GenProp<bool>("reversed", reversed));
+        return this;
+    }
+
     public PropsBuilder Direction(Direction direction)
     {
         if(direction != null)

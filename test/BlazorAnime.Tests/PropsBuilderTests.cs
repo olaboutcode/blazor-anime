@@ -14,13 +14,13 @@ public sealed class PropsBuilderTests
             .Targets(".box")
             .TranslateX(120)
             .Duration(400)
-            .Easing(Easing.Linear)
+            .Ease(Easing.Linear)
             .AutoPlay(false));
 
         Assert.Equal([".box"], Strings(Setter(built, "targets")));
         Assert.Equal(120, Setter(built, "translateX").GetDouble());
         Assert.Equal(400, Setter(built, "duration").GetInt32());
-        Assert.Equal("linear", Setter(built, "easing").GetString());
+        Assert.Equal("linear", Setter(built, "ease").GetString());
         Assert.False(Setter(built, "autoplay").GetBoolean());
     }
 
@@ -55,12 +55,12 @@ public sealed class PropsBuilderTests
         var built = root.Build(builder => builder.TranslateX(parameter => parameter
             .Value(250)
             .Duration(800)
-            .Easing(Easing.EaseInOutQuad)));
+            .Ease(Easing.InOutQuad)));
 
         var parameter = Setter(built, "translateX");
         Assert.Equal(250, Setter(parameter, "value").GetDouble());
         Assert.Equal(800, Setter(parameter, "duration").GetInt32());
-        Assert.Equal("easeInOutQuad", Setter(parameter, "easing").GetString());
+        Assert.Equal("inOutQuad", Setter(parameter, "ease").GetString());
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public sealed class PropsBuilderTests
             .Grid([14, 7])
             .Axis(StaggerAxis.X)
             .Direction(Direction.Reverse)
-            .Easing(Easing.EaseOutQuad)));
+            .Easing(Easing.OutQuad)));
 
         var description = StaggerValue(built, "delay");
         Assert.Equal(100, description.GetProperty("value").GetDouble());
@@ -99,7 +99,7 @@ public sealed class PropsBuilderTests
         Assert.Equal([14, 7], Option(options, "grid").EnumerateArray().Select(item => item.GetInt32()).ToArray());
         Assert.Equal("x", Option(options, "axis").GetString());
         Assert.Equal("reverse", Option(options, "direction").GetString());
-        Assert.Equal("easeOutQuad", Option(options, "easing").GetString());
+        Assert.Equal("outQuad", Option(options, "easing").GetString());
     }
 
     [Fact]
@@ -109,14 +109,14 @@ public sealed class PropsBuilderTests
         using var root = new Props();
         var built = root.Build(builder => builder
             .Delay(host.Delay)
-            .Update(host.OnUpdate));
+            .OnUpdate(host.OnUpdate));
 
         var delay = built.GetProperty("delay").GetProperty("value");
         Assert.Equal("callback", delay.GetProperty("propType").GetString());
         Assert.Equal(2, delay.GetProperty("paramCount").GetInt32());
         Assert.Equal("InvokeAll", delay.GetProperty("value").GetProperty("callback").GetString());
 
-        var update = built.GetProperty("update").GetProperty("value");
+        var update = built.GetProperty("onUpdate").GetProperty("value");
         Assert.Equal("callback", update.GetProperty("propType").GetString());
         Assert.Equal(1, update.GetProperty("paramCount").GetInt32());
         Assert.Equal("Invoke", update.GetProperty("value").GetProperty("callback").GetString());
@@ -151,19 +151,21 @@ public sealed class PropsBuilderTests
     {
         using var root = new Props();
         var built = root.Build(builder => builder
-            .Easing(Easing.Curve(t => t, 3))
+            .Ease(Easing.Curve(t => t, 3))
             .Delay(stagger => stagger.Value(10).Easing(Easing.Curve(t => t, 4))));
 
-        var easing = built.GetProperty("easing").GetProperty("value");
-        Assert.Equal("easingCurve", easing.GetProperty("propType").GetString());
-        Assert.Equal(3, easing.GetProperty("value").GetArrayLength());
+        var easing = built.GetProperty("ease").GetProperty("value");
+        Assert.Equal("easeFn", easing.GetProperty("propType").GetString());
+        Assert.Equal("curve", easing.GetProperty("value").GetProperty("fn").GetString());
+        Assert.Equal(3, easing.GetProperty("value").GetProperty("value").GetArrayLength());
 
         var staggerEasing = StaggerValue(built, "delay")
             .GetProperty("options")
             .GetProperty("easing")
             .GetProperty("value");
-        Assert.Equal("easingCurve", staggerEasing.GetProperty("propType").GetString());
-        Assert.Equal(4, staggerEasing.GetProperty("value").GetArrayLength());
+        Assert.Equal("easeFn", staggerEasing.GetProperty("propType").GetString());
+        Assert.Equal("curve", staggerEasing.GetProperty("value").GetProperty("fn").GetString());
+        Assert.Equal(4, staggerEasing.GetProperty("value").GetProperty("value").GetArrayLength());
     }
 
     [Fact]

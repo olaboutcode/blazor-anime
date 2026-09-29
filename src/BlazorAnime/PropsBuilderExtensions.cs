@@ -6,30 +6,27 @@ public static class PropsBuilderExtensions
 {
     // Animation Lifecycle Callbacks
     // Hooks for animation events: update, begin, complete, loop, and change events
-    public static PropsBuilder Update(
+    public static PropsBuilder OnUpdate(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("update", callback);
-    public static PropsBuilder Complete(
+        Action<AnimationState> callback) => builder.Prop("onUpdate", callback);
+    public static PropsBuilder OnComplete(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("complete", callback);
-    public static PropsBuilder Begin(
+        Action<AnimationState> callback) => builder.Prop("onComplete", callback);
+    public static PropsBuilder OnBegin(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("begin", callback);
-    public static PropsBuilder LoopBegin(
+        Action<AnimationState> callback) => builder.Prop("onBegin", callback);
+    public static PropsBuilder OnLoop(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("loopBegin", callback);
-    public static PropsBuilder LoopComplete(
+        Action<AnimationState> callback) => builder.Prop("onLoop", callback);
+    public static PropsBuilder OnRender(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("loopComplete", callback);
-    public static PropsBuilder Change(
+        Action<AnimationState> callback) => builder.Prop("onRender", callback);
+    public static PropsBuilder OnPause(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("change", callback);
-    public static PropsBuilder ChangeBegin(
+        Action<AnimationState> callback) => builder.Prop("onPause", callback);
+    public static PropsBuilder OnBeforeUpdate(
         this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("changeBegin", callback);
-    public static PropsBuilder ChangeComplete(
-        this PropsBuilder builder,
-        Action<AnimationState> callback) => builder.Prop("changeComplete", callback);
+        Action<AnimationState> callback) => builder.Prop("onBeforeUpdate", callback);
     
     // Animation Configuration
     // Core animation settings: targets, timing, delays, loops, keyframes, and SVG properties
@@ -54,22 +51,22 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Points(
         this PropsBuilder builder,
         params Action<PropsBuilder>[] build) => builder.Prop("points", build);
-    public static PropsBuilder EndDelay(
+    public static PropsBuilder LoopDelay(
         this PropsBuilder builder,
-        int milliseconds) => builder.Prop("endDelay", milliseconds);
-    public static PropsBuilder EndDelay(
+        int milliseconds) => builder.Prop("loopDelay", milliseconds);
+    public static PropsBuilder LoopDelay(
         this PropsBuilder builder,
-        Stagger stagger) => builder.Prop("endDelay", stagger);
-    public static PropsBuilder EndDelay(
+        Stagger stagger) => builder.Prop("loopDelay", stagger);
+    public static PropsBuilder LoopDelay(
         this PropsBuilder builder,
-        Func<int, int, double> callback) => builder.Prop("endDelay", callback);
-    public static PropsBuilder EndDelay(
+        Func<int, int, double> callback) => builder.Prop("loopDelay", callback);
+    public static PropsBuilder LoopDelay(
         this PropsBuilder builder,
-        Func<TargetInfo, double> target) => builder.Prop("endDelay", target);
-    public static PropsBuilder EndDelay(
+        Func<TargetInfo, double> target) => builder.Prop("loopDelay", target);
+    public static PropsBuilder LoopDelay(
         this PropsBuilder builder,
         Func<StaggerSyntax, StaggerSyntax> configure) =>
-        builder.EndDelay(configure(new StaggerSyntax()).ToStagger());
+        builder.LoopDelay(configure(new StaggerSyntax()).ToStagger());
     public static PropsBuilder Duration(
         this PropsBuilder builder,
         int milliseconds) => builder.Prop("duration", milliseconds);
@@ -98,9 +95,6 @@ public static class PropsBuilderExtensions
         this PropsBuilder builder,
         Func<StaggerSyntax, StaggerSyntax> configure) =>
         builder.Delay(configure(new StaggerSyntax()).ToStagger());
-    public static PropsBuilder Round(
-        this PropsBuilder builder,
-        int value) => builder.Prop("round", value);
     public static PropsBuilder Loop(
         this PropsBuilder builder,
         bool shouldLoop) => builder.Prop("loop", shouldLoop);

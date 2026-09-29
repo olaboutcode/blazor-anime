@@ -75,7 +75,7 @@
                 })
                 .TranslateX(2, -4)
                 .TranslateY(2, -4)
-                .Easing(Easing.EaseOutQuad)
+                .Ease(Easing.OutQuad)
                 .AutoPlay(false)));
         }
 
@@ -85,13 +85,13 @@
             .Prop("t", 1)
             .Duration(int.MaxValue)
             .AutoPlay(false)
-            .Update(OnBreath));
+            .OnUpdate(OnBreath));
 
         _intro = await Anime.Animate(props => props
             .Targets(".animated-sphere-demo .sphere path")
             .StrokeDashoffset(0)
             .Duration(3900)
-            .Easing(Easing.EaseInOutCirc)
+            .Ease(Easing.InOutCirc)
             .Delay(Stagger.Create(190, options => options.Direction(Direction.Reverse)))
             .AutoPlay(false));
 
@@ -102,7 +102,7 @@
             .Prop("y1", "0%")
             .Prop("y2", "75%")
             .Duration(30000)
-            .Easing(Easing.EaseOutQuint)
+            .Ease(Easing.OutQuint)
             .AutoPlay(false));
 
         await _intro.Play();

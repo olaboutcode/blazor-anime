@@ -91,6 +91,16 @@ public sealed class HarnessTests : PageTest
             return double.Parse(number, System.Globalization.CultureInfo.InvariantCulture);
         }
 
+        const string translateFunction = "translate(";
+        if (transform.StartsWith(translateFunction, StringComparison.Ordinal))
+        {
+            var body = transform[translateFunction.Length..].TrimEnd(')');
+            var x = body.Split(',')[0].Trim();
+            if (x.EndsWith("px", StringComparison.Ordinal))
+                x = x[..^2];
+            return double.Parse(x, System.Globalization.CultureInfo.InvariantCulture);
+        }
+
         return 0;
     }
 }

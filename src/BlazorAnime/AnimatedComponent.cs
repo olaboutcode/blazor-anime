@@ -40,7 +40,7 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
         string id,
         Func<PropsBuilder, PropsBuilder> configure)
     {
-        var timeline = await Anime.Timeline(configure);
+        var timeline = await Anime.CreateTimeline(configure);
         _timelines.Add(id, timeline);
         return timeline;
     }
@@ -49,7 +49,7 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
         string id,
         Func<PropsBuilder, Task<PropsBuilder>> configure)
     {
-        var timeline = await Anime.Timeline(configure);
+        var timeline = await Anime.CreateTimeline(configure);
         _timelines.Add(id, timeline);
         return timeline;
     }
@@ -57,10 +57,10 @@ public abstract class AnimatedComponent: ComponentBase, IAsyncDisposable
     public virtual void OnBegin(AnimationState state) => StateHasChanged();
     public virtual void OnUpdate(AnimationState state) => StateHasChanged();
     public virtual void OnComplete(AnimationState state) => StateHasChanged();
-    public virtual void OnLoopBegin(AnimationState state) => StateHasChanged();
-    public virtual void OnLoopComplete(AnimationState state) => StateHasChanged();
-    public virtual void OnChangeBegin(AnimationState state) => StateHasChanged();
-    public virtual void OnChangeComplete(AnimationState state) => StateHasChanged();
+    public virtual void OnLoop(AnimationState state) => StateHasChanged();
+    public virtual void OnRender(AnimationState state) => StateHasChanged();
+    public virtual void OnPause(AnimationState state) => StateHasChanged();
+    public virtual void OnBeforeUpdate(AnimationState state) => StateHasChanged();
 
     public async ValueTask DisposeAsync()
     {

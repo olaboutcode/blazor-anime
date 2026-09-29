@@ -170,11 +170,11 @@
                 .Scale([
                     props => props
                         .Value(.1)
-                        .Easing(Easing.EaseOutSine)
+                        .Ease(Easing.OutSine)
                         .Duration(milliseconds: 500),
                     props => props
                         .Value(1)
-                        .Easing(Easing.EaseInOutQuad)
+                        .Ease(Easing.InOutQuad)
                         .Duration(1200)
                 ])
                 .Delay(Stagger.Create(200, stg => stg

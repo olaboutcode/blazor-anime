@@ -30,10 +30,10 @@
             _animation ??= await Anime.Animate(props => props
                 .Targets(".line-drawing-demo .lines path")
                 .StrokeDashoffset(0)
-                .Easing(Easing.EaseInOutSine)
+                .Ease(Easing.InOutSine)
                 .Duration(1500)
                 .Delay(DelaySetter)
-                .Direction(Direction.Alternate)
+                .Alternate(true)
                 .Loop(true)
                 .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))
             );

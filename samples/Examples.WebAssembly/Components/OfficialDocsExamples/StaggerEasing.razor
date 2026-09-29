@@ -43,7 +43,7 @@
             _animation ??= await Anime.Animate(props => props
                 .Targets(".staggering-easing-demo .el")
                 .TranslateX(270)
-                .Delay(Stagger.Create(300, stg => stg.Easing(Easing.EaseOutQuad)))
+                .Delay(Stagger.Create(300, stg => stg.Easing(Easing.OutQuad)))
                 .Duration(1000)
                 .Loop(true)
                 .AutoPlay(DemoPlayback.ShouldAutoPlay(Playing))

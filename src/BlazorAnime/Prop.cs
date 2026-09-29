@@ -97,8 +97,12 @@ internal class StgOptionProp(
     }
 }
 
-internal sealed class EasingCurveProp(string name, double[] samples) : Prop(name, samples)
+internal sealed class EaseFnProp : Prop
 {
+    private readonly object _payload;
+
+    public EaseFnProp(string name, object payload) : base(name, payload) => _payload = payload;
+
     public override object GetValue()
     {
         return new
@@ -106,8 +110,8 @@ internal sealed class EasingCurveProp(string name, double[] samples) : Prop(name
             name = Name,
             value = new
             {
-                propType = "easingCurve",
-                value = GetPrimValue()
+                propType = "easeFn",
+                value = _payload
             }
         };
     }

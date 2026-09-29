@@ -1,8 +1,10 @@
 import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 
 const version = JSON.parse(readFileSync(new URL("./node_modules/animejs/package.json", import.meta.url), "utf8")).version;
-const outfile = process.env.SPIKE_OUTFILE ?? new URL("./dist/spike.js", import.meta.url).pathname;
+const outfile = process.env.OUTFILE
+    ?? fileURLToPath(new URL("../wwwroot/BlazorAnime.lib.module.js", import.meta.url));
 
 await build({
     entryPoints: [new URL("./entry.js", import.meta.url).pathname],

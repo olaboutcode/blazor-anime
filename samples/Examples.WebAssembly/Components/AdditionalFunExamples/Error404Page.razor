@@ -338,15 +338,15 @@
             .Targets(".error-404-demo .row svg")
             .TranslateY(10)
             .Loop(true)
-            .Direction(Direction.Alternate)
-            .Easing(Easing.EaseInOutSine));
+            .Alternate(true)
+            .Ease(Easing.InOutSine));
 
         _zero = await Anime.Animate(props => props
             .Targets(".error-404-demo #zero")
             .TranslateX(10)
             .Loop(true)
-            .Direction(Direction.Alternate)
-            .Easing(Easing.EaseInOutSine)
+            .Alternate(true)
+            .Ease(Easing.InOutSine)
             .Scale(
                 frame => frame.Value(1),
                 frame => frame.Value(1.4),
