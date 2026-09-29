@@ -66,26 +66,6 @@ body {
     height: auto;
 }
 
-.docs-preview-large .demo {
-    min-height: 440px;
-}
-
-.docs-preview-large .demo-content {
-    width: min(100%, 720px);
-}
-
-.docs-preview-large .animated-sphere-demo {
-    width: min(100%, 1160px) !important;
-}
-
-.docs-preview-large .bicycle-demo svg {
-    width: min(100%, 1280px) !important;
-}
-
-.docs-preview-large .error-404-demo .container {
-    width: min(100%, 1440px) !important;
-}
-
 .docs-note {
     max-width: 16rem;
     margin: 0;

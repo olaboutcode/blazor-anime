@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fun examples</title>
+    <base href="/" />
+    <script>
+        // GitHub Pages serves a root 404 for deep links, which returns here as ?p=/route.
+        // Rewrite that back before Blazor reads the URL. Local runs have no p parameter.
+        (function () {
+            var deep = new URLSearchParams(location.search).get("p");
+            if (!deep) return;
+            if (deep.charAt(0) !== "/") deep = "/" + deep;
+            if (deep.length > 1 && deep.endsWith("/")) deep = deep.slice(0, -1);
+            if (!/^\/[A-Za-z0-9/_-]+$/.test(deep) || deep.indexOf("..") !== -1) return;
+            var base = document.querySelector("base");
+            if (!base) return;
+            var restored = new URL(deep.slice(1), new URL(base.getAttribute("href"), location.origin));
+            history.replaceState(null, "", restored.pathname + location.hash);
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        @import "tailwindcss" prefix(tw);
+    </style>
+    <link rel="stylesheet" href="css/app.css" />
+</head>
+
+<body>
+    <div id="app">Loading the examples…</div>
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>

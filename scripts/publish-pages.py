@@ -6,7 +6,7 @@ out = pathlib.Path(sys.argv[1])
 base = sys.argv[2].rstrip("/")
 pages = pathlib.Path(sys.argv[3])
 
-for app in ("examples", "travel"):
+for app in ("examples", "fun", "travel"):
     index = out / app / "index.html"
     text = index.read_text(encoding="utf-8")
     marker = '<base href="/" />'

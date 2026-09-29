@@ -25,7 +25,7 @@
       color: var(--ink);
     }
     main {
-      max-width: 760px;
+      max-width: 1080px;
       margin: 0 auto;
       padding: 72px 24px 48px;
     }
@@ -53,8 +53,8 @@
       display: grid;
       gap: 16px;
     }
-    @media (min-width: 680px) {
-      .cards { grid-template-columns: 1fr 1fr; }
+    @media (min-width: 900px) {
+      .cards { grid-template-columns: repeat(3, 1fr); }
     }
     a.card {
       display: block;
@@ -91,11 +91,15 @@
     <p class="lede">These samples are the Blazor WebAssembly apps from the repository. Open one and the animations play on this page.</p>
     <div class="cards">
       <a class="card" href="__BASE__/examples/">
-        <h2>Examples</h2>
-        <p>Sphere, Easter icons, bicycle, 404, and the anime.js documentation demos.</p>
+        <h2>Official Docs Examples</h2>
+        <p>Animation, timeline, stagger, and SVG demos from the anime.js documentation.</p>
+      </a>
+      <a class="card" href="__BASE__/fun/">
+        <h2>Fun Examples</h2>
+        <p>A wireframe sphere, Easter icons, a pedaling bicycle, and a 404 page.</p>
       </a>
       <a class="card" href="__BASE__/travel/">
-        <h2>Page transitions</h2>
+        <h2>Page Transitions</h2>
         <p>A travel app with the header, profile, and page-change animations.</p>
       </a>
     </div>
