@@ -1,0 +1,35 @@
+@inherits DraggableDemo
+
+<div class="demo draggable-demo draggable-properties">
+    <div class="draggable-field">
+        <div class="large square"></div>
+    </div>
+    <div class="animatable-readout">
+        <span>X @_x.ToString("0.0")</span>
+        <span>Y @_y.ToString("0.0")</span>
+        <span>V @_velocity.ToString("0.00")</span>
+    </div>
+</div>
+
+@code {
+    private double _x;
+    private double _y;
+    private double _velocity;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await Create(".draggable-properties .square", props => props
+            .OnUpdate(state =>
+            {
+                if (!Live)
+                    return;
+                _x = state.X;
+                _y = state.Y;
+                _velocity = state.Velocity;
+                _ = InvokeAsync(StateHasChanged);
+            }));
+    }
+}

@@ -1,0 +1,23 @@
+@inherits DraggableDemo
+
+<div class="demo draggable-demo draggable-axes">
+    <div class="draggable-pane">
+        <div class="large square vertical"></div>
+        <span class="animatable-hint">Vertical</span>
+    </div>
+    <div class="draggable-pane">
+        <div class="large square horizontal"></div>
+        <span class="animatable-hint">Horizontal</span>
+    </div>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await Create(".draggable-axes .vertical", props => props.X(false));
+        await Create(".draggable-axes .horizontal", props => props.Y(false));
+    }
+}

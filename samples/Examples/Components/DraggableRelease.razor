@@ -1,0 +1,17 @@
+@inherits DraggableDemo
+
+<div class="demo draggable-demo draggable-release draggable-stage">
+    <div class="large square"></div>
+    <span class="animatable-hint">Release</span>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await Create(".draggable-release .square", props => props
+            .ReleaseEase(Easing.Spring()));
+    }
+}

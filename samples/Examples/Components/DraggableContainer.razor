@@ -1,0 +1,18 @@
+@inherits DraggableDemo
+
+<div class="demo draggable-demo draggable-container draggable-stage">
+    <div class="draggable-frame"></div>
+    <div class="large square"></div>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await Create(".draggable-container .square", props => props
+            .Container(".draggable-container")
+            .ContainerPadding(16));
+    }
+}

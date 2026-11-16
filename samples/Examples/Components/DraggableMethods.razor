@@ -1,0 +1,55 @@
+@inherits DraggableDemo
+
+<div class="demo draggable-demo draggable-methods">
+    <div class="draggable-field">
+        <div class="large square"></div>
+    </div>
+    <div class="controls draggable-controls">
+        <button type="button" disabled="@_reverted" @onclick="OnDisable">Disable</button>
+        <button type="button" disabled="@_reverted" @onclick="OnEnable">Enable</button>
+        <button type="button" disabled="@_reverted" @onclick="OnReset">Reset</button>
+        <button type="button" disabled="@_reverted" @onclick="OnRevert">Revert</button>
+    </div>
+</div>
+
+@code {
+    private Draggable? _drag;
+    private bool _reverted;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _drag = await Create(".draggable-methods .square");
+    }
+
+    private async Task OnDisable()
+    {
+        if (_drag is null || _reverted)
+            return;
+        await _drag.Disable();
+    }
+
+    private async Task OnEnable()
+    {
+        if (_drag is null || _reverted)
+            return;
+        await _drag.Enable();
+    }
+
+    private async Task OnReset()
+    {
+        if (_drag is null || _reverted)
+            return;
+        await _drag.Reset();
+    }
+
+    private async Task OnRevert()
+    {
+        if (_drag is null || _reverted)
+            return;
+        _reverted = true;
+        await _drag.Revert();
+    }
+}

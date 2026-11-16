@@ -82,6 +82,13 @@ body {
     --hex-current-8: #2c2b23;
 }
 
+.docs-shell[data-docs-section="draggable"] {
+    --hex-current-1: #3ddc97;
+    --hex-current-6: #1d4636;
+    --hex-current-7: #1c3830;
+    --hex-current-8: #222c28;
+}
+
 @media (min-width: 900px) {
     .docs-shell {
         --site-header-height: 4.5rem;
@@ -393,6 +400,7 @@ body {
 .docs-nav > ul > li[data-docs-section="utilities"] { --hex-current-1: #4d9cff; }
 .docs-nav > ul > li[data-docs-section="easings"] { --hex-current-1: #7c85ff; }
 .docs-nav > ul > li[data-docs-section="animatable"] { --hex-current-1: #f9f640; }
+.docs-nav > ul > li[data-docs-section="draggable"] { --hex-current-1: #3ddc97; }
 
 .docs-demos {
     position: fixed;
@@ -579,6 +587,71 @@ body {
 }
 
 .docs-shell .animatable-controls button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.docs-shell .docs-demo-content:has(.draggable-demo) {
+    align-self: stretch;
+}
+
+.docs-shell .draggable-stage,
+.docs-shell .draggable-field,
+.docs-shell .draggable-pane {
+    position: relative;
+    overflow: hidden;
+}
+
+.docs-shell .demo.draggable-axes {
+    gap: 0.5rem;
+}
+
+.docs-shell .draggable-pane {
+    flex: 1;
+    height: 100%;
+}
+
+.docs-shell .demo.draggable-callbacks,
+.docs-shell .demo.draggable-methods,
+.docs-shell .demo.draggable-properties {
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.docs-shell .draggable-field {
+    flex: 1;
+    width: 100%;
+}
+
+.docs-shell .draggable-stage > .square,
+.docs-shell .draggable-field > .square,
+.docs-shell .draggable-pane > .square {
+    pointer-events: auto;
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    margin: 0;
+    cursor: grab;
+}
+
+.docs-shell .draggable-frame {
+    position: absolute;
+    inset: 16px;
+    border: 1px solid currentColor;
+    pointer-events: none;
+}
+
+.docs-shell .draggable-controls {
+    opacity: 1;
+    padding: 0;
+}
+
+.docs-shell .draggable-controls button {
+    cursor: pointer;
+    font-size: 0.7rem;
+}
+
+.docs-shell .draggable-controls button:disabled {
     opacity: 0.4;
     cursor: default;
 }

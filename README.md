@@ -31,6 +31,7 @@ This guide matches the [anime.js v4 documentation](https://animejs.com/documenta
   - [Easings](#easings)
   - [Helpers](#helpers)
 - [Animatable](#animatable)
+- [Draggable](#draggable)
 - [Samples](#samples)
 - [Building](#building)
 
@@ -63,6 +64,17 @@ dotnet add package BlazorAnime.Animatable
 ```csharp
 builder.Services.AddBlazorAnime();
 builder.Services.AddBlazorAnimeAnimatable();
+```
+
+Draggable is a third package. It registers `IDraggable` and loads `BlazorAnime.Draggable.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable package.
+
+```bash
+dotnet add package BlazorAnime.Draggable
+```
+
+```csharp
+builder.Services.AddBlazorAnime();
+builder.Services.AddBlazorAnimeDraggable();
 ```
 
 ## Usage example
@@ -721,11 +733,45 @@ await _square.Set("backgroundColor", new[] { 164d, 255, 79 });
 
 `ModifierRound`, `ModifierSnap`, and `ModifierInvert` run inside the tween, on the animatable or on one property. A property modifier wins. `Get` returns the modified number. `Targets` is the resolved target list. `Animations` is the property animations, keyed by name. Both lists stay until `Revert` or disposal.
 
+## Draggable
+
+`BlazorAnime.Draggable` binds `createDraggable`. The result is a drag instance, not an animation. An empty call drags both axes. `X(false)` or `Y(false)` locks an axis. `Container` keeps the drag inside an element or a bounds list of top, right, bottom, left. `Snap` is a pixel grid or a list of points. `ReleaseEase` is the ease used when the pointer lets go, including a spring.
+
+```razor
+@implements IAsyncDisposable
+@inject IDraggable Draggable
+
+<div class="square"></div>
+
+@code {
+    private Draggable? _square;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _square = await Draggable.Create(".square", props => props
+                .Container(".stage")
+                .Snap(40)
+                .OnRelease(state => _ = state.X));
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_square is not null)
+            await _square.DisposeAsync();
+    }
+}
+```
+
+`Disable`, `Enable`, `SetX`, `SetY`, `Stop`, `Reset`, `Refresh`, `Revert`, `ScrollInView`, and `AnimateInView` return as soon as the call is sent. `X`, `Y`, `Velocity`, and the other reads return the current value. `Target`, `Trigger`, `Container`, and `ScrollContainer` are the elements anime.js resolved. Callbacks receive a `DragState` snapshot. `DisposeAsync` reverts the drag so the pointer listeners do not stay.
+
 ## Samples
 
 Pushes to `master` publish both samples to [olaboutcode.github.io/blazor-anime](https://olaboutcode.github.io/blazor-anime/). In the repository settings, set GitHub Pages to deploy from GitHub Actions. `scripts/publish-pages.sh` builds that same site locally, and `scripts/publish-pages.bat` does it on Windows.
 
-`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, SVG, utilities, and easings. The http profile listens on `http://localhost:5161`.
+`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, SVG, utilities, and easings. The http profile listens on `http://localhost:5161`.
 
 ```bash
 dotnet run --project samples/Examples

@@ -1,0 +1,39 @@
+@inherits DraggableDemo
+
+<div class="demo draggable-demo draggable-callbacks">
+    <div class="draggable-field">
+        <div class="large square"></div>
+    </div>
+    <div class="animatable-readout">
+        <span>@_event</span>
+        <span>X @_x.ToString("0")</span>
+        <span>Y @_y.ToString("0")</span>
+    </div>
+</div>
+
+@code {
+    private string _event = "Idle";
+    private double _x;
+    private double _y;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await Create(".draggable-callbacks .square", props => props
+            .OnGrab(state => Show("Grab", state))
+            .OnRelease(state => Show("Release", state))
+            .OnSettle(state => Show("Settle", state)));
+    }
+
+    private void Show(string name, DragState state)
+    {
+        if (!Live)
+            return;
+        _event = name;
+        _x = state.X;
+        _y = state.Y;
+        _ = InvokeAsync(StateHasChanged);
+    }
+}

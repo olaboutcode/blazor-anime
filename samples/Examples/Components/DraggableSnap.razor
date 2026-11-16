@@ -1,0 +1,16 @@
+@inherits DraggableDemo
+
+<div class="demo draggable-demo draggable-snap draggable-stage">
+    <div class="large square"></div>
+    <span class="animatable-hint">40px</span>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await Create(".draggable-snap .square", props => props.Snap(40));
+    }
+}

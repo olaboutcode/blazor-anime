@@ -1,0 +1,16 @@
+@inherits DraggableDemo
+
+<div class="demo draggable-demo draggable-basic draggable-stage">
+    <div class="large square"></div>
+    <span class="animatable-hint">Drag</span>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await Create(".draggable-basic .square");
+    }
+}

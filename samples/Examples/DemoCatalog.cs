@@ -322,6 +322,84 @@ public static class DemoCatalog
                 """,
                 "Components/AnimatableRevert.razor"))
         ]),
+        new("draggable", "Draggable",
+        [
+            Leaves(
+            Entry("draggable", "Draggable",
+                "Drag a square with the pointer.",
+                "Create with no settings enables both axes. The stage clips the square. Dispose reverts the drag so the pointer listeners do not stay.",
+                """
+                var square = await Draggable.Create(".square");
+                """,
+                "Components/DraggableBasic.razor")),
+            Group("Settings",
+            Entry("draggable-axes", "Axes",
+                "Lock one square to vertical and the other to horizontal.",
+                "X(false) disables the horizontal axis. Y(false) disables the vertical axis. An omitted axis stays enabled.",
+                """
+                var vertical = await Draggable.Create(".vertical", props => props.X(false));
+                var horizontal = await Draggable.Create(".horizontal", props => props.Y(false));
+                """,
+                "Components/DraggableAxes.razor"),
+            Entry("draggable-container", "container",
+                "Keep the square inside the stage.",
+                "Container is the element the drag cannot leave. ContainerPadding insets that box by 16 pixels on every side.",
+                """
+                var square = await Draggable.Create(".square", props => props
+                    .Container(".stage")
+                    .ContainerPadding(16));
+                """,
+                "Components/DraggableContainer.razor"),
+            Entry("draggable-snap", "snap",
+                "Move the square in steps of 40 pixels.",
+                "Snap is the grid, in pixels. A list of numbers is a set of points instead. ModifierSnap is a different setting: it rounds the tween value.",
+                """
+                var square = await Draggable.Create(".square", props => props.Snap(40));
+                """,
+                "Components/DraggableSnap.razor"),
+            Entry("draggable-release", "releaseEase",
+                "Let go, and the square springs to a stop.",
+                "ReleaseEase replaces the default release curve. A spring also replaces the built-in release spring. ReleaseMass, ReleaseStiffness, and ReleaseDamping tune that spring when the ease is not one.",
+                """
+                var square = await Draggable.Create(".square", props => props
+                    .ReleaseEase(Easing.Spring()));
+                """,
+                "Components/DraggableRelease.razor")),
+            Group("Methods",
+            Entry("draggable-callbacks", "Callbacks",
+                "Read the position when the pointer grabs, releases, and settles.",
+                "Each callback receives a snapshot. x and y are the position. grabbed, dragged, and enabled are the flags at that moment. The call does not run inside the pointer event.",
+                """
+                var square = await Draggable.Create(".square", props => props
+                    .OnGrab(state => Show("Grab", state))
+                    .OnRelease(state => Show("Release", state))
+                    .OnSettle(state => Show("Settle", state)));
+                """,
+                "Components/DraggableCallbacks.razor"),
+            Entry("draggable-methods", "Methods",
+                "Disable, enable, reset, or revert the drag.",
+                "Disable ignores the pointer. Enable restores it. Reset returns both axes to 0. Revert removes the listeners and restores the styles. Dispose calls Revert.",
+                """
+                await square.Disable();
+                await square.Enable();
+                await square.Reset();
+                await square.Revert();
+                """,
+                "Components/DraggableMethods.razor"),
+            Entry("draggable-properties", "Properties",
+                "Read x, y, and velocity while the square moves.",
+                "OnUpdate runs when the position changes. The snapshot velocity is the release speed. X, Y, and Velocity read the same values back from the instance.",
+                """
+                var square = await Draggable.Create(".square", props => props
+                    .OnUpdate(state =>
+                    {
+                        var x = state.X;
+                        var y = state.Y;
+                        var velocity = state.Velocity;
+                    }));
+                """,
+                "Components/DraggableProperties.razor"))
+        ]),
         new("svg", "SVG",
         [
             Leaves(
