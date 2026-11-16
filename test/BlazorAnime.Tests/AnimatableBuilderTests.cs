@@ -78,6 +78,23 @@ public sealed class AnimatableBuilderTests
     }
 
     [Fact]
+    public void ModifierSnap_AndInvert_AreMarkers()
+    {
+        var built = new AnimatableBuilder()
+            .Property("rotate", property => property.ModifierSnap(0.25))
+            .ModifierInvert()
+            .Build();
+
+        var rotate = Assert.IsType<Dictionary<string, object>>(built["rotate"]);
+        var snap = Assert.IsType<Dictionary<string, object>>(rotate["modifier"]);
+        Assert.Equal("snap", snap["fn"]);
+        Assert.Equal(0.25, snap["increment"]);
+        var invert = Assert.IsType<Dictionary<string, object>>(built["modifier"]);
+        Assert.Equal("invert", invert["fn"]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => new AnimatableBuilder().ModifierSnap(0));
+    }
+
+    [Fact]
     public void OnUpdate_RegistersOneCallback()
     {
         var builder = new AnimatableBuilder()

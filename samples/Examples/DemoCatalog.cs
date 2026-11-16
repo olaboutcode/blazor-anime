@@ -257,16 +257,21 @@ public static class DemoCatalog
                 "Components/AnimatableEase.razor"),
             Entry("animatable-modifier", "modifier",
                 "Snap one hand to steps of π/10 and mirror the other.",
-                "Duration 0 writes the number immediately. The snapped hand rounds atan2 plus π/2 to the nearest π/10. The inverted hand uses the negated angle. ModifierRound is the built-in modifier when anime.js should round during a tween.",
+                "Duration 0 writes the number immediately. ModifierSnap rounds the angle to the nearest π/10 inside anime.js. ModifierInvert negates it. Get returns that modified number. Targets is the clock element the pointer is measured against.",
                 """
                 var snapped = await Animatable.Create(".clock-1", props => props
                     .Property("rotate", property => property.Unit("rad"))
+                    .ModifierSnap(Math.PI / 10)
+                    .Duration(0));
+                var inverted = await Animatable.Create(".clock-2", props => props
+                    .Property("rotate", property => property.Unit("rad"))
+                    .ModifierInvert()
                     .Duration(0));
 
-                var step = Math.PI / 10;
+                var clock = (await snapped.Targets())[0];
                 var angle = Math.Atan2(y, x) + Math.PI / 2;
-                await snapped.Set("rotate", Math.Round(angle / step) * step);
-                await inverted.Set("rotate", -angle);
+                await snapped.Set("rotate", angle);
+                await inverted.Set("rotate", angle);
                 """,
                 "Components/AnimatableModifier.razor")),
             Group("Methods",

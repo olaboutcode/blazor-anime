@@ -32,7 +32,23 @@ public sealed class Animatable : IAsyncDisposable
     }
 
     /// <summary>Restores the original values and removes the property methods.</summary>
-    public async Task Revert() => await Js.InvokeVoidAsync("revert");
+    public async Task Revert()
+    {
+        await Js.InvokeVoidAsync("revert");
+        await ReleaseHandles();
+    }
+
+    /// <summary>
+    /// Targets anime.js resolved for this animatable. The list is kept until
+    /// <see cref="Revert"/> or disposal.
+    /// </summary>
+    public Task<IReadOnlyList<IJSObjectReference>> Targets() => _targetsTask ??= LoadTargets();
+
+    /// <summary>
+    /// The animation anime.js keeps for each property, keyed by property name.
+    /// The map is kept until <see cref="Revert"/> or disposal.
+    /// </summary>
+    public Task<IReadOnlyDictionary<string, Animation>> Animations() => _animationsTask ??= LoadAnimations();
 
     /// <summary>Pauses every property animation. Does not restore the original values.</summary>
     public async ValueTask DisposeAsync()
@@ -50,6 +66,8 @@ public sealed class Animatable : IAsyncDisposable
         catch (ObjectDisposedException)
         {
         }
+
+        await ReleaseHandles();
 
         try
         {
@@ -89,12 +107,73 @@ public sealed class Animatable : IAsyncDisposable
             ease == null ? null : AnimatableBuilder.EaseMarker(ease));
     }
 
+    private async Task<IReadOnlyList<IJSObjectReference>> LoadTargets()
+    {
+        var targets = await Js.InvokeAsync<IJSObjectReference[]>("targets");
+        return targets ?? [];
+    }
+
+    private async Task<IReadOnlyDictionary<string, Animation>> LoadAnimations()
+    {
+        var listed = await Js.InvokeAsync<AnimationList>("animations");
+        var names = listed.Names ?? [];
+        var animations = listed.Animations ?? [];
+        if (names.Length != animations.Length)
+            throw new InvalidOperationException("Animatable returned a mismatched animation list.");
+
+        var map = new Dictionary<string, Animation>(names.Length);
+        for (var index = 0; index < names.Length; index++)
+            map[names[index]] = new Animation(animations[index], []);
+        return map;
+    }
+
+    private async Task ReleaseHandles()
+    {
+        if (_targetsTask is not null)
+        {
+            var targets = await _targetsTask;
+            _targetsTask = null;
+            foreach (var target in targets)
+                await DisposeReference(target);
+        }
+
+        if (_animationsTask is not null)
+        {
+            var animations = await _animationsTask;
+            _animationsTask = null;
+            foreach (var animation in animations.Values)
+                await animation.DisposeAsync();
+        }
+    }
+
+    private static async Task DisposeReference(IJSObjectReference reference)
+    {
+        try
+        {
+            await reference.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+    }
+
     private IJSObjectReference Js { get; }
     private readonly List<IDisposable> _callbacks;
+    private Task<IReadOnlyList<IJSObjectReference>>? _targetsTask;
+    private Task<IReadOnlyDictionary<string, Animation>>? _animationsTask;
 
     private sealed class ValueRead
     {
         public bool Many { get; set; }
         public double[] Values { get; set; } = [];
+    }
+
+    private sealed class AnimationList
+    {
+        public string[] Names { get; set; } = [];
+        public IJSObjectReference[] Animations { get; set; } = [];
     }
 }

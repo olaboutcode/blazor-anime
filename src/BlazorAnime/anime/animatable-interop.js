@@ -76,15 +76,23 @@ export function installAnimatable(anime) {
         if (isDomNode(value)) return value;
         if (Array.isArray(value)) return value.map(unwrap);
         if (value.propType === "easeFn") return resolveEase(value.value);
-        if (value.propType === "modifier") return anime.round(value.decimals);
+        if (value.propType === "modifier") return resolveModifier(value);
         if (value.propType === "setter") return unwrap(value.value);
         if (value.propType === "stagger") return unwrapStagger(value);
         if (value.propType === "callback") return callback(value);
         if (value.propType === "objectTarget") return unwrapObjectTarget(value);
         if (value.value && typeof value.value === "object" && value.value.propType) return unwrap(value.value);
-        const out = {};
-        for (const key of Object.keys(value)) out[key] = unwrap(value[key]);
-        return out;
+        // Leave data objects in place. Cloning them makes Targets() a different object
+        // from the one the caller passed, and the animation writes the clone.
+        let clone = null;
+        for (const key of Object.keys(value)) {
+            const current = value[key];
+            const next = unwrap(current);
+            if (next === current) continue;
+            clone ??= { ...value };
+            clone[key] = next;
+        }
+        return clone ?? value;
     }
 
     function unwrapStagger(marker) {
@@ -94,6 +102,78 @@ export function installAnimatable(anime) {
         return Object.keys(options).length
             ? anime.stagger(marker.value, options)
             : anime.stagger(marker.value);
+    }
+
+    function resolveModifier(marker) {
+        if (marker.fn === "snap") return anime.snap(marker.increment);
+        if (marker.fn === "invert") return (value) => -value;
+        return anime.round(marker.decimals);
+    }
+
+    // Blazor JSON-encodes a method result unless the value is already a JS object reference.
+    // DOM nodes and animation facades would otherwise arrive in .NET as empty objects.
+    function publish(value) {
+        const create = globalThis.DotNet && globalThis.DotNet.createJSObjectReference;
+        return typeof create === "function" ? create(value) : value;
+    }
+
+    function readCurrent(target, name) {
+        if (target && typeof target.nodeType === "number") return anime.get(target, name);
+        if (target && Object.prototype.hasOwnProperty.call(target, name)) return target[name];
+        return undefined;
+    }
+
+    function run(action) {
+        return (...args) => {
+            action(...args);
+        };
+    }
+
+    // The returned object must not be the timer. Timers are thenable, and Blazor awaits every result.
+    function wrapAnimation(instance, propertyName) {
+        return {
+            play: run(() => instance.play()),
+            pause: run(() => instance.pause()),
+            restart: run(() => instance.restart()),
+            reverse: run(() => instance.reverse()),
+            resume: run(() => instance.resume()),
+            reset: run(() => instance.reset()),
+            seek: run((time) => instance.seek(time)),
+            complete: run(() => instance.complete()),
+            cancel: run(() => instance.cancel()),
+            revert: run(() => instance.revert()),
+            alternate: run(() => instance.alternate()),
+            stretch: run((duration) => instance.stretch(duration)),
+            refresh: run(() => instance.refresh()),
+            remove: run((targets) => anime.remove(targets, instance)),
+            getProgress: () => instance.progress,
+            setProgress: run((progress) => {
+                const clamped = Math.min(1, Math.max(0, Number(progress) || 0));
+                instance.seek(clamped * (instance.duration || 0));
+            }),
+            hasBegun: () => instance.began ? 1 : 0,
+            hasCompleted: () => instance.completed ? 1 : 0,
+            isPaused: () => instance.paused ? 1 : 0,
+            isReversed: () => instance.reversed ? 1 : 0,
+            isBackwards: () => instance.backwards ? 1 : 0,
+            isAlternate: () => instance._alternate ? 1 : 0,
+            getId: () => String(instance.id ?? ""),
+            getLoop: () => normalizeLoop(
+                instance.iterationCount === Infinity ? -1 : (instance.iterationCount ?? 1) - 1),
+            getDuration: () => instance.duration,
+            getDelay: () => instance._delay ?? 0,
+            getLoopDelay: () => instance._loopDelay ?? 0,
+            getCurrentTime: () => instance.currentTime,
+            getIterationProgress: () => instance.iterationProgress ?? 0,
+            getCurrentIteration: () => instance.currentIteration ?? 0,
+            getTargetCount: () => (instance.targets || []).length,
+            getCurrentValues: () => {
+                const target = (instance.targets || [])[0];
+                const current = readCurrent(target, propertyName);
+                return { [propertyName]: current == null ? "" : String(current) };
+            },
+            whenFinished: () => instance.then()
+        };
     }
 
     function callback(marker) {
@@ -120,7 +200,18 @@ export function installAnimatable(anime) {
     function facade(instance) {
         return {
             get(name) {
-                const value = requireFn(instance, name)();
+                requireFn(instance, name);
+                // The animatable getter applies the modifier to tween._number, and render
+                // already stored the modified number there. A second pass turns invert back.
+                const tween = instance.animations && instance.animations[name] && instance.animations[name]._head;
+                const numbers = tween && tween._numbers;
+                if (numbers && numbers.length) {
+                    return { many: true, values: Array.from(numbers, (item) => Number(item)) };
+                }
+                if (tween && typeof tween._number === "number") {
+                    return { many: false, values: [tween._number] };
+                }
+                const value = instance[name]();
                 if (value == null) {
                     throw new Error("Animatable property '" + name + "' has no value.");
                 }
@@ -142,6 +233,18 @@ export function installAnimatable(anime) {
             pause() {
                 for (const name in instance.animations) instance.animations[name].pause();
                 if (instance.callbacks) instance.callbacks.pause();
+            },
+            targets() {
+                return (instance.targets || []).slice().map(publish);
+            },
+            animations() {
+                const names = [];
+                const animations = [];
+                for (const name of Object.keys(instance.animations || {})) {
+                    names.push(name);
+                    animations.push(publish(wrapAnimation(instance.animations[name], name)));
+                }
+                return { names, animations };
             }
         };
     }

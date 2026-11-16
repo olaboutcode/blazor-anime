@@ -59,6 +59,20 @@ public sealed class AnimatableBuilder
         return this;
     }
 
+    /// <summary>Snaps every property to the nearest multiple of <paramref name="increment"/>.</summary>
+    public AnimatableBuilder ModifierSnap(double increment)
+    {
+        _parameters["modifier"] = SnapMarker(increment);
+        return this;
+    }
+
+    /// <summary>Negates every property. <c>Get</c> returns the negated number.</summary>
+    public AnimatableBuilder ModifierInvert()
+    {
+        _parameters["modifier"] = InvertMarker();
+        return this;
+    }
+
     public AnimatableBuilder OnBegin(Action<AnimationState> callback) => Callback("onBegin", callback);
     public AnimatableBuilder OnBeforeUpdate(Action<AnimationState> callback) => Callback("onBeforeUpdate", callback);
     public AnimatableBuilder OnUpdate(Action<AnimationState> callback) => Callback("onUpdate", callback);
@@ -150,7 +164,26 @@ public sealed class AnimatableBuilder
     internal static Dictionary<string, object> ModifierMarker(int decimalPlaces) => new()
     {
         ["propType"] = "modifier",
+        ["fn"] = "round",
         ["decimals"] = decimalPlaces
+    };
+
+    internal static Dictionary<string, object> SnapMarker(double increment)
+    {
+        if (!double.IsFinite(increment) || increment == 0)
+            throw new ArgumentOutOfRangeException(nameof(increment), "Snap increment must be a non-zero finite number.");
+        return new Dictionary<string, object>
+        {
+            ["propType"] = "modifier",
+            ["fn"] = "snap",
+            ["increment"] = increment
+        };
+    }
+
+    internal static Dictionary<string, object> InvertMarker() => new()
+    {
+        ["propType"] = "modifier",
+        ["fn"] = "invert"
     };
 
     internal static Dictionary<string, object> StaggerMarker(Stagger stagger)
@@ -218,6 +251,27 @@ public sealed class AnimatableProperty
     public AnimatableProperty ModifierRound(int decimalPlaces)
     {
         Settings["modifier"] = AnimatableBuilder.ModifierMarker(decimalPlaces);
+        HasSettings = true;
+        return this;
+    }
+
+    /// <summary>
+    /// Snaps this property to the nearest multiple of <paramref name="increment"/>.
+    /// This wins over <see cref="AnimatableBuilder.ModifierSnap"/> on the same property.
+    /// </summary>
+    public AnimatableProperty ModifierSnap(double increment)
+    {
+        Settings["modifier"] = AnimatableBuilder.SnapMarker(increment);
+        HasSettings = true;
+        return this;
+    }
+
+    /// <summary>
+    /// Negates this property. This wins over <see cref="AnimatableBuilder.ModifierInvert"/>.
+    /// </summary>
+    public AnimatableProperty ModifierInvert()
+    {
+        Settings["modifier"] = AnimatableBuilder.InvertMarker();
         HasSettings = true;
         return this;
     }

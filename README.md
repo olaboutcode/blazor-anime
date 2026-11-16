@@ -719,6 +719,8 @@ await _square.Set("y", 50, durationMilliseconds: 500, ease: Easing.Out(2));
 await _square.Set("backgroundColor", new[] { 164d, 255, 79 });
 ```
 
+`ModifierRound`, `ModifierSnap`, and `ModifierInvert` run inside the tween, on the animatable or on one property. A property modifier wins. `Get` returns the modified number. `Targets` is the resolved target list. `Animations` is the property animations, keyed by name. Both lists stay until `Revert` or disposal.
+
 ## Samples
 
 Pushes to `master` publish both samples to [olaboutcode.github.io/blazor-anime](https://olaboutcode.github.io/blazor-anime/). In the repository settings, set GitHub Pages to deploy from GitHub Actions. `scripts/publish-pages.sh` builds that same site locally, and `scripts/publish-pages.bat` does it on Windows.

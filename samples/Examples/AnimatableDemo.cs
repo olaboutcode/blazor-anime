@@ -46,6 +46,9 @@ public abstract class AnimatableDemo : ComponentBase, IAsyncDisposable
     protected async Task<double> Angle(ElementReference element, PointerEventArgs pointer) =>
         await Js.InvokeAsync<double>("docsAngle", element, pointer.ClientX, pointer.ClientY);
 
+    protected async Task<double> Angle(IJSObjectReference element, PointerEventArgs pointer) =>
+        await Js.InvokeAsync<double>("docsAngle", element, pointer.ClientX, pointer.ClientY);
+
     protected static double Unwrap(double current, ref double angle, ref double last)
     {
         var diff = current - last;
