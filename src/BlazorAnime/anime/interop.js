@@ -310,29 +310,34 @@ export function install(anime) {
         const alternate = !!params.alternate;
         const loop = params.loop;
         const valueSlots = slots || [];
+        // Timers are thenable. Blazor awaits every JS result, including void calls,
+        // so a returned timer never finishes while an infinite loop is running.
+        const run = (action) => (...args) => {
+            action(...args);
+        };
         return {
-            play: () => instance.play(),
-            pause: () => instance.pause(),
-            restart: () => instance.restart(),
-            reverse: () => instance.reverse(),
-            resume: () => instance.resume(),
-            reset: () => instance.reset(),
-            seek: (time) => instance.seek(time),
-            complete: () => instance.complete(),
-            cancel: () => instance.cancel(),
-            revert: () => instance.revert(),
-            alternate: () => instance.alternate(),
-            stretch: (duration) => instance.stretch(duration),
+            play: run(() => instance.play()),
+            pause: run(() => instance.pause()),
+            restart: run(() => instance.restart()),
+            reverse: run(() => instance.reverse()),
+            resume: run(() => instance.resume()),
+            reset: run(() => instance.reset()),
+            seek: run((time) => instance.seek(time)),
+            complete: run(() => instance.complete()),
+            cancel: run(() => instance.cancel()),
+            revert: run(() => instance.revert()),
+            alternate: run(() => instance.alternate()),
+            stretch: run((duration) => instance.stretch(duration)),
             refresh: async () => {
                 await refreshValues(valueSlots);
                 instance.refresh();
             },
-            remove: (targets) => anime.remove(targets, instance),
+            remove: run((targets) => anime.remove(targets, instance)),
             getProgress: () => instance.progress,
-            setProgress: (progress) => {
+            setProgress: run((progress) => {
                 const clamped = Math.min(1, Math.max(0, Number(progress) || 0));
                 instance.seek(clamped * (instance.duration || 0));
-            },
+            }),
             hasBegun: () => instance.began ? 1 : 0,
             hasCompleted: () => instance.completed ? 1 : 0,
             isPaused: () => instance.paused ? 1 : 0,
