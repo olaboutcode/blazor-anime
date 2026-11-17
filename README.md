@@ -33,6 +33,7 @@ This guide matches the [anime.js v4 documentation](https://animejs.com/documenta
 - [Animatable](#animatable)
 - [Draggable](#draggable)
 - [Layout](#layout)
+- [Scope](#scope)
 - [Samples](#samples)
 - [Building](#building)
 
@@ -87,6 +88,17 @@ dotnet add package BlazorAnime.Layout
 ```csharp
 builder.Services.AddBlazorAnime();
 builder.Services.AddBlazorAnimeLayout();
+```
+
+Scope is a fifth package. It registers `IScope` and loads `BlazorAnime.Scope.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable, Draggable, Layout, or WAAPI packages.
+
+```bash
+dotnet add package BlazorAnime.Scope
+```
+
+```csharp
+builder.Services.AddBlazorAnime();
+builder.Services.AddBlazorAnimeScope();
 ```
 
 ## Usage example
@@ -833,11 +845,57 @@ await _square.Set("backgroundColor", new[] { 164d, 255, 79 });
 
 `Record`, `Animate`, and `Revert` return as soon as the call is sent. They do not return the timeline. `Delay` is a number or a `Stagger`. `EnterFrom`, `LeaveTo`, and `SwapAt` take number and string property values. Callbacks receive an `AnimationState` snapshot. `Entering`, `Leaving`, `Swapping`, and `Animating` are the elements from the latest `Animate`. `DisposeAsync` reverts the layout.
 
+## Scope
+
+`BlazorAnime.Scope` binds `createScope`. The result is a scope, not an animation. `Add` enters the scope, awaits the constructor, then leaves. Animations, timers, timelines, and the other packages' instances created during that await are registered and pick up the scope root and defaults. anime.js runs its own constructor synchronously, so a .NET method is not passed to `add(callback)`.
+
+```razor
+@implements IAsyncDisposable
+@inject IScope Scopes
+@inject IAnime Anime
+
+<div @ref="root">
+    <div class="square"></div>
+</div>
+
+@code {
+    private ElementReference root;
+    private Scope? _scope;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+        _scope = await Scopes.Create(props => props
+            .Root(root)
+            .MediaQuery("isSmall", "(max-width: 200px)")
+            .Defaults(defaults => defaults.Ease(Easing.Out(3))));
+        await _scope.Add(async ctx =>
+        {
+            var small = ctx.Matches.GetValueOrDefault("isSmall");
+            await Anime.Animate(props => props
+                .Targets(".square")
+                .TranslateX(small ? "0rem" : "4rem")
+                .Loop(true)
+                .Alternate(true));
+        });
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_scope is not null)
+            await _scope.DisposeAsync();
+    }
+}
+```
+
+`Refresh` and `Revert` resolve when the rebuild or teardown has finished. They do not return the scope. `Matches` are the named media queries. `State` is a string-to-int map that survives refresh. `keepTime` is not wrapped. `DisposeAsync` reverts the scope.
+
 ## Samples
 
 Pushes to `master` publish both samples to [olaboutcode.github.io/blazor-anime](https://olaboutcode.github.io/blazor-anime/). In the repository settings, set GitHub Pages to deploy from GitHub Actions. `scripts/publish-pages.sh` builds that same site locally, and `scripts/publish-pages.bat` does it on Windows.
 
-`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, Layout, SVG, utilities, and easings. The http profile listens on `http://localhost:5161`.
+`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, Layout, Scope, SVG, utilities, and easings. The http profile listens on `http://localhost:5161`.
 
 ```bash
 dotnet run --project samples/Examples

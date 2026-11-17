@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\src\BlazorAnime.Animatable\BlazorAnime.Animatable.csproj" />
     <ProjectReference Include="..\..\src\BlazorAnime.Draggable\BlazorAnime.Draggable.csproj" />
     <ProjectReference Include="..\..\src\BlazorAnime.Layout\BlazorAnime.Layout.csproj" />
+    <ProjectReference Include="..\..\src\BlazorAnime.Scope\BlazorAnime.Scope.csproj" />
   </ItemGroup>
 
 </Project>

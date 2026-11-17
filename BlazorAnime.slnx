@@ -14,6 +14,7 @@
     <Project Path="src/BlazorAnime.Animatable/BlazorAnime.Animatable.csproj" />
     <Project Path="src/BlazorAnime.Draggable/BlazorAnime.Draggable.csproj" />
     <Project Path="src/BlazorAnime.Layout/BlazorAnime.Layout.csproj" />
+    <Project Path="src/BlazorAnime.Scope/BlazorAnime.Scope.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/BlazorAnime.Tests/BlazorAnime.Tests.csproj" />

@@ -1,3 +1,5 @@
+import { scope as scopeState } from "./node_modules/animejs/dist/modules/core/globals.js";
+
 const VALUE_FN = "__blazorAnimeValueFn";
 
 const playbackNames = new Set([
@@ -80,7 +82,8 @@ export function install(anime) {
         if (targets == null) return [];
         if (typeof targets === "string") {
             try {
-                return Array.from(document.querySelectorAll(targets));
+                const root = scopeState.root || document;
+                return Array.from(root.querySelectorAll(targets));
             } catch {
                 return [];
             }

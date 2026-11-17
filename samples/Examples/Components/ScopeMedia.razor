@@ -1,0 +1,37 @@
+@inherits ScopeDemo
+
+<div class="demo scope-demo scope-media">
+    <div class="scope-row">
+        <div class="square"></div>
+    </div>
+    <p class="scope-readout">@_label</p>
+</div>
+
+@code {
+    private string _label = "wide";
+
+    protected override async Task Start()
+    {
+        var scope = await Open(props => props
+            .MediaQuery("isSmall", "(max-width: 200px)")
+            .MediaQuery("reduceMotion", "(prefers-reduced-motion)"));
+        await scope.Add(async ctx =>
+        {
+            var small = ctx.Matches.GetValueOrDefault("isSmall");
+            var reduce = ctx.Matches.GetValueOrDefault("reduceMotion");
+            _label = small ? "small" : "wide";
+            if (reduce)
+                _label += ", reduced";
+            await Anime.Animate(props =>
+            {
+                props.Targets(".scope-media .square");
+                if (small)
+                    props.TranslateX(0).TranslateY("-1.25rem", "1.25rem");
+                else
+                    props.TranslateX("-1.25rem", "1.25rem").TranslateY(0);
+                return props.Loop(true).Alternate(true).Duration(reduce ? 0 : small ? 750 : 1250);
+            });
+            StateHasChanged();
+        });
+    }
+}

@@ -1,0 +1,35 @@
+@inherits ScopeDemo
+
+<div class="demo scope-demo scope-revert">
+    <div class="scope-row">
+        <div class="square"></div>
+    </div>
+    <button type="button" class="scope-control" @onclick="Revert" disabled="@_reverted">Revert</button>
+</div>
+
+@code {
+    private BlazorAnime.Scope? _scope;
+    private bool _reverted;
+
+    protected override async Task Start()
+    {
+        _reverted = false;
+        _scope = await Open();
+        await _scope.Add(async _ =>
+        {
+            await Anime.Animate(props => props
+                .Targets(".scope-revert .square")
+                .TranslateX("4rem")
+                .Loop(true)
+                .Alternate(true));
+        });
+    }
+
+    private async Task Revert()
+    {
+        if (_scope is null || !Live || _reverted)
+            return;
+        await _scope.Revert();
+        _reverted = true;
+    }
+}

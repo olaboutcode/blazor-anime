@@ -494,6 +494,122 @@ public static class DemoCatalog
                 """,
                 "Components/LayoutModal.razor"))
         ]),
+        new("scope", "Scope",
+        [
+            Leaves(
+            Entry("scope", "Media queries",
+                "One square reacts to the viewport and to reduced motion.",
+                "isSmall is (max-width: 200px). reduceMotion is (prefers-reduced-motion). Add runs again when either match changes. The constructor reads Matches and creates the animation while the scope is entered.",
+                """
+                var scope = await Scopes.Create(props => props
+                    .MediaQuery("isSmall", "(max-width: 200px)")
+                    .MediaQuery("reduceMotion", "(prefers-reduced-motion)"));
+
+                await scope.Add(async ctx =>
+                {
+                    var small = ctx.Matches.GetValueOrDefault("isSmall");
+                    var reduce = ctx.Matches.GetValueOrDefault("reduceMotion");
+                    await Anime.Animate(props =>
+                    {
+                        props.Targets(".square");
+                        if (small)
+                            props.TranslateX(0).TranslateY("-1.25rem", "1.25rem");
+                        else
+                            props.TranslateX("-1.25rem", "1.25rem").TranslateY(0);
+                        return props.Loop(true).Alternate(true)
+                            .Duration(reduce ? 0 : small ? 750 : 1250);
+                    });
+                });
+                """,
+                "Components/ScopeMedia.razor")),
+            Group("Parameters",
+            Entry("scope-root", "root",
+                "Only the square inside the root moves.",
+                "Root limits every selector used while the scope is entered. The squares outside that row stay put.",
+                """
+                var scope = await Scopes.Create(props => props.Root(root));
+                await scope.Add(async _ =>
+                {
+                    await Anime.Animate(props => props
+                        .Targets(".square")
+                        .TranslateX("4rem")
+                        .Loop(true)
+                        .Alternate(true));
+                });
+                """,
+                "Components/ScopeRoot.razor"),
+            Entry("scope-defaults", "defaults",
+                "Three rows share a motion and keep their own ease.",
+                "Each row is its own scope. The default ease is out(1), out(2), or out(3). The animation does not set an ease, so it uses the scope default.",
+                """
+                var scope = await Scopes.Create(props => props
+                    .Root(row)
+                    .Defaults(defaults => defaults.Ease(Easing.Out(1))));
+                """,
+                "Components/ScopeDefaults.razor"),
+            Entry("scope-constructor", "constructor",
+                "A narrow viewport spins the square. A wide one drags it.",
+                "Add is the constructor. It runs again when isSmall changes. The previous draggable is reverted with the scope, and OnCleanup releases the .NET handle. The Scope package does not reference Draggable.",
+                """
+                await scope.Add(async ctx =>
+                {
+                    ctx.OnCleanup(ReleaseDrag);
+                    if (ctx.Matches.GetValueOrDefault("isSmall"))
+                        await Anime.Animate(props => props
+                            .Targets(".square")
+                            .Rotate(360)
+                            .Loop(true));
+                    else
+                        _drag = await Draggables.Create(".square", props => props.Container(stage));
+                });
+                """,
+                "Components/ScopeConstructor.razor")),
+            Group("Methods",
+            Entry("scope-method", "method",
+                "A click moves the square from inside the scope.",
+                "AddMethod registers onClick. Invoke enters the scope before the method runs, so the animation it creates is registered. ClientX and ClientY are the click position. There is no DOM event.",
+                """
+                await scope.AddMethod("onClick", async call =>
+                {
+                    var small = (await scope.Matches()).GetValueOrDefault("isSmall");
+                    await Anime.Animate(props =>
+                    {
+                        props.Targets(".square");
+                        return small
+                            ? props.Rotate("+=360").Duration(750)
+                            : props.TranslateX($"{call.ClientX}px").TranslateY($"{call.ClientY}px").Duration(400);
+                    });
+                });
+
+                await scope.Invoke("onClick", new ScopeCall(x, y));
+                """,
+                "Components/ScopeMethod.razor"),
+            Entry("scope-refresh", "refresh",
+                "Refresh rebuilds one row and leaves the other.",
+                "State keeps an integer across refresh. Each click advances the stagger origin and runs the constructor again. The other row is a separate scope.",
+                """
+                await scope.Add(async ctx =>
+                {
+                    var index = await ctx.State.Get("i");
+                    await ctx.State.Set("i", index + 1);
+                    await Anime.Animate(props => props
+                        .Targets(".circle")
+                        .Scale(0.5, 1)
+                        .Loop(true)
+                        .Delay(stagger => stagger.Value(40).From(index)));
+                });
+
+                await scope.Refresh();
+                """,
+                "Components/ScopeRefresh.razor"),
+            Entry("scope-revert", "revert",
+                "Revert stops the square and restores it.",
+                "Revert drops every instance created while the scope was entered, then clears the media listeners and the state map.",
+                """
+                await scope.Revert();
+                """,
+                "Components/ScopeRevert.razor"))
+        ]),
         new("svg", "SVG",
         [
             Leaves(

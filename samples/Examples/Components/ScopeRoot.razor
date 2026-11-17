@@ -1,0 +1,33 @@
+@inherits ScopeDemo
+
+<div class="demo scope-demo scope-root">
+    <div class="scope-row">
+        <div class="square"></div>
+        <span>outside</span>
+    </div>
+    <div class="scope-row" @ref="_root">
+        <div class="square"></div>
+        <span>inside</span>
+    </div>
+    <div class="scope-row">
+        <div class="square"></div>
+        <span>outside</span>
+    </div>
+</div>
+
+@code {
+    private ElementReference _root;
+
+    protected override async Task Start()
+    {
+        var scope = await Open(props => props.Root(_root));
+        await scope.Add(async _ =>
+        {
+            await Anime.Animate(props => props
+                .Targets(".square")
+                .TranslateX("4rem")
+                .Loop(true)
+                .Alternate(true));
+        });
+    }
+}

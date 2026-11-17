@@ -1,0 +1,51 @@
+@inherits ScopeDemo
+@inject IDraggable Draggables
+
+<div class="demo scope-demo scope-constructor">
+    <div class="scope-stage" @ref="_stage">
+        <div class="square @(_drag ? "is-draggable" : null)"></div>
+    </div>
+    <p class="scope-readout">@_label</p>
+</div>
+
+@code {
+    private ElementReference _stage;
+    private bool _drag;
+    private string _label = "spin";
+    private BlazorAnime.Draggable? _dragHandle;
+
+    protected override async Task Start()
+    {
+        var scope = await Open(props => props.MediaQuery("isSmall", "(max-width: 200px)"));
+        await scope.Add(async ctx =>
+        {
+            var small = ctx.Matches.GetValueOrDefault("isSmall");
+            ctx.OnCleanup(ReleaseDrag);
+            _drag = !small;
+            _label = small ? "spin" : "drag";
+            if (small)
+            {
+                await Anime.Animate(props => props
+                    .Targets(".scope-constructor .square")
+                    .Rotate(360)
+                    .Loop(true)
+                    .Duration(1200));
+            }
+            else
+            {
+                _dragHandle = await Draggables.Create(".scope-constructor .square", props => props
+                    .Container(_stage));
+            }
+            StateHasChanged();
+        });
+    }
+
+    private async Task ReleaseDrag()
+    {
+        if (_dragHandle is null)
+            return;
+        var handle = _dragHandle;
+        _dragHandle = null;
+        await handle.DisposeAsync();
+    }
+}

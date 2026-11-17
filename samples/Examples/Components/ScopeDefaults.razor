@@ -1,0 +1,35 @@
+@inherits ScopeDemo
+
+<div class="demo scope-demo scope-defaults">
+    <div class="scope-row" @ref="_one"><div class="square"></div><span>out(1)</span></div>
+    <div class="scope-row" @ref="_two"><div class="square"></div><span>out(2)</span></div>
+    <div class="scope-row" @ref="_three"><div class="square"></div><span>out(3)</span></div>
+</div>
+
+@code {
+    private ElementReference _one;
+    private ElementReference _two;
+    private ElementReference _three;
+
+    protected override async Task Start()
+    {
+        await Play(_one, Easing.Out(1));
+        await Play(_two, Easing.Out(2));
+        await Play(_three, Easing.Out(3));
+    }
+
+    private async Task Play(ElementReference root, Easing ease)
+    {
+        var scope = await Open(props => props
+            .Root(root)
+            .Defaults(defaults => defaults.Ease(ease)));
+        await scope.Add(async _ =>
+        {
+            await Anime.Animate(props => props
+                .Targets(".square")
+                .TranslateX("4rem")
+                .Loop(true)
+                .Alternate(true));
+        });
+    }
+}

@@ -1,0 +1,41 @@
+@inherits ScopeDemo
+@inject IJSRuntime Js
+
+<div class="demo scope-demo scope-method">
+    <div class="scope-stage" @ref="_stage" @onclick="OnClick">
+        <div class="square"></div>
+    </div>
+    <p class="scope-readout">Click the stage</p>
+</div>
+
+@code {
+    private ElementReference _stage;
+    private BlazorAnime.Scope? _scope;
+
+    protected override async Task Start()
+    {
+        _scope = await Open(props => props.MediaQuery("isSmall", "(max-width: 200px)"));
+        await _scope.AddMethod("onClick", async call =>
+        {
+            var small = (await _scope.Matches()).GetValueOrDefault("isSmall");
+            await Anime.Animate(props =>
+            {
+                props.Targets(".scope-method .square");
+                if (small)
+                    return props.Rotate("+=360").Duration(750);
+                return props
+                    .TranslateX($"{call.ClientX}px")
+                    .TranslateY($"{call.ClientY}px")
+                    .Duration(400);
+            });
+        });
+    }
+
+    private async Task OnClick(MouseEventArgs e)
+    {
+        if (_scope is null || !Live)
+            return;
+        var point = await Js.InvokeAsync<DocsPoint>("docsPointer", _stage, e.ClientX, e.ClientY);
+        await _scope.Invoke("onClick", new ScopeCall(point.X, point.Y));
+    }
+}

@@ -1,0 +1,53 @@
+@inherits ScopeDemo
+
+<div class="demo scope-demo scope-refresh">
+    <div class="scope-row scope-refresh-a">
+        @for (var i = 0; i < 5; i++)
+        {
+            <div class="circle"></div>
+        }
+    </div>
+    <div class="scope-row scope-refresh-b">
+        @for (var i = 0; i < 5; i++)
+        {
+            <div class="circle"></div>
+        }
+    </div>
+    <div class="scope-controls">
+        <button type="button" class="scope-control" @onclick="() => Refresh(0)">Refresh row 1</button>
+        <button type="button" class="scope-control" @onclick="() => Refresh(1)">Refresh row 2</button>
+    </div>
+</div>
+
+@code {
+    private readonly BlazorAnime.Scope?[] _rows = new BlazorAnime.Scope?[2];
+
+    protected override async Task Start()
+    {
+        _rows[0] = await Row(".scope-refresh-a .circle");
+        _rows[1] = await Row(".scope-refresh-b .circle");
+    }
+
+    private async Task<BlazorAnime.Scope> Row(string selector)
+    {
+        var scope = await Open();
+        await scope.Add(async ctx =>
+        {
+            var count = 5;
+            var index = await ctx.State.Get("i");
+            if (index >= count)
+                index = 0;
+            await ctx.State.Set("i", index + 1);
+            await Anime.Animate(props => props
+                .Targets(selector)
+                .Scale(0.5, 1)
+                .Duration(750)
+                .Loop(true)
+                .Delay(stagger => stagger.Value(40).From(index)));
+        });
+        return scope;
+    }
+
+    private Task Refresh(int row) =>
+        _rows[row] is null || !Live ? Task.CompletedTask : _rows[row]!.Refresh();
+}
