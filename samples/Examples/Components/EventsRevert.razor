@@ -1,0 +1,37 @@
+@inherits EventsDemo
+
+<div class="demo events-demo events-revert">
+    <div class="events-scroll" @ref="_container">
+        <div class="events-section"><span>scroll</span></div>
+        <div class="events-section"><div class="square"></div></div>
+        <div class="events-section"></div>
+    </div>
+    <button type="button" class="events-control" @onclick="Revert" disabled="@_reverted">Revert</button>
+</div>
+
+@code {
+    private ElementReference _container;
+    private ScrollObserver? _scroll;
+    private bool _reverted;
+
+    protected override async Task Start()
+    {
+        _reverted = false;
+        _scroll = await Open(props => props
+            .Container(_container)
+            .Sync(true));
+        await Animate(props => props
+            .Targets(".events-revert .square")
+            .TranslateX("4rem")
+            .Duration(1000)
+            .AutoPlay(_scroll.Handle));
+    }
+
+    private async Task Revert()
+    {
+        if (_scroll is null || !Live || _reverted)
+            return;
+        await _scroll.Revert();
+        _reverted = true;
+    }
+}

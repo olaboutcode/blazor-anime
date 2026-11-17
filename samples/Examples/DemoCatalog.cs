@@ -610,6 +610,60 @@ public static class DemoCatalog
                 """,
                 "Components/ScopeRevert.razor"))
         ]),
+        new("events", "Events",
+        [
+            Leaves(
+            Entry("events", "onScroll",
+                "Scroll plays the square.",
+                "AutoPlay takes the observer handle. anime.js links the animation and does not start it. The scroll container is the card.",
+                """
+                var scroll = await Events.OnScroll(props => props.Container(container));
+                await Anime.Animate(props => props
+                    .Targets(".square")
+                    .TranslateX("4rem")
+                    .Rotate("1turn")
+                    .Duration(2000)
+                    .Alternate(true)
+                    .Loop(true)
+                    .AutoPlay(scroll.Handle));
+                """,
+                "Components/EventsAutoplay.razor"),
+            Entry("events-sync", "Sync",
+                "Enter and leave call playback methods.",
+                "sync is a list of method names. Two names bind enter and leave. Four names bind the forward and backward crossings.",
+                """
+                var scroll = await Events.OnScroll(props => props
+                    .Container(container)
+                    .Enter("bottom top")
+                    .Leave("top bottom")
+                    .Sync("resume pause reverse reset"));
+                """,
+                "Components/EventsSync.razor"),
+            Entry("events-progress", "Progress",
+                "Scroll position is the animation progress.",
+                "Sync(true) seeks the linked animation. Progress runs from 0 to 1 across the threshold.",
+                """
+                .Sync(true)
+                """,
+                "Components/EventsProgress.razor"),
+            Entry("events-thresholds", "Thresholds",
+                "Enter and leave report a snapshot.",
+                "OnEnter and OnLeave receive ScrollState. Progress is 0 to 1. The callback does not get the live observer.",
+                """
+                .Enter("bottom top")
+                .Leave("top bottom")
+                .OnEnter(state => { })
+                .OnLeave(state => { })
+                """,
+                "Components/EventsThresholds.razor"),
+            Entry("events-revert", "Revert",
+                "Revert stops the scroll link.",
+                "Revert resolves when the observer is removed. It does not return the observer.",
+                """
+                await scroll.Revert();
+                """,
+                "Components/EventsRevert.razor"))
+        ]),
         new("svg", "SVG",
         [
             Leaves(

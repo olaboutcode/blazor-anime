@@ -36,6 +36,13 @@ const satellites = [
         source: fileURLToPath(new URL("./scope-entry.js", import.meta.url)),
         www: fileURLToPath(new URL("../../BlazorAnime.Scope/wwwroot/", import.meta.url)),
         forbidden: ["/scope/scope.js", "/scope-entry.js"]
+    },
+    {
+        name: "BlazorAnime.Events.lib.module.js",
+        entry: "BlazorAnime.Events.lib.module",
+        source: fileURLToPath(new URL("./events-entry.js", import.meta.url)),
+        www: fileURLToPath(new URL("../../BlazorAnime.Events/wwwroot/", import.meta.url)),
+        forbidden: ["/events/scroll.js", "/events-entry.js"]
     }
 ];
 
@@ -137,6 +144,16 @@ function assertOneEngine(metafile) {
         "/layout/layout.js",
         "/layout-entry.js"
     ], "Scope bundle");
+
+    const eventsBundle = outputNamed(outputs, "BlazorAnime.Events.lib.module.js");
+    assertNotReached(eventsBundle, outputs, [
+        "/draggable/draggable.js",
+        "/draggable-entry.js",
+        "/layout/layout.js",
+        "/layout-entry.js",
+        "/scope/scope.js",
+        "/scope-entry.js"
+    ], "Events bundle");
 }
 
 function assertNotReached(start, outputs, suffixes, label) {

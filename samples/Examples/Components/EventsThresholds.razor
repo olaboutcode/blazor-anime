@@ -1,0 +1,36 @@
+@inherits EventsDemo
+
+<div class="demo events-demo events-thresholds">
+    <div class="events-scroll" @ref="_container">
+        <div class="events-section"><span>scroll</span></div>
+        <div class="events-section">
+            <div class="square"></div>
+            <span class="events-readout">@_label</span>
+        </div>
+        <div class="events-section"></div>
+    </div>
+</div>
+
+@code {
+    private ElementReference _container;
+    private string _label = "out";
+
+    protected override async Task Start()
+    {
+        await Open(props => props
+            .Container(_container)
+            .Target(".events-thresholds .square")
+            .Enter("bottom top")
+            .Leave("top bottom")
+            .OnEnter(_ =>
+            {
+                _label = "in";
+                StateHasChanged();
+            })
+            .OnLeave(_ =>
+            {
+                _label = "out";
+                StateHasChanged();
+            }));
+    }
+}

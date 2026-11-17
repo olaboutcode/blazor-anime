@@ -186,6 +186,8 @@ public class Animation : IAsyncDisposable
     }
 
     protected IJSObjectReference Js { get; }
+
+    internal IJSObjectReference Instance => Js;
     private readonly List<IDisposable> _callbacks;
 
     protected void Track(IEnumerable<IDisposable> callbacks) => _callbacks.AddRange(callbacks);

@@ -86,6 +86,13 @@ public static class PropsBuilderExtensions
     public static PropsBuilder AutoPlay(
         this PropsBuilder builder,
         bool autoPlay) => builder.Prop("autoplay", autoPlay);
+
+    /// <summary>
+    /// Pass a scroll observer handle. anime.js links it and does not start playback.
+    /// </summary>
+    public static PropsBuilder AutoPlay(
+        this PropsBuilder builder,
+        IJSObjectReference autoplay) => builder.Prop("autoplay", autoplay);
     public static PropsBuilder Delay(
         this PropsBuilder builder,
         int milliseconds) => builder.Prop("delay", milliseconds);

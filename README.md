@@ -34,6 +34,7 @@ This guide matches the [anime.js v4 documentation](https://animejs.com/documenta
 - [Draggable](#draggable)
 - [Layout](#layout)
 - [Scope](#scope)
+- [Events](#events)
 - [Samples](#samples)
 - [Building](#building)
 
@@ -99,6 +100,17 @@ dotnet add package BlazorAnime.Scope
 ```csharp
 builder.Services.AddBlazorAnime();
 builder.Services.AddBlazorAnimeScope();
+```
+
+Events is a sixth package. It registers `IEvents` and loads `BlazorAnime.Events.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable, Draggable, Layout, Scope, or WAAPI packages.
+
+```bash
+dotnet add package BlazorAnime.Events
+```
+
+```csharp
+builder.Services.AddBlazorAnime();
+builder.Services.AddBlazorAnimeEvents();
 ```
 
 ## Usage example
@@ -891,11 +903,43 @@ await _square.Set("backgroundColor", new[] { 164d, 255, 79 });
 
 `Refresh` and `Revert` resolve when the rebuild or teardown has finished. They do not return the scope. `Matches` are the named media queries. `State` is a string-to-int map that survives refresh. `keepTime` is not wrapped. `DisposeAsync` reverts the scope.
 
+## Events
+
+`BlazorAnime.Events` binds `onScroll`. The result is a scroll observer, not an animation. Pass `Handle` to `AutoPlay`. anime.js links the animation, timer, or timeline and does not start it.
+
+```razor
+@inject IEvents Events
+@inject IAnime Anime
+
+<div class="scroll" @ref="container">
+    <div class="square"></div>
+</div>
+
+@code {
+    private ElementReference container;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+        var scroll = await Events.OnScroll(props => props
+            .Container(container)
+            .Sync(true));
+        await Anime.Animate(props => props
+            .Targets(".square")
+            .TranslateX("4rem")
+            .AutoPlay(scroll.Handle));
+    }
+}
+```
+
+`Refresh`, `Revert`, and `Link` resolve when finished and do not return the observer. `Sync(true)` seeks playback from scroll progress. A method string such as `play pause` calls those methods on enter and leave. Callbacks receive a `ScrollState` snapshot. `DisposeAsync` reverts the observer.
+
 ## Samples
 
 Pushes to `master` publish both samples to [olaboutcode.github.io/blazor-anime](https://olaboutcode.github.io/blazor-anime/). In the repository settings, set GitHub Pages to deploy from GitHub Actions. `scripts/publish-pages.sh` builds that same site locally, and `scripts/publish-pages.bat` does it on Windows.
 
-`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, Layout, Scope, SVG, utilities, and easings. The http profile listens on `http://localhost:5161`.
+`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, Layout, Scope, Events, SVG, utilities, and easings. The http profile listens on `http://localhost:5161`.
 
 ```bash
 dotnet run --project samples/Examples

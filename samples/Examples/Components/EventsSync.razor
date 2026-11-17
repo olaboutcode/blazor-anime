@@ -1,0 +1,28 @@
+@inherits EventsDemo
+
+<div class="demo events-demo events-sync">
+    <div class="events-scroll" @ref="_container">
+        <div class="events-section"><span>scroll</span></div>
+        <div class="events-section"><div class="square"></div></div>
+        <div class="events-section"></div>
+    </div>
+</div>
+
+@code {
+    private ElementReference _container;
+
+    protected override async Task Start()
+    {
+        var scroll = await Open(props => props
+            .Container(_container)
+            .Enter("bottom top")
+            .Leave("top bottom")
+            .Sync("resume pause reverse reset"));
+        await Animate(props => props
+            .Targets(".events-sync .square")
+            .TranslateX("4rem")
+            .Rotate("1turn")
+            .Duration(2000)
+            .AutoPlay(scroll.Handle));
+    }
+}
