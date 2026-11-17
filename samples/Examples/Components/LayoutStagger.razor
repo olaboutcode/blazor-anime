@@ -1,0 +1,26 @@
+@inherits LayoutDemo
+
+<div class="demo layout-demo layout-stagger">
+    <div class="layout-field @(_row ? "row" : null)">
+        <div class="layout-item">Item A</div>
+        <div class="layout-item">Item B</div>
+        <div class="layout-item">Item C</div>
+        <div class="layout-item">Item D</div>
+        <div class="layout-item">Item E</div>
+    </div>
+    <button type="button" class="layout-control" @onclick="Toggle">Stagger animation</button>
+</div>
+
+@code {
+    private bool _row;
+
+    protected override Task OnFirstRender() =>
+        Create(".layout-stagger .layout-field", props => props.Ease(Easing.OutExpo));
+
+    private Task Toggle()
+    {
+        var fromEnd = _row;
+        return Prepare(() => _row = !_row, props => props.Delay(stagger =>
+            stagger.Value(50).From(fromEnd ? BlazorAnime.StaggerFrom.Last : BlazorAnime.StaggerFrom.First)));
+    }
+}

@@ -1,0 +1,53 @@
+@inherits LayoutDemo
+
+<div class="demo layout-demo layout-leave">
+    <div class="layout-field">
+        @foreach (var item in _items)
+        {
+            <div class="layout-item @(_hidden.Contains(item) ? "is-hidden" : null)" @key="item">@item</div>
+        }
+    </div>
+    <button type="button" class="layout-control" @onclick="Remove" disabled="@(!_items.Any(item => !_hidden.Contains(item)))">Remove item</button>
+</div>
+
+@code {
+    private readonly List<int> _items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    private readonly HashSet<int> _hidden = [];
+    private readonly Queue<int> _leaving = new();
+
+    protected override Task OnFirstRender() =>
+        Create(".layout-leave .layout-field", props => props
+            .Duration(250)
+            .Ease(Easing.OutQuad)
+            .LeaveTo(state => state
+                .Property("transform", "translateY(-100px) scale(.25)")
+                .Opacity(0)
+                .Duration(350)
+                .Ease(Easing.Out(3)))
+            .OnComplete(state => { _ = DropLeaving(); }));
+
+    private Task Remove() => Prepare(() =>
+    {
+        var next = _items.FirstOrDefault(item => !_hidden.Contains(item));
+        if (next == 0)
+            return;
+        _hidden.Add(next);
+        _leaving.Enqueue(next);
+    });
+
+    private async Task DropLeaving()
+    {
+        if (_leaving.Count == 0)
+            return;
+        var item = _leaving.Dequeue();
+        _items.Remove(item);
+        _hidden.Remove(item);
+        try
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+    }
+}

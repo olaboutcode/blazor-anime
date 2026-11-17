@@ -32,6 +32,7 @@ This guide matches the [anime.js v4 documentation](https://animejs.com/documenta
   - [Helpers](#helpers)
 - [Animatable](#animatable)
 - [Draggable](#draggable)
+- [Layout](#layout)
 - [Samples](#samples)
 - [Building](#building)
 
@@ -75,6 +76,17 @@ dotnet add package BlazorAnime.Draggable
 ```csharp
 builder.Services.AddBlazorAnime();
 builder.Services.AddBlazorAnimeDraggable();
+```
+
+Layout is a fourth package. It registers `ILayout` and loads `BlazorAnime.Layout.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable, Draggable, or WAAPI packages.
+
+```bash
+dotnet add package BlazorAnime.Layout
+```
+
+```csharp
+builder.Services.AddBlazorAnime();
+builder.Services.AddBlazorAnimeLayout();
 ```
 
 ## Usage example
@@ -767,11 +779,65 @@ await _square.Set("backgroundColor", new[] { 164d, 255, 79 });
 
 `Disable`, `Enable`, `SetX`, `SetY`, `Stop`, `Reset`, `Refresh`, `Revert`, `ScrollInView`, and `AnimateInView` return as soon as the call is sent. `X`, `Y`, `Velocity`, and the other reads return the current value. `Target`, `Trigger`, `Container`, and `ScrollContainer` are the elements anime.js resolved. Callbacks receive a `DragState` snapshot. `DisposeAsync` reverts the drag so the pointer listeners do not stay.
 
+## Layout
+
+`BlazorAnime.Layout` binds `createLayout`. The result is a layout instance, not an animation. `Record` measures the current DOM. Change the markup and let Blazor render, then call `Animate` from `OnAfterRenderAsync`. `update(callback)` is not wrapped, because that callback has to change the DOM before `animate` returns.
+
+```razor
+@implements IAsyncDisposable
+@inject ILayout Layouts
+
+<div class="stage">
+    <div class="item">A</div>
+    <div class="item">B</div>
+</div>
+<button @onclick="Toggle">Toggle</button>
+
+@code {
+    private Layout? _layout;
+    private bool _row;
+    private bool _pending;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _layout = await Layouts.Create(".stage", props => props
+                .Children(".item")
+                .Duration(350)
+                .EnterFrom(state => state.Opacity(0)));
+        }
+        else if (_pending && _layout is not null)
+        {
+            _pending = false;
+            await _layout.Animate();
+        }
+    }
+
+    private async Task Toggle()
+    {
+        if (_layout is null)
+            return;
+        await _layout.Record();
+        _row = !_row;
+        _pending = true;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_layout is not null)
+            await _layout.DisposeAsync();
+    }
+}
+```
+
+`Record`, `Animate`, and `Revert` return as soon as the call is sent. They do not return the timeline. `Delay` is a number or a `Stagger`. `EnterFrom`, `LeaveTo`, and `SwapAt` take number and string property values. Callbacks receive an `AnimationState` snapshot. `Entering`, `Leaving`, `Swapping`, and `Animating` are the elements from the latest `Animate`. `DisposeAsync` reverts the layout.
+
 ## Samples
 
 Pushes to `master` publish both samples to [olaboutcode.github.io/blazor-anime](https://olaboutcode.github.io/blazor-anime/). In the repository settings, set GitHub Pages to deploy from GitHub Actions. `scripts/publish-pages.sh` builds that same site locally, and `scripts/publish-pages.bat` does it on Windows.
 
-`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, SVG, utilities, and easings. The http profile listens on `http://localhost:5161`.
+`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, Layout, SVG, utilities, and easings. The http profile listens on `http://localhost:5161`.
 
 ```bash
 dotnet run --project samples/Examples

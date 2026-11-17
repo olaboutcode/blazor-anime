@@ -1,0 +1,83 @@
+@inherits LayoutDemo
+@inject IJSRuntime Js
+
+<div class="demo layout-demo layout-modal">
+    <div class="layout-modal-grid">
+        @foreach (var card in Cards)
+        {
+            <button type="button"
+                    class="layout-modal-item"
+                    data-layout-id="@card.Id"
+                    data-duration="@card.Duration"
+                    @onclick="() => Open(card.Id)">
+                <h2 class="layout-modal-title" data-layout-id="@card.TitleId">@card.Title</h2>
+                <h3 class="layout-modal-meta" data-layout-id="@card.MetaId">(@card.Duration)ms</h3>
+                <p class="layout-modal-copy">This paragraph is hidden until the card is inside the dialog.</p>
+            </button>
+        }
+    </div>
+    <dialog class="layout-modal-dialog"
+            @ref="_dialog"
+            @onclick="Close"
+            @oncancel="Close"
+            @oncancel:preventDefault="true"></dialog>
+</div>
+
+@code {
+    private static readonly ModalCard[] Cards =
+    [
+        new("A", "Item A", 500),
+        new("B", "Item B", 1000),
+        new("C", "Item C", 2000)
+    ];
+
+    private ElementReference _dialog;
+    private bool _render = true;
+    private bool _open;
+    private string? _openId;
+
+    protected override bool ShouldRender() => _render;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+        await Create(".layout-modal-dialog", props => props
+            .Children([".layout-modal-item", ".layout-modal-title", ".layout-modal-meta", ".layout-modal-copy"])
+            .Properties("--overlay-alpha"));
+        _render = false;
+    }
+
+    protected override Task OnFirstRender() => Task.CompletedTask;
+
+    private async Task Open(string id)
+    {
+        if (_open || Instance is null || !Live)
+            return;
+        var duration = Cards.First(card => card.Id == id).Duration;
+        _open = true;
+        _openId = id;
+        await Js.InvokeVoidAsync("layoutModalClone", _dialog, id);
+        await Instance.Record();
+        await Js.InvokeVoidAsync("layoutModalShow", _dialog, id);
+        await Instance.Animate(props => props.Duration(duration));
+    }
+
+    private async Task Close()
+    {
+        if (!_open || Instance is null || !Live || _openId is null)
+            return;
+        var id = _openId;
+        _open = false;
+        _openId = null;
+        await Instance.Record();
+        await Js.InvokeVoidAsync("layoutModalHide", _dialog, id);
+        await Instance.Animate();
+    }
+
+    private sealed record ModalCard(string Id, string Title, int Duration)
+    {
+        public string TitleId => Id + "-title";
+        public string MetaId => Id + "-duration";
+    }
+}

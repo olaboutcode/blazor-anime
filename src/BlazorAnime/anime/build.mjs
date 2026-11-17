@@ -22,6 +22,13 @@ const satellites = [
         source: fileURLToPath(new URL("./draggable-entry.js", import.meta.url)),
         www: fileURLToPath(new URL("../../BlazorAnime.Draggable/wwwroot/", import.meta.url)),
         forbidden: ["/draggable/draggable.js", "/draggable-entry.js"]
+    },
+    {
+        name: "BlazorAnime.Layout.lib.module.js",
+        entry: "BlazorAnime.Layout.lib.module",
+        source: fileURLToPath(new URL("./layout-entry.js", import.meta.url)),
+        www: fileURLToPath(new URL("../../BlazorAnime.Layout/wwwroot/", import.meta.url)),
+        forbidden: ["/layout/layout.js", "/layout-entry.js"]
     }
 ];
 
@@ -112,6 +119,9 @@ function assertOneEngine(metafile) {
 
     const animatable = outputNamed(outputs, "BlazorAnime.Animatable.lib.module.js");
     assertNotReached(animatable, outputs, ["/draggable/draggable.js", "/draggable-entry.js"], "Animatable bundle");
+
+    const layout = outputNamed(outputs, "BlazorAnime.Layout.lib.module.js");
+    assertNotReached(layout, outputs, ["/draggable/draggable.js", "/draggable-entry.js"], "Layout bundle");
 }
 
 function assertNotReached(start, outputs, suffixes, label) {

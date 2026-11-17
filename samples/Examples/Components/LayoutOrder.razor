@@ -1,0 +1,27 @@
+@inherits LayoutDemo
+
+<div class="demo layout-demo layout-order">
+    <div class="layout-field">
+        @foreach (var item in _items)
+        {
+            <div class="layout-item" @key="item">@item</div>
+        }
+    </div>
+    <button type="button" class="layout-control" @onclick="Shuffle">Shuffle</button>
+</div>
+
+@code {
+    private readonly List<string> _items = ["A", "B", "C", "D", "E", "F", "G"];
+
+    protected override Task OnFirstRender() =>
+        Create(".layout-order .layout-field");
+
+    private Task Shuffle() => Prepare(() =>
+    {
+        for (var i = _items.Count - 1; i > 0; i--)
+        {
+            var j = Random.Shared.Next(i + 1);
+            (_items[i], _items[j]) = (_items[j], _items[i]);
+        }
+    });
+}

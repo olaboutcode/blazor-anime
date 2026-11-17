@@ -400,6 +400,100 @@ public static class DemoCatalog
                 """,
                 "Components/DraggableProperties.razor"))
         ]),
+        new("layout", "Layout",
+        [
+            Leaves(
+            Entry("layout", "Root",
+                "Animate one root, and leave the other where it is.",
+                "Each root is its own layout, so a class change on A does not measure B. Record, render the new class, then Animate. That is the Blazor form of update(), whose callback has to change the DOM before it returns.",
+                """
+                var layoutA = await Layouts.Create(".root-a");
+                var layoutB = await Layouts.Create(".root-b");
+
+                await layoutA.Record();
+                _rowA = !_rowA;
+                await layoutA.Animate();
+                """,
+                "Components/LayoutRoot.razor")),
+            Group("Changes",
+            Entry("layout-display", "display",
+                "Cycle flex, grid, and display: none.",
+                "The root class walks flex-row, grid-1, flex-col, none, grid-2, and flex-row-reverse. none hides every item. leaveTo scales those items to 0, staggered by 75ms.",
+                """
+                var layout = await Layouts.Create(".container", props => props
+                    .LeaveTo(state => state
+                        .Property("transform", "scale(0)")
+                        .Delay(Stagger.Create(75))));
+                """,
+                "Components/LayoutDisplay.razor"),
+            Entry("layout-stagger", "stagger",
+                "Stagger the row change from the first or last item.",
+                "Ease is outExpo. The delay is stagger(50). from is last when the root is already a row, and first otherwise. The value is chosen before the class toggles, matching the docs call.",
+                """
+                var layout = await Layouts.Create(".container", props => props
+                    .Ease(Easing.OutExpo));
+
+                await layout.Animate(props => props.Delay(stagger =>
+                    stagger.Value(50).From(fromEnd ? BlazorAnime.StaggerFrom.Last : BlazorAnime.StaggerFrom.First)));
+                """,
+                "Components/LayoutStagger.razor"),
+            Entry("layout-order", "DOM order",
+                "Shuffle the items.",
+                "The same elements change order. @key keeps each letter on its element so anime.js can follow it across the render.",
+                """
+                await layout.Record();
+                Shuffle(_items);
+                await layout.Animate();
+                """,
+                "Components/LayoutOrder.razor")),
+            Group("Enter and leave",
+            Entry("layout-enter", "enterFrom",
+                "Add items into an empty root.",
+                "enterFrom starts at translateY(100px) scale(.25) and opacity 0, over 350ms with out(3). The rest of the layout uses 250ms and outQuad. The button stops at 15 items.",
+                """
+                var layout = await Layouts.Create(".container", props => props
+                    .Duration(250)
+                    .Ease(Easing.OutQuad)
+                    .EnterFrom(state => state
+                        .Property("transform", "translateY(100px) scale(.25)")
+                        .Opacity(0)
+                        .Duration(350)
+                        .Ease(Easing.Out(3))));
+                """,
+                "Components/LayoutEnter.razor"),
+            Entry("layout-leave", "leaveTo",
+                "Hide the first item, then remove it.",
+                "leaveTo moves the item to translateY(-100px) scale(.25) and opacity 0. The item stays in the DOM with display: none during the transition. OnComplete removes it, which is the Blazor form of layout.leaving.",
+                """
+                var layout = await Layouts.Create(".container", props => props
+                    .Duration(250)
+                    .Ease(Easing.OutQuad)
+                    .LeaveTo(state => state
+                        .Property("transform", "translateY(-100px) scale(.25)")
+                        .Opacity(0)
+                        .Duration(350)
+                        .Ease(Easing.Out(3))));
+                """,
+                "Components/LayoutLeave.razor"),
+            Entry("layout-swap", "swap parent",
+                "Move one item between two parents.",
+                "The layout root contains both parents, and every descendant is tracked. The item element itself is appended to the other parent. The next parent is raised.",
+                """
+                var layout = await Layouts.Create(".layout");
+                """,
+                "Components/LayoutSwap.razor"),
+            Entry("layout-modal", "modal",
+                "Open a card into a dialog.",
+                "The dialog is the root. The cards sit outside it and share data-layout-id with the clone placed inside the dialog. Children names those elements, and --overlay-alpha fades the backdrop. Open uses the card's duration.",
+                """
+                var layout = await Layouts.Create(".dialog", props => props
+                    .Children([".item", "h2", "h3", "p"])
+                    .Properties("--overlay-alpha"));
+
+                await layout.Animate(props => props.Duration(duration));
+                """,
+                "Components/LayoutModal.razor"))
+        ]),
         new("svg", "SVG",
         [
             Leaves(

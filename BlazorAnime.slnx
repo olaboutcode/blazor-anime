@@ -13,6 +13,7 @@
     <Project Path="src/BlazorAnime/BlazorAnime.csproj" />
     <Project Path="src/BlazorAnime.Animatable/BlazorAnime.Animatable.csproj" />
     <Project Path="src/BlazorAnime.Draggable/BlazorAnime.Draggable.csproj" />
+    <Project Path="src/BlazorAnime.Layout/BlazorAnime.Layout.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/BlazorAnime.Tests/BlazorAnime.Tests.csproj" />

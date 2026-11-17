@@ -1,0 +1,38 @@
+@inherits LayoutDemo
+@inject IJSRuntime Js
+
+<div class="demo layout-demo layout-swap">
+    <div class="layout-swap-root" @ref="_root">
+        <div class="layout-bin">
+            <div class="layout-swap-item">Item A</div>
+        </div>
+        <div class="layout-bin layout-bin-wide"></div>
+    </div>
+    <button type="button" class="layout-control" @onclick="Move">Swap parent</button>
+</div>
+
+@code {
+    private ElementReference _root;
+    private bool _render = true;
+
+    protected override bool ShouldRender() => _render;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+        await Create(".layout-swap .layout-swap-root");
+        _render = false;
+    }
+
+    protected override Task OnFirstRender() => Task.CompletedTask;
+
+    private async Task Move()
+    {
+        if (Instance is null || !Live)
+            return;
+        await Instance.Record();
+        await Js.InvokeVoidAsync("layoutSwapParent", _root);
+        await Instance.Animate();
+    }
+}

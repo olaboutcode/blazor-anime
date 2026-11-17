@@ -56,6 +56,33 @@
             var rect = element.getBoundingClientRect();
             return Math.atan2(clientY - rect.top - rect.height / 2, clientX - rect.left - rect.width / 2);
         };
+        window.layoutSwapParent = function (root) {
+            var child = root.querySelector(".layout-swap-item");
+            if (!child) return;
+            var parent = child.parentElement;
+            var next = parent.nextElementSibling || parent.previousElementSibling;
+            if (!next) return;
+            parent.style.zIndex = "0";
+            next.style.zIndex = "1";
+            next.appendChild(child);
+        };
+        window.layoutModalClone = function (dialog, id) {
+            var item = document.querySelector('.layout-modal-item[data-layout-id="' + id + '"]');
+            if (!item) return;
+            dialog.replaceChildren(item.cloneNode(true));
+        };
+        window.layoutModalShow = function (dialog, id) {
+            var item = document.querySelector('.layout-modal-item[data-layout-id="' + id + '"]');
+            dialog.showModal();
+            if (item) item.classList.add("is-open");
+        };
+        window.layoutModalHide = function (dialog, id) {
+            var item = document.querySelector('.layout-modal-item[data-layout-id="' + id + '"]');
+            dialog.close();
+            if (!item) return;
+            item.classList.remove("is-open");
+            item.focus();
+        };
     </script>
 </head>
 

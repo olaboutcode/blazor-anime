@@ -1,0 +1,35 @@
+@inherits LayoutDemo
+
+<div class="demo layout-demo layout-root">
+    <div class="layout-root-pair">
+        <div class="layout-field layout-root-a @(_rowA ? "row" : null)">
+            <div class="layout-item">A 1</div>
+            <div class="layout-item">A 2</div>
+        </div>
+        <div class="layout-field layout-root-b @(_rowB ? "row" : null)">
+            <div class="layout-item">B 1</div>
+            <div class="layout-item">B 2</div>
+        </div>
+    </div>
+    <div class="layout-controls">
+        <button type="button" class="layout-control" @onclick="ToggleA">Animate A</button>
+        <button type="button" class="layout-control" @onclick="ToggleB">Animate B</button>
+    </div>
+</div>
+
+@code {
+    private BlazorAnime.Layout? _layoutA;
+    private BlazorAnime.Layout? _layoutB;
+    private bool _rowA;
+    private bool _rowB;
+
+    protected override async Task OnFirstRender()
+    {
+        _layoutA = await Create(".layout-root-a");
+        _layoutB = await Create(".layout-root-b");
+    }
+
+    private Task ToggleA() => _layoutA is null ? Task.CompletedTask : Prepare(_layoutA, () => _rowA = !_rowA);
+
+    private Task ToggleB() => _layoutB is null ? Task.CompletedTask : Prepare(_layoutB, () => _rowB = !_rowB);
+}

@@ -1,0 +1,28 @@
+@inherits LayoutDemo
+
+<div class="demo layout-demo layout-display">
+    <div class="layout-field @_mode">
+        <div class="layout-item">Item A</div>
+        <div class="layout-item">Item B</div>
+        <div class="layout-item">Item C</div>
+    </div>
+    <button type="button" class="layout-control" @onclick="Next">@_mode</button>
+</div>
+
+@code {
+    private static readonly string[] Modes = ["flex-row", "grid-1", "flex-col", "none", "grid-2", "flex-row-reverse"];
+    private int _index;
+    private string _mode = Modes[0];
+
+    protected override Task OnFirstRender() =>
+        Create(".layout-display .layout-field", props => props
+            .LeaveTo(state => state
+                .Property("transform", "scale(0)")
+                .Delay(Stagger.Create(75))));
+
+    private Task Next() => Prepare(() =>
+    {
+        _index = _index == Modes.Length - 1 ? 0 : _index + 1;
+        _mode = Modes[_index];
+    });
+}

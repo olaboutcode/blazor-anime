@@ -1,0 +1,33 @@
+@inherits LayoutDemo
+
+<div class="demo layout-demo layout-enter">
+    <div class="layout-field">
+        @foreach (var item in _items)
+        {
+            <div class="layout-item" @key="item">@item</div>
+        }
+    </div>
+    <button type="button" class="layout-control" @onclick="Add" disabled="@(_items.Count >= 15)">Add item</button>
+</div>
+
+@code {
+    private readonly List<int> _items = [];
+    private int _count;
+
+    protected override Task OnFirstRender() =>
+        Create(".layout-enter .layout-field", props => props
+            .Duration(250)
+            .Ease(Easing.OutQuad)
+            .EnterFrom(state => state
+                .Property("transform", "translateY(100px) scale(.25)")
+                .Opacity(0)
+                .Duration(350)
+                .Ease(Easing.Out(3))));
+
+    private Task Add() => Prepare(() =>
+    {
+        if (_count >= 15)
+            return;
+        _items.Add(++_count);
+    });
+}

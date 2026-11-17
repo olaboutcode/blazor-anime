@@ -11,5 +11,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddBlazorAnime();
 builder.Services.AddBlazorAnimeAnimatable();
 builder.Services.AddBlazorAnimeDraggable();
+builder.Services.AddBlazorAnimeLayout();
 
 await builder.Build().RunAsync();

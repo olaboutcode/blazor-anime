@@ -23,6 +23,7 @@
         <InternalsVisibleTo Include="BlazorAnime.Tests"/>
         <InternalsVisibleTo Include="BlazorAnime.Animatable"/>
         <InternalsVisibleTo Include="BlazorAnime.Draggable"/>
+        <InternalsVisibleTo Include="BlazorAnime.Layout"/>
     </ItemGroup>
 
     <ItemGroup>
