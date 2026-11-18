@@ -15,5 +15,6 @@ builder.Services.AddBlazorAnimeLayout();
 builder.Services.AddBlazorAnimeScope();
 builder.Services.AddBlazorAnimeEvents();
 builder.Services.AddBlazorAnimeWaapi();
+builder.Services.AddBlazorAnimeText();
 
 await builder.Build().RunAsync();

@@ -1,4 +1,4 @@
-import{a as g}from"../BlazorAnime/chunks/4NK53C2I.js";import{fa as h,ga as T,ha as k,ra as A}from"../BlazorAnime/chunks/U2BIFWTN.js";/**
+import{a as g}from"../BlazorAnime/chunks/F2Z333XE.js";import{ga as h,ha as T,ia as k,ta as A}from"../BlazorAnime/chunks/IHLRTKWS.js";/**
  * Anime.js - waapi - ESM
  * @version v4.5.0
  * @license MIT

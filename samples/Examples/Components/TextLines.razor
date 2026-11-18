@@ -1,0 +1,22 @@
+@inherits TextDemo
+
+<div class="demo text-demo text-lines">
+    <p>First line<br>Second line</p>
+</div>
+
+@code {
+    protected override async Task Start()
+    {
+        var split = await Split(".text-lines p", props => props
+            .Lines(true)
+            .Words(false)
+            .Chars(false));
+        await Animate(props => props
+            .Targets(split.Lines)
+            .TranslateY("100%", "0%")
+            .Ease(Easing.InOut(3))
+            .Duration(700)
+            .Delay(Stagger.Create(120))
+            .Loop(true));
+    }
+}

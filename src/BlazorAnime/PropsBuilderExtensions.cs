@@ -49,6 +49,21 @@ public static class PropsBuilderExtensions
     public static PropsBuilder Targets(
         this PropsBuilder builder,
         DrawableTarget drawable) => builder.ObjectTarget("targets", drawable.Reference);
+
+    /// <summary>
+    /// Element handles whose <c>target</c> is the DOM node. <c>TextSplit</c> lines, words, and chars use this.
+    /// </summary>
+    public static PropsBuilder Targets(
+        this PropsBuilder builder,
+        IReadOnlyList<IJSObjectReference> references)
+    {
+        ArgumentNullException.ThrowIfNull(references);
+        if (references.Count == 0)
+            throw new ArgumentException("At least one target is required.", nameof(references));
+        return references.Count == 1
+            ? builder.ObjectTarget("targets", references[0])
+            : builder.ObjectTarget("targets", references.ToArray());
+    }
     public static PropsBuilder Points(
         this PropsBuilder builder,
         Action<PropsBuilder> configure) => builder.Prop("points", configure);

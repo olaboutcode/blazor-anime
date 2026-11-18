@@ -1,0 +1,30 @@
+@inherits TextDemo
+
+<div class="demo text-demo text-revert">
+    <p>Colored words are split.</p>
+    <button type="button" class="text-control" disabled="@(Playing != true)" @onclick="Revert" @onclick:stopPropagation="true">Revert</button>
+</div>
+
+@code {
+    private TextSplit? _split;
+
+    protected override async Task Start()
+    {
+        _split = await Split(".text-revert p", props => props.Words(true));
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Playing == false)
+            _split = null;
+    }
+
+    private async Task Revert()
+    {
+        if (_split is null)
+            return;
+        var split = _split;
+        _split = null;
+        await split.Revert();
+    }
+}

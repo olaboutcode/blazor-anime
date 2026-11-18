@@ -1,0 +1,28 @@
+@inherits TextDemo
+
+<div class="demo text-demo text-split">
+    <p>Split words and chars</p>
+</div>
+
+@code {
+    protected override async Task Start()
+    {
+        var split = await Split(".text-split p", props => props
+            .Words(part => part.Wrap("clip"))
+            .Chars(true));
+        await Animate(props => props
+            .Targets(split.Words)
+            .TranslateY("100%", "0%")
+            .Ease(Easing.InOut(3))
+            .Duration(650)
+            .Delay(Stagger.Create(125))
+            .Loop(true));
+        await Animate(props => props
+            .Targets(split.Chars)
+            .TranslateY("100%", "0%")
+            .Ease(Easing.InOut(3))
+            .Duration(650)
+            .Delay(Stagger.Create(10))
+            .Loop(true));
+    }
+}

@@ -61,6 +61,13 @@ body {
     --hex-current-8: #232a2a;
 }
 
+.docs-shell[data-docs-section="text"] {
+    --hex-current-1: #33b3f1;
+    --hex-current-6: #273d47;
+    --hex-current-7: #263338;
+    --hex-current-8: #25292a;
+}
+
 .docs-shell[data-docs-section="utilities"] {
     --hex-current-1: #4d9cff;
     --hex-current-6: #2b3849;
@@ -425,6 +432,7 @@ body {
 .docs-nav > ul > li[data-docs-section="animation"] { --hex-current-1: #ffa828; }
 .docs-nav > ul > li[data-docs-section="timeline"] { --hex-current-1: #ffcc2a; }
 .docs-nav > ul > li[data-docs-section="svg"] { --hex-current-1: #05dbe9; }
+.docs-nav > ul > li[data-docs-section="text"] { --hex-current-1: #33b3f1; }
 .docs-nav > ul > li[data-docs-section="utilities"] { --hex-current-1: #4d9cff; }
 .docs-nav > ul > li[data-docs-section="easings"] { --hex-current-1: #7c85ff; }
 .docs-nav > ul > li[data-docs-section="animatable"] { --hex-current-1: #f9f640; }
@@ -1049,7 +1057,8 @@ body {
 }
 
 .docs-shell .events-control,
-.docs-shell .waapi-control {
+.docs-shell .waapi-control,
+.docs-shell .text-control {
     position: relative;
     z-index: 1;
     margin: 0.2rem auto;
@@ -1063,7 +1072,8 @@ body {
 }
 
 .docs-shell .events-control:disabled,
-.docs-shell .waapi-control:disabled {
+.docs-shell .waapi-control:disabled,
+.docs-shell .text-control:disabled {
     opacity: 0.4;
     cursor: default;
 }
@@ -1092,6 +1102,22 @@ body {
 .docs-shell .waapi-controls {
     display: flex;
     gap: 0.25rem;
+}
+
+.docs-shell .text-demo {
+    width: 100%;
+    color: var(--hex-fg-1);
+}
+
+.docs-shell .text-demo p {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.35;
+    letter-spacing: 0.03em;
+}
+
+.docs-shell .text-revert [data-word] {
+    color: var(--hex-current-1);
 }
 
 .docs-demo .demo-content svg {

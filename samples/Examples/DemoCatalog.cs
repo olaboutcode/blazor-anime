@@ -710,6 +710,79 @@ public static class DemoCatalog
                 """,
                 "Components/SvgMotionPath.razor"))
         ]),
+        new("text", "Text",
+        [
+            Leaves(
+            Entry("text", "Split",
+                "Split a sentence into words and characters.",
+                "Words use wrap clip, so each word hides its own overflow. Chars is true. Both lists are element handles passed to Targets. An omitted words value would still split words.",
+                """
+                var split = await Text.Split("p", props => props
+                    .Words(part => part.Wrap("clip"))
+                    .Chars(true));
+                await Anime.Animate(props => props
+                    .Targets(split.Words)
+                    .TranslateY("100%", "0%")
+                    .Delay(Stagger.Create(125))
+                    .Loop(true));
+                await Anime.Animate(props => props
+                    .Targets(split.Chars)
+                    .TranslateY("100%", "0%")
+                    .Delay(Stagger.Create(10))
+                    .Loop(true));
+                """,
+                "Components/TextSplitDemo.razor"),
+            Entry("text-lines", "Lines",
+                "Split two lines and move each one.",
+                "Lines(true) with words and chars turned off keeps the line elements. A line break gives the splitter two tops to measure.",
+                """
+                var split = await Text.Split("p", props => props
+                    .Lines(true)
+                    .Words(false)
+                    .Chars(false));
+                await Anime.Animate(props => props
+                    .Targets(split.Lines)
+                    .TranslateY("100%", "0%")
+                    .Delay(Stagger.Create(120))
+                    .Loop(true));
+                """,
+                "Components/TextLines.razor"),
+            Entry("text-settings", "Class and wrap",
+                "Give each word a class and clip its overflow.",
+                "Wrap clip hides the word while it moves in. Class sets the span class. Clone and an HTML template that contains {value} are the other part settings.",
+                """
+                var split = await Text.Split("p", props => props
+                    .Words(part => part.Class("split-word").Wrap("clip")));
+                await Anime.Animate(props => props
+                    .Targets(split.Words)
+                    .TranslateY("-100%", "0%")
+                    .Delay(Stagger.Create(80))
+                    .Loop(true));
+                """,
+                "Components/TextSettings.razor"),
+            Entry("text-scramble", "Scramble",
+                "Reveal the sentence through a character scramble.",
+                "Scramble returns the function scrambleText builds. InnerHtml passes it to the animation. It does not create an animation by itself. Chars can be a named set, a range, or a literal.",
+                """
+                var scramble = await Text.Scramble(props => props
+                    .Chars("uppercase")
+                    .Cursor("_")
+                    .From("center"));
+                await Anime.Animate(props => props
+                    .Targets("p")
+                    .InnerHtml(scramble)
+                    .Loop(true)
+                    .LoopDelay(800));
+                """,
+                "Components/TextScrambleDemo.razor"),
+            Entry("text-revert", "Revert",
+                "Put the original sentence back.",
+                "Revert resolves when the original HTML is restored. It does not return the splitter. Refresh rebuilds the elements, so Lines, Words, and Chars are replaced.",
+                """
+                await split.Revert();
+                """,
+                "Components/TextRevert.razor"))
+        ]),
         new("utilities", "Utilities",
         [
             Group("Stagger",

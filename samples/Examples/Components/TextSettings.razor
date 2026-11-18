@@ -1,0 +1,20 @@
+@inherits TextDemo
+
+<div class="demo text-demo text-settings">
+    <p>Clip each word</p>
+</div>
+
+@code {
+    protected override async Task Start()
+    {
+        var split = await Split(".text-settings p", props => props
+            .Words(part => part.Class("split-word").Wrap("clip")));
+        await Animate(props => props
+            .Targets(split.Words)
+            .TranslateY("-100%", "0%")
+            .Ease(Easing.Out(3))
+            .Duration(600)
+            .Delay(Stagger.Create(80))
+            .Loop(true));
+    }
+}

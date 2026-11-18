@@ -1,0 +1,20 @@
+@inherits TextDemo
+
+<div class="demo text-demo text-scramble">
+    <p>Scramble this sentence.</p>
+</div>
+
+@code {
+    protected override async Task Start()
+    {
+        var scramble = await Scramble(props => props
+            .Chars("uppercase")
+            .Cursor("_")
+            .From("center"));
+        await Animate(props => props
+            .Targets(".text-scramble p")
+            .InnerHtml(scramble)
+            .Loop(true)
+            .LoopDelay(800));
+    }
+}

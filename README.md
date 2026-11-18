@@ -124,6 +124,17 @@ builder.Services.AddBlazorAnime();
 builder.Services.AddBlazorAnimeWaapi();
 ```
 
+Text is an eighth package. It registers `IText` and loads `BlazorAnime.Text.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable, Draggable, Layout, Scope, Events, or WAAPI packages.
+
+```bash
+dotnet add package BlazorAnime.Text
+```
+
+```csharp
+builder.Services.AddBlazorAnime();
+builder.Services.AddBlazorAnimeText();
+```
+
 ## Usage example
 
 ```razor
@@ -972,11 +983,39 @@ await _square.Set("backgroundColor", new[] { 164d, 255, 79 });
 
 `Play`, `Pause`, `Seek`, `Revert`, and `CommitStyles` resolve when finished and do not return the animation. `ConvertEase` returns a CSS `linear()` string and does not create an animation. `OnComplete` receives a `WaapiState` snapshot. `DisposeAsync` reverts the animation.
 
+## Text
+
+`BlazorAnime.Text` binds `splitText` and `scrambleText`. A split returns element handles for `Targets`. Scramble returns a function for `innerHTML` and does not create an animation.
+
+```razor
+@inject IText Text
+@inject IAnime Anime
+
+<p>Split words and chars</p>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+        var split = await Text.Split("p", props => props
+            .Words(part => part.Wrap("clip"))
+            .Chars(true));
+        await Anime.Animate(props => props
+            .Targets(split.Words)
+            .TranslateY("100%", "0%")
+            .Loop(true));
+    }
+}
+```
+
+`Refresh` and `Revert` resolve when finished and do not return the splitter. `Refresh` replaces `Lines`, `Words`, and `Chars`. `DisposeAsync` reverts the split.
+
 ## Samples
 
 Pushes to `master` publish both samples to [olaboutcode.github.io/blazor-anime](https://olaboutcode.github.io/blazor-anime/). In the repository settings, set GitHub Pages to deploy from GitHub Actions. `scripts/publish-pages.sh` builds that same site locally, and `scripts/publish-pages.bat` does it on Windows.
 
-`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, Layout, Scope, Events, SVG, utilities, easings, and WAAPI. The http profile listens on `http://localhost:5161`.
+`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, Layout, Scope, Events, SVG, Text, utilities, easings, and WAAPI. The http profile listens on `http://localhost:5161`.
 
 ```bash
 dotnet run --project samples/Examples

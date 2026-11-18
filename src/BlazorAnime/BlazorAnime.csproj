@@ -27,6 +27,7 @@
         <InternalsVisibleTo Include="BlazorAnime.Scope"/>
         <InternalsVisibleTo Include="BlazorAnime.Events"/>
         <InternalsVisibleTo Include="BlazorAnime.Waapi"/>
+        <InternalsVisibleTo Include="BlazorAnime.Text"/>
     </ItemGroup>
 
     <ItemGroup>

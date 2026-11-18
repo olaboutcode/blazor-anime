@@ -17,6 +17,7 @@
     <Project Path="src/BlazorAnime.Scope/BlazorAnime.Scope.csproj" />
     <Project Path="src/BlazorAnime.Events/BlazorAnime.Events.csproj" />
     <Project Path="src/BlazorAnime.Waapi/BlazorAnime.Waapi.csproj" />
+    <Project Path="src/BlazorAnime.Text/BlazorAnime.Text.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/BlazorAnime.Tests/BlazorAnime.Tests.csproj" />
