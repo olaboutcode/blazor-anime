@@ -1,0 +1,15 @@
+@inherits WaapiDemo
+
+<div class="demo waapi-demo waapi-properties">
+    <div class="large square"></div>
+</div>
+
+@code {
+    protected override Task Start() =>
+        Animate(".waapi-properties .square", props => props
+            .X(tween => tween.To("8rem").Duration(500).Ease(Easing.Out(3)))
+            .Rotate(tween => tween.To("180deg").Duration(900).Ease(Easing.InOut(2)))
+            .Scale(tween => tween.To(1.4).Duration(700))
+            .Loop(true)
+            .Alternate(true));
+}

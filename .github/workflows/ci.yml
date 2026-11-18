@@ -39,7 +39,7 @@ jobs:
           node-version: 22
       - run: npm ci --prefix src/BlazorAnime/anime
       - run: npm run build --prefix src/BlazorAnime/anime
-      - run: git add -N -- src/BlazorAnime/wwwroot src/BlazorAnime.Animatable/wwwroot && git diff --exit-code -- src/BlazorAnime/wwwroot src/BlazorAnime.Animatable/wwwroot
+      - run: git add -N -- src/BlazorAnime/wwwroot src/BlazorAnime.Animatable/wwwroot src/BlazorAnime.Waapi/wwwroot && git diff --exit-code -- src/BlazorAnime/wwwroot src/BlazorAnime.Animatable/wwwroot src/BlazorAnime.Waapi/wwwroot
       - run: node --test test/interop/*.cjs
       - name: Reject a root npm manifest
         run: test ! -e package.json && test ! -e package-lock.json

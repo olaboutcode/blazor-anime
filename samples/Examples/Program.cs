@@ -14,5 +14,6 @@ builder.Services.AddBlazorAnimeDraggable();
 builder.Services.AddBlazorAnimeLayout();
 builder.Services.AddBlazorAnimeScope();
 builder.Services.AddBlazorAnimeEvents();
+builder.Services.AddBlazorAnimeWaapi();
 
 await builder.Build().RunAsync();

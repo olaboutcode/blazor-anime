@@ -398,6 +398,11 @@ export function install(anime) {
                     const targets = child.targets;
                     delete child.targets;
                     add(targets, child, position);
+                },
+                // sync() returns the timeline. Drop that return so Blazor does not await it.
+                sync: (tickable, position) => {
+                    if (arguments.length < 2) timeline.sync(tickable);
+                    else timeline.sync(tickable, position);
                 }
             }, slots);
         },

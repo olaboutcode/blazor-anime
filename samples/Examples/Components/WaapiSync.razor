@@ -1,0 +1,33 @@
+@inherits WaapiDemo
+
+<div class="demo waapi-demo waapi-sync">
+    <div class="waapi-row">
+        <div class="circle"></div>
+        <div class="triangle"></div>
+        <div class="square"></div>
+    </div>
+</div>
+
+@code {
+    protected override async Task Start()
+    {
+        var circle = await Animate(".waapi-sync .circle", props => props
+            .X("8rem")
+            .AutoPlay(false));
+        var triangle = await Animate(".waapi-sync .triangle", props => props
+            .X("8rem")
+            .Y(tween => tween.To("0", "-1.5rem", "0"))
+            .Ease(Easing.Out(4))
+            .Duration(750)
+            .AutoPlay(false));
+        var square = await Animate(".waapi-sync .square", props => props
+            .X("8rem")
+            .Rotate("1turn")
+            .AutoPlay(false));
+        var timeline = await Timeline(props => props.AutoPlay(false));
+        await timeline.Sync(circle.Handle, 0);
+        await timeline.Sync(triangle.Handle, 350);
+        await timeline.Sync(square.Handle, 250);
+        await timeline.Play();
+    }
+}

@@ -798,6 +798,66 @@ public static class DemoCatalog
                     .Loop(true));
                 """,
                 "Components/AnimationEasings.razor"))
+        ]),
+        new("waapi", "WAAPI",
+        [
+            Leaves(
+            Entry("waapi", "WAAPI",
+                "A browser animation that loops and alternates.",
+                "waapi.animate runs on the browser timeline. It does not follow engine.speed. Loop(true) repeats forever, and Alternate flips direction.",
+                """
+                await Waapi.Animate(".square", props => props
+                    .TranslateX("8rem")
+                    .Duration(600)
+                    .Loop(true)
+                    .Alternate(true)
+                    .Ease(Easing.InOut(2)));
+                """,
+                "Components/WaapiBasic.razor"),
+            Entry("waapi-properties", "Property parameters",
+                "Each transform has its own duration and ease.",
+                "x, rotate, and scale are individual transforms. A property object sets to, duration, and ease for that property only.",
+                """
+                .X(tween => tween.To("8rem").Duration(500).Ease(Easing.Out(3)))
+                .Rotate(tween => tween.To("180deg").Duration(900).Ease(Easing.InOut(2)))
+                .Scale(tween => tween.To(1.4).Duration(700))
+                """,
+                "Components/WaapiProperties.razor"),
+            Entry("waapi-ease", "Spring",
+                "A spring ease, and the linear() string it becomes.",
+                "ConvertEase calls waapi.convertEase and returns a CSS linear() string. It does not create an animation. The square uses the spring itself.",
+                """
+                var linear = await Waapi.ConvertEase(Easing.Spring(1, 80, 10, 0));
+                await Waapi.Animate(".square", props => props
+                    .TranslateX("8rem")
+                    .Rotate("1turn")
+                    .Ease(Easing.Spring())
+                    .Loop(true)
+                    .Alternate(true));
+                """,
+                "Components/WaapiEase.razor"),
+            Entry("waapi-playback", "Playback",
+                "Play, pause, seek, and commit styles.",
+                "Persist keeps the finished styles. Play, Pause, Seek, and CommitStyles resolve to nothing. They do not return the animation.",
+                """
+                var animation = await Waapi.Animate(".square", props => props
+                    .TranslateX("8rem")
+                    .Duration(1200)
+                    .Persist(true)
+                    .AutoPlay(false));
+                await animation.Play();
+                await animation.CommitStyles();
+                """,
+                "Components/WaapiPlayback.razor"),
+            Entry("waapi-sync", "Sync",
+                "A timeline drives three WAAPI animations.",
+                "Handle is the object timeline.sync accepts. Sync resolves to nothing. The timeline does not reference the Waapi package.",
+                """
+                await timeline.Sync(circle.Handle, 0);
+                await timeline.Sync(triangle.Handle, 350);
+                await timeline.Sync(square.Handle, 250);
+                """,
+                "Components/WaapiSync.razor"))
         ])
     ];
 

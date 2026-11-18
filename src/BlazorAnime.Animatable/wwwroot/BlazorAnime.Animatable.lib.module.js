@@ -1,4 +1,4 @@
-import{b as c}from"../BlazorAnime/chunks/Z6DR5JUV.js";import{fa as h,ga as y,ha as A,ja as T,ka as w,oa as k,qa as _,ra as j}from"../BlazorAnime/chunks/7JGY247P.js";/**
+import{b as c}from"../BlazorAnime/chunks/U53QQBVE.js";import{fa as h,ga as y,ha as A,ja as T,ka as w,oa as k,qa as _,ra as j}from"../BlazorAnime/chunks/U2BIFWTN.js";/**
  * Anime.js - animatable - ESM
  * @version v4.5.0
  * @license MIT

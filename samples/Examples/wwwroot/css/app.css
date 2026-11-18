@@ -110,6 +110,13 @@ body {
     --hex-current-8: #242b29;
 }
 
+.docs-shell[data-docs-section="waapi"] {
+    --hex-current-1: #a369ff;
+    --hex-current-6: #3a2f49;
+    --hex-current-7: #322a3a;
+    --hex-current-8: #29252b;
+}
+
 @media (min-width: 900px) {
     .docs-shell {
         --site-header-height: 4.5rem;
@@ -425,6 +432,7 @@ body {
 .docs-nav > ul > li[data-docs-section="layout"] { --hex-current-1: #8dff55; }
 .docs-nav > ul > li[data-docs-section="scope"] { --hex-current-1: #00ffaa; }
 .docs-nav > ul > li[data-docs-section="events"] { --hex-current-1: #26f2d5; }
+.docs-nav > ul > li[data-docs-section="waapi"] { --hex-current-1: #a369ff; }
 
 .docs-demos {
     position: fixed;
@@ -1040,7 +1048,8 @@ body {
     text-transform: uppercase;
 }
 
-.docs-shell .events-control {
+.docs-shell .events-control,
+.docs-shell .waapi-control {
     position: relative;
     z-index: 1;
     margin: 0.2rem auto;
@@ -1053,9 +1062,36 @@ body {
     cursor: pointer;
 }
 
-.docs-shell .events-control:disabled {
+.docs-shell .events-control:disabled,
+.docs-shell .waapi-control:disabled {
     opacity: 0.4;
     cursor: default;
+}
+
+.docs-shell .waapi-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+}
+
+.docs-shell .waapi-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.docs-shell .waapi-ease {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 0.65rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.docs-shell .waapi-controls {
+    display: flex;
+    gap: 0.25rem;
 }
 
 .docs-demo .demo-content svg {

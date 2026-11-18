@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\src\BlazorAnime.Layout\BlazorAnime.Layout.csproj" />
     <ProjectReference Include="..\..\src\BlazorAnime.Scope\BlazorAnime.Scope.csproj" />
     <ProjectReference Include="..\..\src\BlazorAnime.Events\BlazorAnime.Events.csproj" />
+    <ProjectReference Include="..\..\src\BlazorAnime.Waapi\BlazorAnime.Waapi.csproj" />
   </ItemGroup>
 
 </Project>

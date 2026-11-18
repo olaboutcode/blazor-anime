@@ -1,0 +1,35 @@
+@inherits WaapiDemo
+
+<div class="demo waapi-demo waapi-playback">
+    <div class="large square"></div>
+    <div class="waapi-controls">
+        <button type="button" class="waapi-control" disabled="@(Playing != true)" @onclick="Play">Play</button>
+        <button type="button" class="waapi-control" disabled="@(Playing != true)" @onclick="Pause">Pause</button>
+        <button type="button" class="waapi-control" disabled="@(Playing != true)" @onclick="SeekStart">Seek</button>
+        <button type="button" class="waapi-control" disabled="@(Playing != true)" @onclick="Commit">Commit</button>
+    </div>
+</div>
+
+@code {
+    private WaapiAnimation? _animation;
+
+    protected override async Task Start()
+    {
+        _animation = await Animate(".waapi-playback .square", props => props
+            .TranslateX("8rem")
+            .Duration(1200)
+            .Persist(true)
+            .AutoPlay(false));
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Playing == false)
+            _animation = null;
+    }
+
+    private Task Play() => _animation?.Play() ?? Task.CompletedTask;
+    private Task Pause() => _animation?.Pause() ?? Task.CompletedTask;
+    private Task SeekStart() => _animation?.Seek(0) ?? Task.CompletedTask;
+    private Task Commit() => _animation?.CommitStyles() ?? Task.CompletedTask;
+}

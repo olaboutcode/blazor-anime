@@ -43,6 +43,13 @@ const satellites = [
         source: fileURLToPath(new URL("./events-entry.js", import.meta.url)),
         www: fileURLToPath(new URL("../../BlazorAnime.Events/wwwroot/", import.meta.url)),
         forbidden: ["/events/scroll.js", "/events-entry.js"]
+    },
+    {
+        name: "BlazorAnime.Waapi.lib.module.js",
+        entry: "BlazorAnime.Waapi.lib.module",
+        source: fileURLToPath(new URL("./waapi-entry.js", import.meta.url)),
+        www: fileURLToPath(new URL("../../BlazorAnime.Waapi/wwwroot/", import.meta.url)),
+        forbidden: ["/waapi/waapi.js", "/waapi-entry.js"]
     }
 ];
 
@@ -154,6 +161,18 @@ function assertOneEngine(metafile) {
         "/scope/scope.js",
         "/scope-entry.js"
     ], "Events bundle");
+
+    const waapiBundle = outputNamed(outputs, "BlazorAnime.Waapi.lib.module.js");
+    assertNotReached(waapiBundle, outputs, [
+        "/draggable/draggable.js",
+        "/draggable-entry.js",
+        "/layout/layout.js",
+        "/layout-entry.js",
+        "/scope/scope.js",
+        "/scope-entry.js",
+        "/events/scroll.js",
+        "/events-entry.js"
+    ], "Waapi bundle");
 }
 
 function assertNotReached(start, outputs, suffixes, label) {

@@ -1,0 +1,22 @@
+@inherits WaapiDemo
+
+<div class="demo waapi-demo waapi-ease">
+    <div class="large square"></div>
+    <div class="waapi-ease">@(_linear ?? "linear()")</div>
+</div>
+
+@code {
+    private string? _linear;
+
+    protected override async Task Start()
+    {
+        _linear = await Waapi.ConvertEase(Easing.Spring(1, 80, 10, 0));
+        await Animate(".waapi-ease .square", props => props
+            .TranslateX("8rem")
+            .Rotate("1turn")
+            .Ease(Easing.Spring())
+            .Loop(true)
+            .Alternate(true));
+        StateHasChanged();
+    }
+}

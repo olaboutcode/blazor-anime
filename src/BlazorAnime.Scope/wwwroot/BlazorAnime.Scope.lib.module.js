@@ -1,4 +1,4 @@
-import{N as T,R as L,b as j,c as E,fa as I,ga as R,ha as A,ma as D,p as a,q as O,y as w}from"../BlazorAnime/chunks/7JGY247P.js";/**
+import{N as T,R as L,b as j,c as E,fa as I,ga as R,ha as A,ma as D,p as a,q as O,y as w}from"../BlazorAnime/chunks/U2BIFWTN.js";/**
  * Anime.js - scope - ESM
  * @version v4.5.0
  * @license MIT

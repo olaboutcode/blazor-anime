@@ -113,6 +113,17 @@ builder.Services.AddBlazorAnime();
 builder.Services.AddBlazorAnimeEvents();
 ```
 
+WAAPI is a seventh package. It registers `IWaapi` and loads `BlazorAnime.Waapi.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable, Draggable, Layout, Scope, or Events packages.
+
+```bash
+dotnet add package BlazorAnime.Waapi
+```
+
+```csharp
+builder.Services.AddBlazorAnime();
+builder.Services.AddBlazorAnimeWaapi();
+```
+
 ## Usage example
 
 ```razor
@@ -935,11 +946,37 @@ await _square.Set("backgroundColor", new[] { 164d, 255, 79 });
 
 `Refresh`, `Revert`, and `Link` resolve when finished and do not return the observer. `Sync(true)` seeks playback from scroll progress. A method string such as `play pause` calls those methods on enter and leave. Callbacks receive a `ScrollState` snapshot. `DisposeAsync` reverts the observer.
 
+## WAAPI
+
+`BlazorAnime.Waapi` binds `waapi.animate`. The result is a browser-timeline animation, not a core `Animation`, and it does not follow `engine.speed`. Pass `Handle` to `Timeline.Sync`.
+
+```razor
+@inject IWaapi Waapi
+@inject IAnime Anime
+
+<div class="square"></div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+        var square = await Waapi.Animate(".square", props => props
+            .TranslateX("8rem")
+            .AutoPlay(false));
+        var timeline = await Anime.CreateTimeline(props => props.AutoPlay(true));
+        await timeline.Sync(square.Handle, 0);
+    }
+}
+```
+
+`Play`, `Pause`, `Seek`, `Revert`, and `CommitStyles` resolve when finished and do not return the animation. `ConvertEase` returns a CSS `linear()` string and does not create an animation. `OnComplete` receives a `WaapiState` snapshot. `DisposeAsync` reverts the animation.
+
 ## Samples
 
 Pushes to `master` publish both samples to [olaboutcode.github.io/blazor-anime](https://olaboutcode.github.io/blazor-anime/). In the repository settings, set GitHub Pages to deploy from GitHub Actions. `scripts/publish-pages.sh` builds that same site locally, and `scripts/publish-pages.bat` does it on Windows.
 
-`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, Layout, Scope, Events, SVG, utilities, and easings. The http profile listens on `http://localhost:5161`.
+`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, Layout, Scope, Events, SVG, utilities, easings, and WAAPI. The http profile listens on `http://localhost:5161`.
 
 ```bash
 dotnet run --project samples/Examples

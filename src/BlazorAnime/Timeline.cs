@@ -32,6 +32,30 @@ public sealed class Timeline : Animation
     public async Task AddAsync(Func<PropsBuilder, PropsBuilder> configure, OffSet offSet) =>
         await AddCore(configure, offSet.GetValue());
 
+    /// <summary>
+    /// Sync a WAAPI animation for its whole duration. The handle is not a core <see cref="Animation"/>.
+    /// </summary>
+    public Task Sync(IJSObjectReference animation)
+    {
+        ArgumentNullException.ThrowIfNull(animation);
+        return Js.InvokeVoidAsync("sync", animation).AsTask();
+    }
+
+    /// <summary>Sync a WAAPI animation at an absolute time, in milliseconds.</summary>
+    public Task Sync(IJSObjectReference animation, double position)
+    {
+        ArgumentNullException.ThrowIfNull(animation);
+        return Js.InvokeVoidAsync("sync", animation, position).AsTask();
+    }
+
+    /// <summary>Sync a WAAPI animation at a position such as <c>+=500</c> or <c>&lt;</c>.</summary>
+    public Task Sync(IJSObjectReference animation, string position)
+    {
+        ArgumentNullException.ThrowIfNull(animation);
+        ArgumentException.ThrowIfNullOrWhiteSpace(position);
+        return Js.InvokeVoidAsync("sync", animation, position).AsTask();
+    }
+
     internal Timeline(IJSObjectReference jsRef, IEnumerable<IDisposable> callbacks)
         : base(jsRef, callbacks)
     {
