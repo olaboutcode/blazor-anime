@@ -5,12 +5,12 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <Authors>olaboutcode</Authors>
-        <Version>1.0.0-alpha</Version>
+        <Version>1.0.0-alpha.1</Version>
         <PackageTags>blazor;anime.js;animejs;animation;animatable</PackageTags>
         <Description>Animatable bindings for BlazorAnime. Shares the BlazorAnime anime.js engine.</Description>
         <PackageId>BlazorAnime.Animatable</PackageId>
         <Copyright>olaboutcode</Copyright>
-        <PackageReleaseNotes>createAnimatable for anime.js 4.5.0. Depends on BlazorAnime 1.0.0-alpha.</PackageReleaseNotes>
+        <PackageReleaseNotes>createAnimatable for anime.js 4.5.0. Depends on BlazorAnime 1.0.0-alpha.1.</PackageReleaseNotes>
         <AssemblyName>BlazorAnime.Animatable</AssemblyName>
         <RootNamespace>BlazorAnime</RootNamespace>
     </PropertyGroup>
