@@ -89,6 +89,9 @@ jobs:
     needs: [build-and-test, interop, bundle, browser, pack]
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      actions: read
     steps:
       - uses: actions/setup-dotnet@v4
         with:
@@ -97,15 +100,24 @@ jobs:
         with:
           name: nupkgs
           path: artifacts/nupkg
-      - name: Push to nuget.org
+      - name: Require the NuGet profile name
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          NUGET_USER: ${{ vars.NUGET_USER }}
         run: |
-          set -euo pipefail
-          if [ -z "$NUGET_API_KEY" ]; then
-            echo "Add the NUGET_API_KEY repository secret before publishing."
+          if [ -z "$NUGET_USER" ]; then
+            echo "Set the NUGET_USER repository variable to the nuget.org profile name."
             exit 1
           fi
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ vars.NUGET_USER }}
+      - name: Push to nuget.org
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: |
+          set -euo pipefail
           core=$(find artifacts/nupkg -type f -name 'BlazorAnime.*.nupkg' | grep -E '/BlazorAnime\.[0-9][^/]*\.nupkg$')
           test -n "$core"
           dotnet nuget push "$core" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
