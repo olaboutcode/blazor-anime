@@ -2,54 +2,65 @@ name: Release
 
 on:
   push:
-    tags: ["v*"]
-  workflow_dispatch:
+    tags:
+      - "v*"
 
-concurrency:
-  group: release-${{ github.ref }}
-  cancel-in-progress: false
+permissions:
+  contents: read
 
 jobs:
-  ci:
-    uses: ./.github/workflows/ci.yml
-    permissions:
-      contents: read
-
   publish:
-    needs: ci
+    name: Pack and push NuGet
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      actions: read
+      contents: read
     steps:
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
-      - uses: actions/download-artifact@v4
-        with:
-          name: nupkgs
-          path: artifacts/nupkg
-      - name: Require the NuGet profile name
-        env:
-          NUGET_USER: ${{ vars.NUGET_USER }}
+
+      - name: Pack
         run: |
-          if [ -z "$NUGET_USER" ]; then
-            echo "Set the NUGET_USER repository variable to the nuget.org profile name."
-            exit 1
-          fi
-      - name: NuGet login
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p artifacts
+          dotnet pack src/BlazorAnime/BlazorAnime.csproj \
+            -c Release \
+            -o artifacts \
+            -p:Version="$VERSION" \
+            -p:PackageVersion="$VERSION"
+          for project in Animatable Draggable Layout Scope Events Waapi Text; do
+            dotnet pack "src/BlazorAnime.$project/BlazorAnime.$project.csproj" \
+              -c Release \
+              -o artifacts \
+              -p:Version="$VERSION" \
+              -p:PackageVersion="$VERSION"
+          done
+
+      - name: Check the packed files
+        run: python3 scripts/check-nupkgs.py artifacts
+
+      - name: NuGet login (OIDC)
         uses: NuGet/login@v1
         id: login
         with:
-          user: ${{ vars.NUGET_USER }}
-      - name: Push to nuget.org
+          user: olaboutcode
+
+      - name: Push nuget.org
         env:
           NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
         run: |
           set -euo pipefail
-          core=$(find artifacts/nupkg -type f -name 'BlazorAnime.*.nupkg' | grep -E '/BlazorAnime\.[0-9][^/]*\.nupkg$')
+          core=$(find artifacts -type f -name 'BlazorAnime.*.nupkg' | grep -E '/BlazorAnime\.[0-9][^/]*\.nupkg$')
           test -n "$core"
-          dotnet nuget push "$core" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
-          find artifacts/nupkg -type f -name 'BlazorAnime.*.nupkg' | grep -vE '/BlazorAnime\.[0-9][^/]*\.nupkg$' | sort | while read -r pkg; do
-            dotnet nuget push "$pkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+          dotnet nuget push "$core" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json
+          find artifacts -type f -name 'BlazorAnime.*.nupkg' | grep -vE '/BlazorAnime\.[0-9][^/]*\.nupkg$' | sort | while read -r pkg; do
+            dotnet nuget push "$pkg" \
+              --api-key "$NUGET_API_KEY" \
+              --source https://api.nuget.org/v3/index.json
           done
