@@ -3,7 +3,7 @@
 Typed Blazor bindings for [anime.js](https://animejs.com/) 4.5.0. The core package embeds the engine and exposes it as `IAnime`. Each extra module is its own package and loads that same engine. Durations are milliseconds. Blazor loads the script from the package.
 
 > [!WARNING]
-> The packages are `1.0.0-alpha`. The API can still change.
+> BlazorAnime is still experimental. The API can still change.
 
 ## Contents
 
