@@ -1,148 +1,76 @@
-# Blazor.Anime
+# BlazorAnime
 
-Typed Blazor bindings for [anime.js](https://animejs.com/) 4.5.0. The package embeds that engine and exposes it through `IAnime`, so animations stay in C# while playback stays in the browser. Register the service with `AddBlazorAnime()`. Blazor loads the script. Durations are milliseconds.
+Typed Blazor bindings for [anime.js](https://animejs.com/) 4.5.0. The core package embeds the engine and exposes it as `IAnime`. Each extra module is its own package and loads that same engine. Durations are milliseconds. Blazor loads the script from the package.
 
-This guide matches the [anime.js v4 documentation](https://animejs.com/documentation/). The [v3 to v4 migration notes](https://github.com/juliangarnier/anime/wiki/Migrating-from-v3-to-v4) describe the engine this package binds.
-
-## Features
-
-- **anime.js 4.5.0** — targets, properties, keyframes, stagger, timelines, SVG, and easings
-- **Strongly typed** — IntelliSense for transforms, colors, dimensions, and SVG attributes
-- **Function parameters** — per-target values from an index or a `TargetInfo` snapshot, including lambdas and ordinary methods
-- **Playback** — play, pause, resume, seek, restart, reverse, alternate, and a task that completes when the animation finishes
-- **Object targets** — animate a plain JavaScript object and read the values back
+> [!WARNING]
+> The packages are `1.0.0-alpha`. The API can still change.
 
 ## Contents
 
-- [Installation](#installation)
-- [Usage example](#usage-example)
-- [Documentation](#documentation)
-  - [Targets](#targets)
-  - [Properties](#properties)
-  - [Property parameters](#property-parameters)
-  - [Animation parameters](#animation-parameters)
-  - [Values](#values)
-  - [Keyframes](#keyframes)
-  - [Staggering](#staggering)
+- [Getting started](#getting-started)
+  - [Install](#install)
+  - [Example](#example)
+- [BlazorAnime](#blazoranime)
+  - [Service](#service)
+  - [Playback](#playback)
   - [Timeline](#timeline)
-  - [Controls](#controls)
-  - [Callbacks](#callbacks)
-  - [SVG](#svg)
+  - [Parameters](#parameters)
+  - [Properties](#properties)
+  - [Stagger](#stagger)
   - [Easings](#easings)
-  - [Helpers](#helpers)
-- [Animatable](#animatable)
-- [Draggable](#draggable)
-- [Layout](#layout)
-- [Scope](#scope)
-- [Events](#events)
+  - [SVG](#svg)
+- [Modules](#modules)
+  - [Animatable](#animatable)
+  - [Draggable](#draggable)
+  - [Layout](#layout)
+  - [Scope](#scope)
+  - [Events](#events)
+  - [Text](#text)
+  - [WAAPI](#waapi)
 - [Samples](#samples)
-- [Building](#building)
+- [How to contribute](#how-to-contribute)
 
-## Installation
+## Getting started
+
+Create the animation in `OnAfterRenderAsync`, after the element exists. `DisposeAsync` pauses playback and releases the JavaScript instance, including callback handles. The namespace is `BlazorAnime`.
+
+### Install
 
 ```bash
-dotnet add package BlazorAnime
+dotnet add package BlazorAnime --prerelease
 ```
-
-Register the service. That call does not inject a script tag. Blazor imports `BlazorAnime.lib.module.js` from the package when the app starts.
 
 ```csharp
 builder.Services.AddBlazorAnime();
 ```
-
-WebAssembly hosts keep the framework script in `wwwroot/index.html`. Blazor Web App hosts keep it in `Components/App.razor`. Do not add an anime.js script beside either one.
-
-Add the namespace in `_Imports.razor`:
 
 ```razor
 @using BlazorAnime
 ```
 
-Animatable is a second package. It registers `IAnimatable` and loads `BlazorAnime.Animatable.lib.module.js`. That file imports the core module, so the page still has one engine.
+WebAssembly hosts keep the framework script in `wwwroot/index.html`. Blazor Web App hosts keep it in `Components/App.razor`.
 
-```bash
-dotnet add package BlazorAnime.Animatable
-```
+Install a module only when you use it. Register it beside `AddBlazorAnime()`.
 
-```csharp
-builder.Services.AddBlazorAnime();
-builder.Services.AddBlazorAnimeAnimatable();
-```
+| Package | Register | anime.js |
+|---|---|---|
+| `BlazorAnime` | `AddBlazorAnime()` | `animate`, `timeline`, `svg`, `easings`, `utils`, `engine` |
+| `BlazorAnime.Animatable` | `AddBlazorAnimeAnimatable()` | `createAnimatable` |
+| `BlazorAnime.Draggable` | `AddBlazorAnimeDraggable()` | `createDraggable` |
+| `BlazorAnime.Layout` | `AddBlazorAnimeLayout()` | `createLayout` |
+| `BlazorAnime.Scope` | `AddBlazorAnimeScope()` | `createScope` |
+| `BlazorAnime.Events` | `AddBlazorAnimeEvents()` | `onScroll` |
+| `BlazorAnime.Text` | `AddBlazorAnimeText()` | `splitText`, `scrambleText` |
+| `BlazorAnime.Waapi` | `AddBlazorAnimeWaapi()` | `waapi.animate` |
 
-Draggable is a third package. It registers `IDraggable` and loads `BlazorAnime.Draggable.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable package.
-
-```bash
-dotnet add package BlazorAnime.Draggable
-```
-
-```csharp
-builder.Services.AddBlazorAnime();
-builder.Services.AddBlazorAnimeDraggable();
-```
-
-Layout is a fourth package. It registers `ILayout` and loads `BlazorAnime.Layout.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable, Draggable, or WAAPI packages.
-
-```bash
-dotnet add package BlazorAnime.Layout
-```
-
-```csharp
-builder.Services.AddBlazorAnime();
-builder.Services.AddBlazorAnimeLayout();
-```
-
-Scope is a fifth package. It registers `IScope` and loads `BlazorAnime.Scope.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable, Draggable, Layout, or WAAPI packages.
-
-```bash
-dotnet add package BlazorAnime.Scope
-```
-
-```csharp
-builder.Services.AddBlazorAnime();
-builder.Services.AddBlazorAnimeScope();
-```
-
-Events is a sixth package. It registers `IEvents` and loads `BlazorAnime.Events.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable, Draggable, Layout, Scope, or WAAPI packages.
-
-```bash
-dotnet add package BlazorAnime.Events
-```
-
-```csharp
-builder.Services.AddBlazorAnime();
-builder.Services.AddBlazorAnimeEvents();
-```
-
-WAAPI is a seventh package. It registers `IWaapi` and loads `BlazorAnime.Waapi.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable, Draggable, Layout, Scope, or Events packages.
-
-```bash
-dotnet add package BlazorAnime.Waapi
-```
-
-```csharp
-builder.Services.AddBlazorAnime();
-builder.Services.AddBlazorAnimeWaapi();
-```
-
-Text is an eighth package. It registers `IText` and loads `BlazorAnime.Text.lib.module.js`. It imports the same core module, so the page still has one engine. It does not depend on the Animatable, Draggable, Layout, Scope, Events, or WAAPI packages.
-
-```bash
-dotnet add package BlazorAnime.Text
-```
-
-```csharp
-builder.Services.AddBlazorAnime();
-builder.Services.AddBlazorAnimeText();
-```
-
-## Usage example
+### Example
 
 ```razor
 @implements IAsyncDisposable
 @inject IAnime Anime
 
 <div @ref="element">Animate me!</div>
-<button @onclick="OnPlayButtonClicked">Play Animation</button>
+<button @onclick="Play">Play</button>
 
 @code {
     private ElementReference element;
@@ -152,7 +80,7 @@ builder.Services.AddBlazorAnimeText();
     {
         if (firstRender)
         {
-            _animation ??= await Anime.Animate(props => props
+            _animation = await Anime.Animate(props => props
                 .Targets(element)
                 .TranslateX(250)
                 .Rotate(360)
@@ -162,7 +90,7 @@ builder.Services.AddBlazorAnimeText();
         }
     }
 
-    private async Task OnPlayButtonClicked()
+    private async Task Play()
     {
         if (_animation is not null)
             await _animation.Play();
@@ -176,866 +104,404 @@ builder.Services.AddBlazorAnimeText();
 }
 ```
 
-Create the animation in `OnAfterRenderAsync`, after the element exists. `DisposeAsync` pauses playback and releases the JavaScript instance, including callback handles.
-
-## Documentation
-
-Build animations after the first render, once the target elements exist.
-
-### Targets
-
-A target is a CSS selector, an `ElementReference`, or a `JsTarget`. Pseudo-elements cannot be selected.
-
-CSS selector:
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(250)
-    .Duration(700)
-    .AutoPlay(true));
-```
-
-Several selectors:
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element-a", ".element-b")
-    .TranslateY(250)
-    .Duration(300)
-    .AutoPlay(true));
-```
-
-An element reference, from `@ref`:
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(element)
-    .TranslateX(250)
-    .Duration(700));
-```
-
-A plain JavaScript object. Property names are sent as-is, and you can read them back while the animation runs:
-
-```csharp
-var target = await Anime.CreateObject(new Dictionary<string, object>
-{
-    ["progress"] = 0d
-});
-
-await Anime.Animate(props => props
-    .Targets(target)
-    .Prop("progress", 1)
-    .Duration(1000)
-    .AutoPlay(true));
-
-var progress = await target.GetNumber("progress");
-```
-
-`GetString` reads a string property. Dispose the `JsTarget` when you are done with it.
-
-### Properties
-
-Any CSS property, DOM attribute, or SVG attribute can be animated. Typed methods cover the common names. Anything else goes through `Prop`.
-
-A second `Animate` of the same property on the same target cancels the tween already running. That is anime.js `composition: 'replace'`, the default. `Set` does not cancel, because `utils.set` forces `composition: 'none'`.
-
-CSS properties:
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .Left(250)
-    .BackgroundColor("#FFF")
-    .BorderRadius("0%", "50%")
-    .Ease(Easing.InOutQuad)
-    .AutoPlay(true));
-```
-
-CSS transforms:
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(250)
-    .Scale(2)
-    .Rotate("1turn")
-    .AutoPlay(true));
-```
-
-DOM attributes. `Value` is the HTML attribute named `value`. Tween destinations use `To`, not `Value`.
-
-```csharp
-await Anime.Animate(props => props
-    .Targets("input")
-    .Value(0, 1000)
-    .ModifierRound(0)
-    .Ease(Easing.InOutExpo)
-    .AutoPlay(true));
-```
-
-`ModifierRound(0)` rounds to an integer. `ModifierRound(1)` keeps one decimal place. The argument is the number of decimal places.
-
-SVG attributes. `points` is set through a property parameter because `Points` takes a builder:
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".svg-attributes-demo polygon")
-    .Points(shape => shape.To("64 128 8.574 96 8.574 32 64 0 119.426 32 119.426 96"))
-    .Prop("baseFrequency", 0)
-    .Scale(1)
-    .Loop(true)
-    .Alternate(true)
-    .Ease(Easing.InOutExpo)
-    .AutoPlay(true));
-```
-
-### Property parameters
-
-Duration, delay, loop delay, ease, and `ModifierRound` can apply to the whole animation or to one property. `Duration`, `Delay`, and `LoopDelay` are milliseconds.
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(250)
-    .Duration(3000)
-    .Delay(1000)
-    .LoopDelay(1000)
-    .Ease(Easing.InOutExpo)
-    .ModifierRound(1)
-    .AutoPlay(true));
-```
-
-Per-property timing. `To` is the destination:
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(property => property
-        .To(250)
-        .Duration(800))
-    .Rotate(property => property
-        .To(360)
-        .Duration(1800)
-        .Ease(Easing.InOutExpo))
-    .Scale(property => property
-        .To(2)
-        .Duration(1600)
-        .Delay(800)
-        .Ease(Easing.InOutQuart))
-    .Delay(250)
-    .AutoPlay(true));
-```
-
-Function parameters receive the target index and the target count. Lambdas and ordinary methods both work, and the function runs once per target when the animation is created.
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(270)
-    .Alternate(true)
-    .Loop(true)
-    .Delay((index, total) => index * 100)
-    .LoopDelay((index, total) => (total - index) * 100)
-    .AutoPlay(true));
-```
-
-The same shape as a method:
-
-```csharp
-public double SetDelay(int index, int total) => index * 100;
-```
-
-### Animation parameters
-
-`Alternate(true)` flips direction on each repeat. `Reversed(true)` plays backward from the start.
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(100)
-    .Alternate(true)
-    .Loop(true)
-    .AutoPlay(true));
-```
-
-`Loop(true)` repeats forever. A number is a repeat count: `Loop(2)` plays once, then repeats twice more. Omit `Loop`, or pass `0`, for a single play. On the snapshot, `Loop` is the value stored at build, and it is `-1` when the animation loops forever.
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(100)
-    .Loop(2)
-    .AutoPlay(true));
-```
-
-`AutoPlay(false)` creates the animation in a paused state. Call `Play` when you want it to start. An infinite loop never finishes, so `Finished()` does not complete for `Loop(true)`.
-
-If you omit `Ease`, anime.js uses `out(2)`.
-
-### Values
-
-Unitless values and explicit units:
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(0, 250)
-    .Width("100%")
-    .Rotate("1turn")
-    .BackgroundColor("#FFF", "#000")
-    .Opacity(0, 1)
-    .AutoPlay(true));
-```
-
-Relative values. A unit string works on transforms. `Relative` is the typed form and also accepts units.
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX("+=100")
-    .Rotate(Relative.Add("1turn"))
-    .AutoPlay(true));
-```
-
-`Relative.Add`, `Relative.Subtract`, and `Relative.Multiply` take a number or a string.
-
-Function-based values use `(index, total) => ...` or a `TargetInfo`. `TargetInfo` is a snapshot taken when the animation is built: `Index`, `Total`, `Id`, `TagName`, and `Dataset`. A `data-x` attribute is `Dataset["x"]`. The function is not called again on later frames. `Refresh()` reads function values again.
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".el")
-    .TranslateX((index, total) => index * 40)
-    .TranslateY(target => double.Parse(target.Dataset.GetValueOrDefault("x", "0")))
-    .AutoPlay(true));
-```
-
-### Keyframes
-
-Pass each step as an array of builders. A comma-separated list of lambdas binds to the `TargetInfo` overload instead of a keyframe sequence. Each step uses `To`. A step can set its own duration, delay, and ease.
-
-Animation keyframes:
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX([
-        step => step.To(250).Duration(1000).Delay(500),
-        step => step.To(0).Duration(1000).Delay(500)
-    ])
-    .TranslateY([
-        step => step.To(-40).Duration(500),
-        step => step.To(40).Duration(500).Delay(1000),
-        step => step.To(0).Duration(500).Delay(1000)
-    ])
-    .ScaleX([
-        step => step.To(4).Duration(100).Delay(500).Ease(Easing.OutExpo),
-        step => step.To(1).Duration(900),
-        step => step.To(4).Duration(100).Delay(500).Ease(Easing.OutExpo),
-        step => step.To(1).Duration(900)
-    ])
-    .ScaleY([
-        step => step.FromTo(1.75, 1).Duration(500),
-        step => step.To(2).Duration(50).Delay(1000).Ease(Easing.OutExpo),
-        step => step.To(1).Duration(450),
-        step => step.To(1.75).Duration(50).Delay(1000).Ease(Easing.OutExpo),
-        step => step.To(1).Duration(450)
-    ])
-    .Ease(Easing.OutElastic(1, .8))
-    .Loop(true)
-    .AutoPlay(true));
-```
-
-Property keyframes are the same array on a single property. Ease on the animation covers steps that leave ease unset.
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX([
-        step => step.To(250).Duration(1000),
-        step => step.To(0).Duration(500)
-    ])
-    .Duration(4000)
-    .AutoPlay(true));
-```
-
-### Staggering
-
-`Delay(stagger => ...)` builds an anime.js stagger.
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(270)
-    .Delay(stagger => stagger.Value(100))
-    .AutoPlay(true));
-```
-
-Start offset:
-
-```csharp
-.Delay(stagger => stagger.Value(100).Start(500))
-```
-
-`From` is `StaggerPosition.First`, `StaggerPosition.Last`, `StaggerPosition.Center`, or an index:
-
-```csharp
-.Delay(stagger => stagger.Value(100).From(StaggerPosition.Center))
-.Delay(stagger => stagger.Value(100).From(3))
-```
-
-`Reversed(true)` starts at the last target. `Ease` changes the gap between targets:
-
-```csharp
-.Delay(stagger => stagger
-    .Value(100)
-    .Reversed(true)
-    .Ease(Easing.OutQuad))
-```
-
-Grid is `[columns, rows]`. `Axis` is `StaggerAxis.X` or `StaggerAxis.Y`.
-
-```csharp
-.Delay(stagger => stagger
-    .Value(100)
-    .Grid(14, 7)
-    .From(StaggerPosition.Center)
-    .Axis(StaggerAxis.X))
-```
-
-`Stagger.Create` builds the same value when you want to pass it to a property directly:
-
-```csharp
-.TranslateX(Stagger.Create(10, 40, options => options.From(StaggerPosition.Center)))
-.Delay(Stagger.Create(100, options => options.Reversed(true).Ease(Easing.OutQuad)))
-```
+## BlazorAnime
+
+`IAnime` is the core service. A second `Animate` of the same property replaces the running tween (`composition: 'replace'`). `Set` writes the value immediately and leaves other tweens alone (`composition: 'none'`). An omitted ease is `out(2)`.
+
+Playback methods resolve when the call is sent, so a looping animation returns immediately.
+
+### Service
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Animate` | `animate` | Builds one animation from a `PropsBuilder`. |
+| `CreateTimeline` | `createTimeline` | One clock for child animations. Autoplay, loop, and callbacks stay on the timeline. Duration, ease, and every other key are child defaults. |
+| `Set` | `utils.set` | Writes values immediately. |
+| `Get` | `utils.get` | Reads a computed value. A unit argument returns a number in that unit. |
+| `Remove` | `utils.remove` | Drops targets from running animations. |
+| `CreateObject` | plain object | JavaScript object you can target. `GetNumber` and `GetString` read it back. |
+| `Random` | `utils.random` | Integer in a range. |
+| `GetSpeed`, `SetSpeed` | `engine.speed` | Playback speed of the shared engine. |
+| `PauseOnDocumentHidden` | `engine.pauseOnDocumentHidden` | Pauses while the tab is hidden. The engine default is `true`. |
+| `Version` | version | The embedded engine. `4.5.0`. |
+
+### Playback
+
+`Animation` is the instance `Animate` returns. `Timeline` inherits these members.
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Play` | `play` | Starts a paused animation. |
+| `Pause` | `pause` | Pauses. |
+| `Resume` | `resume` | Continues in the current direction. |
+| `Restart` | `restart` | Plays again from the initial values. |
+| `Reverse` | `reverse` | Plays backward from the current time. |
+| `Alternate` | `alternate` | Mirrors the time and flips direction. |
+| `Reset` | `reset` | Returns to the initial values and pauses. |
+| `Seek` | `seek` | Jumps to a time, in milliseconds. |
+| `Progress` | `progress` | Jumps to a value from 0 to 1. |
+| `Stretch` | `stretch` | Changes the duration. |
+| `Refresh` | `refresh` | Re-reads function values, then refreshes. |
+| `Complete` | `complete` | Seeks to the end and leaves the engine. |
+| `Cancel` | `cancel` | Cancels. |
+| `Revert` | `revert` | Restores the original values. |
+| `Finished` | `then` | Completes when playback finishes. An infinite loop never completes. |
+| `Remove` | `remove` | Removes targets from this animation. |
+| `GetProgress`, `Began`, `Completed`, `Paused`, `Reversed`, `Backwards`, `IsAlternate` | `progress`, `began`, `completed`, `paused`, `reversed`, `backwards`, `alternate` | Current flags. |
+| `Id`, `Loop`, `Duration`, `Delay`, `LoopDelay`, `CurrentTime`, `IterationProgress`, `CurrentIteration`, `TargetCount`, `CurrentValues` | the same fields | Current numbers. `Loop` is `-1` when playback repeats forever. |
+
+Callbacks receive an `AnimationState` snapshot with those same fields. The live instance stays in JavaScript.
 
 ### Timeline
 
-`CreateTimeline` plays child animations on one clock. Duration and ease set on the timeline become defaults for each child that does not set its own. `AutoPlay(false)` is playback on the timeline, not a default copied onto each child.
+| Member | anime.js | Role |
+|---|---|---|
+| `AddAsync` | `add(targets, parameters, position)` | Adds a child. No position appends it. A number is an absolute time. `0` starts with the timeline. |
+| `AddAsync` + `string` | `+=500`, `-=200`, `<`, `<<` | Position string, including overlap with the previous child. |
+| `OffSet.Before`, `OffSet.After` | `-=`, `+=` | Relative to the end of the previous child. |
+| `Sync` | `sync` | Places a WAAPI handle on the timeline. The handle is not a core `Animation`. |
 
-```csharp
-var timeline = await Anime.CreateTimeline(props => props
-    .Duration(750)
-    .Ease(Easing.OutExpo)
-    .AutoPlay(false));
+### Parameters
 
-await timeline.AddAsync(child => child
-    .Targets(".element-1")
-    .TranslateX(250));
+These methods are on `PropsBuilder`. A number is unitless. A string keeps its unit (`"1rem"`, `"1turn"`). `Relative.Add`, `Subtract`, and `Multiply` are `+=`, `-=`, and `*=`. A nested builder sets `to`, `duration`, `delay`, and `ease` on that one property.
 
-await timeline.AddAsync(child => child
-    .Targets(".element-2")
-    .TranslateX(250));
+`Func<int, int, T>` receives the target index and the target count. `Func<TargetInfo, T>` receives `Index`, `Total`, `Id`, `TagName`, and `Dataset`. Both run once per target when the animation is created.
 
-await timeline.Play();
-```
+| Member | anime.js | Role |
+|---|---|---|
+| `Targets` | `targets` | CSS selector, `ElementReference`, `JsTarget`, `DrawableTarget`, or split-text handles. |
+| `Duration` | `duration` | Milliseconds. |
+| `Delay` | `delay` | Milliseconds, a stagger, or a per-target function. |
+| `LoopDelay` | `loopDelay` | Pause between repeats, in milliseconds. |
+| `Loop` | `loop` | `true` repeats forever. A count is extra plays after the first. `0` plays once. |
+| `Alternate` | `alternate` | Flips direction on each repeat. |
+| `Reversed` | `reversed` | Starts playing backward. |
+| `AutoPlay` | `autoplay` | `false` creates the animation paused. A scroll-observer handle links playback and does not start it. |
+| `Ease` | `ease` | An `Easing`. Omitted uses `out(2)`. |
+| `ModifierRound` | `modifier` | Rounds to this many decimal places. `0` is an integer. |
+| `From` | `from` | Start value. |
+| `To` | `to` | End value. |
+| `FromTo` | `to: [from, to]` | Start and end. |
+| `Value` | `value` | The HTML attribute named `value`. |
+| `Keyframes` | `keyframes` | A list of steps, or percentage keys such as `"0%"`. |
+| `Prop` | any key | A name the typed methods do not cover, including `id`, `composition`, `frameRate`, `playbackRate`, and `playbackEase`. |
+| `OnBegin`, `OnBeforeUpdate`, `OnUpdate`, `OnRender`, `OnLoop`, `OnPause`, `OnComplete` | `onBegin`, `onBeforeUpdate`, `onUpdate`, `onRender`, `onLoop`, `onPause`, `onComplete` | `AnimationState` snapshot. |
 
-A position places the child. A number is an absolute time in milliseconds, and `0` starts with the timeline. `"<"` starts with the previous child. `"<<"` starts with the child before that. `"+=500"` and `"-=200"` shift from the end of the previous child. `OffSet.After(500)` is the same as `"+=500"`. `OffSet.Before(200)` is `"-=200"`.
+### Properties
 
-```csharp
-await timeline.AddAsync(child => child
-    .Targets(".el1")
-    .TranslateX(250));
+Each setter accepts a number, a unit string, a `Relative`, a stagger, a per-target function, or a nested builder.
 
-await timeline.AddAsync(child => child
-    .Targets(".el2")
-    .TranslateX(250), "+=1000");
+| Member | anime.js | Role |
+|---|---|---|
+| `TranslateX`, `TranslateY`, `TranslateZ` | `translateX`, `translateY`, `translateZ` | Shift on one axis. |
+| `Rotate`, `RotateX`, `RotateY`, `RotateZ` | `rotate`, `rotateX`, `rotateY`, `rotateZ` | Turn. Degrees, or a string such as `"1turn"`. |
+| `Scale`, `ScaleX`, `ScaleY`, `ScaleZ` | `scale`, `scaleX`, `scaleY`, `scaleZ` | Scale. |
+| `SkewX`, `SkewY` | `skewX`, `skewY` | Skew. |
+| `Perspective` | `perspective` | Perspective on the transform. |
+| `TransformOrigin` | `transformOrigin` | Origin of the transform. |
+| `Opacity` | `opacity` | Opacity. |
+| `BackgroundColor`, `Color`, `BorderColor`, `OutlineColor`, `Fill` | `backgroundColor`, `color`, `borderColor`, `outlineColor`, `fill` | Color. |
+| `Width`, `Height`, `MinWidth`, `MaxWidth`, `MinHeight`, `MaxHeight` | `width`, `height`, `minWidth`, `maxWidth`, `minHeight`, `maxHeight` | Box size. |
+| `Top`, `Left`, `Right`, `Bottom` | `top`, `left`, `right`, `bottom` | Offset. |
+| `MarginTop`, `MarginLeft`, `MarginRight`, `MarginBottom` | `marginTop`, `marginLeft`, `marginRight`, `marginBottom` | Margin. |
+| `PaddingTop`, `PaddingLeft`, `PaddingRight`, `PaddingBottom` | `paddingTop`, `paddingLeft`, `paddingRight`, `paddingBottom` | Padding. |
+| `BorderWidth`, `BorderRadius`, `OutlineWidth`, `OutlineOffset` | `borderWidth`, `borderRadius`, `outlineWidth`, `outlineOffset` | Border and outline. |
+| `FontSize`, `FontWeight`, `LetterSpacing`, `LineHeight`, `WordSpacing`, `TextIndent` | `fontSize`, `fontWeight`, `letterSpacing`, `lineHeight`, `wordSpacing`, `textIndent` | Text metrics. |
+| `BoxShadow`, `TextShadow`, `Filter` | `boxShadow`, `textShadow`, `filter` | Shadow and filter. |
+| `ZIndex`, `Order` | `zIndex`, `order` | Stacking and flex order. |
+| `FlexGrow`, `FlexShrink`, `FlexBasis`, `Gap`, `RowGap`, `ColumnGap` | `flexGrow`, `flexShrink`, `flexBasis`, `gap`, `rowGap`, `columnGap` | Flex layout. |
+| `BackgroundPosition`, `BackgroundSize`, `ClipPath` | `backgroundPosition`, `backgroundSize`, `clipPath` | Background and clip. |
+| `X`, `Y`, `Cx`, `Cy`, `R`, `Rx`, `Ry` | `x`, `y`, `cx`, `cy`, `r`, `rx`, `ry` | SVG geometry. |
+| `D` | `d` | SVG path data. A `morphTo` function morphs into another shape. |
+| `Points` | `points` | Polygon points, or a `morphTo` function. |
+| `Stroke`, `StrokeWidth`, `StrokeDashoffset` | `stroke`, `strokeWidth`, `strokeDashoffset` | SVG stroke. |
+| `Draw` | `draw` | Line drawing on a `DrawableTarget`. `"0 1"` draws the whole shape. |
 
-await timeline.AddAsync(child => child
-    .Targets(".el3")
-    .TranslateX(250), 0);
+### Stagger
 
-await timeline.AddAsync(child => child
-    .Targets(".el4")
-    .TranslateX(250), "<");
+`Stagger.Create` is `stagger()`. Pass a delay, a from/to range, or a value plus options. `Delay`, `Duration`, and `LoopDelay` also take `stagger => stagger.Value(...).From(...)`.
 
-await timeline.AddAsync(child => child
-    .Targets(".el5")
-    .TranslateX(250), OffSet.Before(200));
-```
-
-A `Timeline` is an `Animation`, so play, pause, seek, restart, reverse, and dispose are the same methods.
-
-### Controls
-
-Every control method is asynchronous. `Seek` takes milliseconds. `Progress` takes a value from 0 to 1. `Resume` continues in the current direction. `Alternate` mirrors the current time and flips direction. `Complete` seeks to the end and removes the animation from the engine. `Finished` completes when playback ends. It does not complete while `Loop(true)` is set.
-
-```csharp
-var animation = await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(250)
-    .AutoPlay(false));
-
-await animation.Play();
-await animation.Pause();
-await animation.Resume();
-await animation.Restart();
-await animation.Reverse();
-await animation.Alternate();
-await animation.Reset();
-await animation.Seek(1500);
-await animation.Progress(0.5);
-await animation.Complete();
-await animation.Finished();
-```
-
-`animation.Remove(".element")` drops that target from this instance. `Anime.Remove` drops it from running animations.
-
-### Callbacks
-
-`OnBegin`, `OnUpdate`, `OnLoop`, and `OnComplete` take `Action<AnimationState>`. Lambdas and ordinary methods both work. The argument is a snapshot, not the live instance, and the callback returns `void`.
-
-`OnBegin` runs after the delay. `OnUpdate` runs each frame and reports `Progress` from 0 to 1. `OnLoop` runs when a repeat begins. `OnComplete` runs after the repeats finish.
-
-```csharp
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(250)
-    .Delay(500)
-    .Alternate(true)
-    .OnBegin(state => Console.WriteLine($"Started at {state.CurrentTime}ms"))
-    .OnUpdate(state => Console.WriteLine($"Progress: {state.Progress:0.00}"))
-    .OnLoop(state => Console.WriteLine($"Repeat {state.CurrentIteration}"))
-    .OnComplete(state => Console.WriteLine("Animation completed"))
-    .Loop(2)
-    .AutoPlay(true));
-```
-
-`OnRender`, `OnPause`, and `OnBeforeUpdate` use the same snapshot.
-
-`AnimationState` also carries `Began`, `Completed`, `Paused`, `Reversed`, `Backwards`, `Alternate`, `Duration`, `Delay`, `LoopDelay`, `CurrentTime`, `IterationProgress`, `CurrentIteration`, and `Loop`. `Loop` is `-1` when the animation loops forever. `Alternate` on the snapshot is the flag stored at build.
-
-### SVG
-
-Line drawing. `CreateDrawable` wraps the geometry, and `Draw` animates the stroke. `Draw("0 0", "0 1", "1 1")` draws the stroke on, then carries the dash off the end.
-
-```csharp
-var lines = await Anime.CreateDrawable(".line-drawing path");
-await Anime.Animate(props => props
-    .Targets(lines)
-    .Draw("0 0", "0 1", "1 1")
-    .Ease(Easing.InOutQuad)
-    .Duration(2000)
-    .Delay(Stagger.Create(100))
-    .Loop(true)
-    .AutoPlay(true));
-```
-
-Dispose the `DrawableTarget` with the animation.
-
-Morphing. `MorphTo` returns the function anime.js builds for another shape. Pass that reference to `D` or `Points`. Do not pass a string array to `D`. Precision defaults to `0.33`. `0` copies the target shape. A path string can still be assigned with `D(string)` when you are not morphing toward an element.
-
-```csharp
-var morph = await Anime.MorphTo(".target-shape");
-await Anime.Animate(props => props
-    .Targets(".morphing path")
-    .D(morph)
-    .Duration(2000)
-    .Ease(Easing.InOutQuad)
-    .AutoPlay(true));
-```
-
-Motion path. `CreateMotionPath` accepts a selector or an `ElementReference`. Offset is 0 to 1 along the path, and the default `0` starts at the beginning. The three fields are functions. Pass them to the matching transforms.
-
-```csharp
-var motion = await Anime.CreateMotionPath(".motion-path path");
-await Anime.Animate(props => props
-    .Targets(".motion-path .el")
-    .TranslateX(motion.TranslateX)
-    .TranslateY(motion.TranslateY)
-    .Rotate(motion.Rotate)
-    .Duration(2000)
-    .Ease(Easing.Linear)
-    .Loop(true)
-    .AutoPlay(true));
-```
-
-Dispose the `MotionPath` with the animation.
+| Member | anime.js | Role |
+|---|---|---|
+| `Start` | `start` | Added to every delay. |
+| `Reversed` | `reversed` | Walks the targets backward. |
+| `Ease` | `ease` | Distributes the range. |
+| `Grid` | `grid` | `[columns, rows]`. |
+| `Axis` | `axis` | `StaggerAxis.X` or `StaggerAxis.Y`. |
+| `From` | `from` | `StaggerFrom.First`, `Last`, `Center`, or `Index`. |
 
 ### Easings
 
-Named curves drop the `ease` prefix. They are properties on `Easing`:
-
-- `Linear`
-- `InSine`, `OutSine`, `InOutSine`, `OutInSine`
-- `InQuad`, `OutQuad`, `InOutQuad`, `OutInQuad`
-- `InCubic`, `OutCubic`, `InOutCubic`, `OutInCubic`
-- `InQuart`, `OutQuart`, `InOutQuart`, `OutInQuart`
-- `InQuint`, `OutQuint`, `InOutQuint`, `OutInQuint`
-- `InExpo`, `OutExpo`, `InOutExpo`, `OutInExpo`
-- `InCirc`, `OutCirc`, `InOutCirc`, `OutInCirc`
-- `InBack`, `OutBack`, `InOutBack`, `OutInBack`
-- `InBounce`, `OutBounce`, `InOutBounce`, `OutInBounce`
-
-`In(power)`, `Out(power)`, and `InOut(power)` build a curve from a number. `out(2)` is the ease anime.js uses when a call omits one.
-
-Elastic easing is a method. Amplitude defaults to `1` and period defaults to `0.3`.
-
-```csharp
-.Ease(Easing.OutElastic(1, .6))
-```
-
-`InElastic`, `InOutElastic`, and `OutInElastic` take the same arguments.
-
-`Spring()` uses the anime.js defaults: mass `1`, stiffness `100`, damping `10`, and velocity `0`. The four-argument method sets those values. `SpringBounce` takes a bounce from -1 to 1 and a duration in milliseconds.
-
-```csharp
-.Ease(Easing.Spring())
-.Ease(Easing.Spring(1, 80, 10, 0))
-.Ease(Easing.SpringBounce(0.5, 600))
-```
-
-Cubic Bézier, steps, and a raw expression the v4 parser accepts:
-
-```csharp
-.Ease(Easing.CubicBezier(.5, .05, .1, .3))
-.Ease(Easing.Steps(5))
-.Ease(Easing.Raw("inElastic(1, .5)"))
-```
-
-A C# function can be the ease. `Easing.Curve` samples it from 0 to 1 (64 samples by default, at least 2) and the browser interpolates that table on each frame. The same call works on a stagger.
-
-```csharp
-.Ease(Easing.Curve(t => t * t))
-.Delay(stagger => stagger.Value(100).Ease(Easing.Curve(t => t * t, samples: 32)))
-```
-
-### Helpers
-
-`Random`, `Get`, `Set`, and `Remove` are `utils`. Speed and `PauseOnDocumentHidden` are the engine. `Version()` is the pinned anime.js build, `4.5.0`.
-
-`Random` is asynchronous. Read it before you build the animation:
-
-```csharp
-var distance = await Anime.Random(0, 250);
-await Anime.Animate(props => props
-    .Targets(".element")
-    .TranslateX(distance)
-    .AutoPlay(true));
-```
-
-`Get` reads computed style. Without a unit the result is a string, usually in pixels. The unit overload converts it and returns a number. `Set` writes immediately and does not cancel other tweens.
-
-```csharp
-var value = await Anime.Get(".element", "translateX");
-var percent = await Anime.Get(element, "width", "%");
-await Anime.Set(".element", "translateX", 250);
-await Anime.Set(element, props => props.TranslateX(250).Rotate(45));
-```
-
-`Remove` takes targets out of running animations. It leaves the elements in the document.
-
-```csharp
-await Anime.Remove(".element");
-```
-
-Engine helpers:
-
-```csharp
-await Anime.SetSpeed(1.5);
-var speed = await Anime.GetSpeed();
-var version = await Anime.Version();
-await Anime.PauseOnDocumentHidden(false);
-var pauses = await Anime.GetPauseOnDocumentHidden();
-```
-
-`PauseOnDocumentHidden(true)` is the anime.js default: playback pauses while the tab is hidden.
-
-## Animatable
-
-`BlazorAnime.Animatable` binds `createAnimatable`. A property is a number duration in milliseconds, or a settings object. Calling it later animates to a new number. `Get` reads one number. `GetValues` reads a color or any other list of numbers. `Revert` restores the original values. `DisposeAsync` pauses and releases the instance.
-
-```razor
-@implements IAsyncDisposable
-@inject IAnimatable Animatable
-
-<div class="square"></div>
-
-@code {
-    private Animatable? _square;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _square = await Animatable.Create(".square", props => props
-                .Property("x", 500)
-                .Property("y", property => property.Duration(500).Ease(Easing.Out(4)))
-                .Ease(Easing.Out(3)));
-        }
-    }
-
-    private async Task Follow(double x, double y)
-    {
-        if (_square is null)
-            return;
-        await _square.Set("x", x);
-        await _square.Set("y", y);
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_square is not null)
-            await _square.DisposeAsync();
-    }
-}
-```
-
-Property names are the anime.js names: `x`, `translateX`, `backgroundColor`. A setter accepts a `double` or a list of doubles. Pass a duration and an `Easing` when that one call should override the settings:
-
-```csharp
-await _square.Set("y", 50, durationMilliseconds: 500, ease: Easing.Out(2));
-await _square.Set("backgroundColor", new[] { 164d, 255, 79 });
-```
-
-`ModifierRound`, `ModifierSnap`, and `ModifierInvert` run inside the tween, on the animatable or on one property. A property modifier wins. `Get` returns the modified number. `Targets` is the resolved target list. `Animations` is the property animations, keyed by name. Both lists stay until `Revert` or disposal.
-
-## Draggable
-
-`BlazorAnime.Draggable` binds `createDraggable`. The result is a drag instance, not an animation. An empty call drags both axes. `X(false)` or `Y(false)` locks an axis. `Container` keeps the drag inside an element or a bounds list of top, right, bottom, left. `Snap` is a pixel grid or a list of points. `ReleaseEase` is the ease used when the pointer lets go, including a spring.
-
-```razor
-@implements IAsyncDisposable
-@inject IDraggable Draggable
-
-<div class="square"></div>
-
-@code {
-    private Draggable? _square;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _square = await Draggable.Create(".square", props => props
-                .Container(".stage")
-                .Snap(40)
-                .OnRelease(state => _ = state.X));
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_square is not null)
-            await _square.DisposeAsync();
-    }
-}
-```
-
-`Disable`, `Enable`, `SetX`, `SetY`, `Stop`, `Reset`, `Refresh`, `Revert`, `ScrollInView`, and `AnimateInView` return as soon as the call is sent. `X`, `Y`, `Velocity`, and the other reads return the current value. `Target`, `Trigger`, `Container`, and `ScrollContainer` are the elements anime.js resolved. Callbacks receive a `DragState` snapshot. `DisposeAsync` reverts the drag so the pointer listeners do not stay.
-
-## Layout
-
-`BlazorAnime.Layout` binds `createLayout`. The result is a layout instance, not an animation. `Record` measures the current DOM. Change the markup and let Blazor render, then call `Animate` from `OnAfterRenderAsync`. `update(callback)` is not wrapped, because that callback has to change the DOM before `animate` returns.
-
-```razor
-@implements IAsyncDisposable
-@inject ILayout Layouts
-
-<div class="stage">
-    <div class="item">A</div>
-    <div class="item">B</div>
-</div>
-<button @onclick="Toggle">Toggle</button>
-
-@code {
-    private Layout? _layout;
-    private bool _row;
-    private bool _pending;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _layout = await Layouts.Create(".stage", props => props
-                .Children(".item")
-                .Duration(350)
-                .EnterFrom(state => state.Opacity(0)));
-        }
-        else if (_pending && _layout is not null)
-        {
-            _pending = false;
-            await _layout.Animate();
-        }
-    }
-
-    private async Task Toggle()
-    {
-        if (_layout is null)
-            return;
-        await _layout.Record();
-        _row = !_row;
-        _pending = true;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_layout is not null)
-            await _layout.DisposeAsync();
-    }
-}
-```
-
-`Record`, `Animate`, and `Revert` return as soon as the call is sent. They do not return the timeline. `Delay` is a number or a `Stagger`. `EnterFrom`, `LeaveTo`, and `SwapAt` take number and string property values. Callbacks receive an `AnimationState` snapshot. `Entering`, `Leaving`, `Swapping`, and `Animating` are the elements from the latest `Animate`. `DisposeAsync` reverts the layout.
-
-## Scope
-
-`BlazorAnime.Scope` binds `createScope`. The result is a scope, not an animation. `Add` enters the scope, awaits the constructor, then leaves. Animations, timers, timelines, and the other packages' instances created during that await are registered and pick up the scope root and defaults. anime.js runs its own constructor synchronously, so a .NET method is not passed to `add(callback)`.
-
-```razor
-@implements IAsyncDisposable
-@inject IScope Scopes
-@inject IAnime Anime
-
-<div @ref="root">
-    <div class="square"></div>
-</div>
-
-@code {
-    private ElementReference root;
-    private Scope? _scope;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-            return;
-        _scope = await Scopes.Create(props => props
-            .Root(root)
-            .MediaQuery("isSmall", "(max-width: 200px)")
-            .Defaults(defaults => defaults.Ease(Easing.Out(3))));
-        await _scope.Add(async ctx =>
-        {
-            var small = ctx.Matches.GetValueOrDefault("isSmall");
-            await Anime.Animate(props => props
-                .Targets(".square")
-                .TranslateX(small ? "0rem" : "4rem")
-                .Loop(true)
-                .Alternate(true));
-        });
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_scope is not null)
-            await _scope.DisposeAsync();
-    }
-}
-```
-
-`Refresh` and `Revert` resolve when the rebuild or teardown has finished. They do not return the scope. `Matches` are the named media queries. `State` is a string-to-int map that survives refresh. `keepTime` is not wrapped. `DisposeAsync` reverts the scope.
-
-## Events
-
-`BlazorAnime.Events` binds `onScroll`. The result is a scroll observer, not an animation. Pass `Handle` to `AutoPlay`. anime.js links the animation, timer, or timeline and does not start it.
-
-```razor
-@inject IEvents Events
-@inject IAnime Anime
-
-<div class="scroll" @ref="container">
-    <div class="square"></div>
-</div>
-
-@code {
-    private ElementReference container;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-            return;
-        var scroll = await Events.OnScroll(props => props
-            .Container(container)
-            .Sync(true));
-        await Anime.Animate(props => props
-            .Targets(".square")
-            .TranslateX("4rem")
-            .AutoPlay(scroll.Handle));
-    }
-}
-```
-
-`Refresh`, `Revert`, and `Link` resolve when finished and do not return the observer. `Sync(true)` seeks playback from scroll progress. A method string such as `play pause` calls those methods on enter and leave. Callbacks receive a `ScrollState` snapshot. `DisposeAsync` reverts the observer.
-
-## WAAPI
-
-`BlazorAnime.Waapi` binds `waapi.animate`. The result is a browser-timeline animation, not a core `Animation`, and it does not follow `engine.speed`. Pass `Handle` to `Timeline.Sync`.
-
-```razor
-@inject IWaapi Waapi
-@inject IAnime Anime
-
-<div class="square"></div>
-
-@code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-            return;
-        var square = await Waapi.Animate(".square", props => props
-            .TranslateX("8rem")
-            .AutoPlay(false));
-        var timeline = await Anime.CreateTimeline(props => props.AutoPlay(true));
-        await timeline.Sync(square.Handle, 0);
-    }
-}
-```
-
-`Play`, `Pause`, `Seek`, `Revert`, and `CommitStyles` resolve when finished and do not return the animation. `ConvertEase` returns a CSS `linear()` string and does not create an animation. `OnComplete` receives a `WaapiState` snapshot. `DisposeAsync` reverts the animation.
-
-## Text
-
-`BlazorAnime.Text` binds `splitText` and `scrambleText`. A split returns element handles for `Targets`. Scramble returns a function for `innerHTML` and does not create an animation.
-
-```razor
-@inject IText Text
-@inject IAnime Anime
-
-<p>Split words and chars</p>
-
-@code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-            return;
-        var split = await Text.Split("p", props => props
-            .Words(part => part.Wrap("clip"))
-            .Chars(true));
-        await Anime.Animate(props => props
-            .Targets(split.Words)
-            .TranslateY("100%", "0%")
-            .Loop(true));
-    }
-}
-```
-
-`Refresh` and `Revert` resolve when finished and do not return the splitter. `Refresh` replaces `Lines`, `Words`, and `Chars`. `DisposeAsync` reverts the split.
+Named curves use the anime.js string: `Easing.InOutQuad` is `inOutQuad`. The set is `In`, `Out`, `InOut`, and `OutIn` combined with `Quad`, `Cubic`, `Quart`, `Quint`, `Sine`, `Expo`, `Circ`, `Back`, and `Bounce`, plus `Linear`.
+
+| Member | anime.js | Role |
+|---|---|---|
+| `In`, `Out`, `InOut` | `in(power)`, `out(power)`, `inOut(power)` | Power curves. |
+| `InElastic`, `OutElastic`, `InOutElastic`, `OutInElastic` | `inElastic`, `outElastic`, `inOutElastic`, `outInElastic` | Amplitude defaults to 1. Period defaults to 0.3. |
+| `Spring` | `spring` | Mass, stiffness, damping, and velocity, or bounce plus a duration. |
+| `CubicBezier` | `cubicBezier(x1, y1, x2, y2)` | Cubic bezier. |
+| `Steps` | `steps(n)` | Discrete steps. |
+| `Curve` | sampled function | A .NET function, sampled. The default is 64 samples. |
+| `Raw` | the string you pass | An ease string sent as-is. |
+
+### SVG
+
+| Member | anime.js | Role |
+|---|---|---|
+| `CreateDrawable` | `svg.createDrawable` | Proxies for geometry. Pass the result to `Targets` and animate `Draw`. |
+| `CreateMotionPath` | `svg.createMotionPath` | Functions for a path, polygon, or polyline. `offset` is 0–1 along the length. |
+| `MotionPath.TranslateX`, `TranslateY`, `Rotate` | `translateX`, `translateY`, `rotate` | Path position and tangent. Pass them to the matching property. |
+| `MorphTo` | `svg.morphTo` | A function for `D` or `Points`. Precision `0` copies the shape. The default is `0.33`. |
+
+## Modules
+
+Each package below registers its own service and imports the core engine.
+
+### Animatable
+
+`IAnimatable.Create` is `createAnimatable`. A property is a duration in milliseconds, a `Stagger`, or a settings object. Calling `Set` later animates to a new number. anime.js forces `composition: 'replace'` and `autoplay: false` on every property.
+
+#### Settings
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Property` | the property name | Duration, or unit, ease, and modifier for one property such as `x` or `backgroundColor`. |
+| `Duration` | `duration` | Default duration, in milliseconds. |
+| `Ease` | `ease` | Default ease. |
+| `Unit` | `unit` | Unit appended to the number, such as `rem`. |
+| `ModifierRound` | `modifier` | Rounds to this many decimal places. A property modifier wins. |
+| `ModifierSnap` | `modifier` | Snaps to a multiple. |
+| `ModifierInvert` | `modifier` | Negates the value. `Get` returns the negated number. |
+| `OnBegin` … `OnComplete` | `onBegin` … `onComplete` | `AnimationState` snapshot. |
+
+#### Instance
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Get` | getter | The current number. |
+| `GetValues` | getter | A color or any other list of numbers. |
+| `Set` | setter | Animates to a number or a list. An optional duration and ease apply to that call. |
+| `Targets` | `targets` | Resolved elements. Kept until `Revert` or disposal. |
+| `Animations` | property animations | One `Animation` per property name. |
+| `Revert` | `revert` | Restores the original values. |
+
+### Draggable
+
+`IDraggable.Create` is `createDraggable`. The result is a drag instance. An empty builder drags both axes, mapped to `translateX` and `translateY`. Commands resolve when sent. `DisposeAsync` reverts the drag and drops the pointer listeners.
+
+#### Settings
+
+| Member | anime.js | Role |
+|---|---|---|
+| `X`, `Y` | `x`, `y` | `false` locks that axis. A nested `DraggableAxis` sets map, modifier, composition, and snap. |
+| `MapTo` | `mapTo` | CSS property the axis writes, such as `rotate`. |
+| `Composition` | `composition` | `DragComposition.Replace`, `None`, or `Blend`. |
+| `ModifierRound`, `ModifierSnap`, `ModifierInvert` | `modifier` | Round, snap, or negate. An axis modifier wins on that axis. |
+| `Trigger` | `trigger` | Element that receives the pointer. The dragged element is the default. |
+| `Container` | `container` | An element, or bounds in pixels: top, right, bottom, left. |
+| `ContainerPadding` | `containerPadding` | One padding, or top, right, bottom, left. |
+| `ContainerFriction` | `containerFriction` | How far a drag can pass the edge while the pointer is down. 0 to 1. |
+| `ReleaseContainerFriction` | `releaseContainerFriction` | How far the release can pass the edge. 0 to 1. |
+| `DragSpeed` | `dragSpeed` | Multiplier on pointer movement. |
+| `DragThreshold` | `dragThreshold` | Pixels before a press becomes a drag. A pair is mouse and touch. |
+| `ScrollSpeed`, `ScrollThreshold` | `scrollSpeed`, `scrollThreshold` | Automatic scrolling near the edge. |
+| `MinVelocity`, `MaxVelocity`, `VelocityMultiplier` | `minVelocity`, `maxVelocity`, `velocityMultiplier` | Release velocity. |
+| `ReleaseMass`, `ReleaseStiffness`, `ReleaseDamping` | `releaseMass`, `releaseStiffness`, `releaseDamping` | The default release spring. |
+| `ReleaseEase` | `releaseEase` | Ease when the pointer lets go. A spring replaces the default spring. |
+| `Cursor` | `cursor` | `true` uses grab and grabbing. A pair sets `onHover` and `onGrab`. |
+| `Snap` | `snap` | A pixel grid, or a list of points. An axis snap wins on that axis. |
+| `OnGrab`, `OnDrag`, `OnRelease`, `OnUpdate`, `OnSettle`, `OnSnap`, `OnResize`, `OnAfterResize` | the same names | A `DragState` snapshot: position, progress, velocity, angle, and grab flags. |
+
+#### Instance
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Disable`, `Enable` | `disable`, `enable` | Ignore or accept the pointer. |
+| `SetX`, `SetY` | `setX`, `setY` | Move an axis. The mute flag skips `onUpdate`. |
+| `Stop` | `stop` | Stops the release. |
+| `Reset` | `reset` | Stops, clears velocity, and returns both axes to 0. |
+| `Refresh` | `refresh` | Re-reads container, snap, and cursor. |
+| `Revert` | `revert` | Removes listeners and restores styles. |
+| `ScrollInView`, `AnimateInView` | `scrollInView`, `animateInView` | Bring the target into view. A null argument keeps the anime.js default. |
+| `X`, `Y`, `ProgressX`, `ProgressY`, `Velocity`, `Angle`, `DestX`, `DestY`, `DeltaX`, `DeltaY` | the same fields | Current numbers. |
+| `Enabled`, `Grabbed`, `Dragged`, `Contained` | the same fields | Current flags. |
+| `XProp`, `YProp` | the mapped property | Property name each axis writes. |
+| `Target`, `Trigger`, `Container`, `ScrollContainer` | `$target`, `$trigger`, `$container`, `$scrollContainer` | Resolved elements. |
+
+### Layout
+
+`ILayout.Create` is `createLayout`. `Record` measures the current DOM. Change the markup, let Blazor render, then call `Animate` from `OnAfterRenderAsync`. `Record`, `Animate`, and `Revert` resolve when the call is sent.
+
+#### Settings
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Children` | `children` | Elements this layout tracks. Omitted tracks every child of the root. |
+| `Duration` | `duration` | Transition length, in milliseconds. |
+| `Delay` | `delay` | A number or a `Stagger`. |
+| `Ease` | `ease` | Ease of the transition. |
+| `Properties` | `properties` | Extra CSS names interpolated when their computed values change. |
+| `EnterFrom` | `enterFrom` | State for elements that appear. Replaces the default opacity of 0. |
+| `LeaveTo` | `leaveTo` | State for elements that leave. |
+| `SwapAt` | `swapAt` | State while elements swap. |
+| `Loop`, `Alternate`, `Reversed`, `LoopDelay`, `Autoplay` | `loop`, `alternate`, `reversed`, `loopDelay`, `autoplay` | Playback of the layout timeline. |
+| `PlaybackEase` | `playbackEase` | Ease of the timeline, not of each element. |
+| `Id` | `id` | Layout id. `Layout.Id` reads it. |
+| `OnBegin` … `OnRender` | `onBegin` … `onRender` | `AnimationState` snapshot. |
+
+#### Instance
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Record` | `record` | Measures the current DOM and keeps it as the previous state. |
+| `Animate` | `animate` | Measures again and plays. Settings on this call override `Create` for this run. |
+| `Revert` | `revert` | Completes the transition and restores measured styles. |
+| `Root` | `root` | The root element. |
+| `Entering`, `Leaving`, `Swapping`, `Animating` | the same lists | Elements from the latest `Animate`. |
+
+`EnterFrom`, `LeaveTo`, and `SwapAt` take `Opacity`, `Duration`, `Delay`, `Ease`, or `Property(name, value)`.
+
+### Scope
+
+`IScope.Create` is `createScope`. `Add` enters the scope, awaits the constructor, then leaves. Animations and module instances created during that await register on the scope and pick up its root and defaults. `Refresh` and `Revert` resolve when the rebuild or teardown has finished. Time on the rebuilt instances starts over.
+
+#### Settings
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Root` | `root` | Selectors resolve inside this element. Omitted uses the document. |
+| `MediaQuery` | `mediaQueries` | A name plus a query such as `"(max-width: 200px)"`. |
+| `Defaults` | `defaults` | Duration, delay, loop, ease, playback rate, frame rate, and composition for instances created inside the scope. |
+
+`Composition` on the defaults is `none`, `replace`, or `blend`.
+
+#### Instance
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Add` | `add` | Runs now, and again on `Refresh` and when a media query changes. |
+| `AddOnce` | `addOnce` | Runs once. Its instances stay across `Refresh`. |
+| `AddMethod` | `add(name, fn)` | A named method that runs inside the scope. |
+| `Invoke` | the method | Enters the scope and runs that method. `ScopeCall` carries `ClientX` and `ClientY`. |
+| `Refresh` | `refresh` | Reverts repeating instances and runs each `Add` constructor again. |
+| `Revert` | `revert` | Reverts every instance and drops the media listeners. |
+| `Matches` | `matches` | The latest media-query map. |
+| `Root` | `root` | The root element. |
+| `ScopeContext.OnCleanup` | cleanup | Runs after repeating instances revert, before the constructor runs again. |
+| `ScopeContext.State` | scope data | A string-to-int map. `Get` and `Set` survive `Refresh` and clear on `Revert`. |
+
+### Events
+
+`IEvents.OnScroll` is `onScroll`. Pass `Handle` to `AutoPlay`. anime.js links the animation, timer, or timeline and leaves it paused. `Refresh`, `Revert`, and `Link` resolve when finished.
+
+#### Settings
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Container` | `container` | The scrolling element. |
+| `Target` | `target` | The element whose position drives the observer. |
+| `Axis` | `axis` | `"x"` or `"y"`. |
+| `Debug` | `debug` | Draws the debug markers. |
+| `Repeat` | `repeat` | Runs again each time the target enters. |
+| `Enter`, `Leave` | `enter`, `leave` | A position, a number, or a target and container pair. |
+| `Sync` | `sync` | `true` seeks from scroll progress. A method string such as `"play pause"` calls those methods on enter and leave. A number eases the link. An `Easing` does the same. |
+| `OnEnter`, `OnEnterForward`, `OnEnterBackward`, `OnLeave`, `OnLeaveForward`, `OnLeaveBackward`, `OnUpdate`, `OnSyncComplete`, `OnResize` | the same names | A `ScrollState` snapshot: progress, in view, direction, velocity, and scroll. |
+
+#### Instance
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Handle` | the observer | Pass this to `AutoPlay`. |
+| `Link` | `link` | Attaches an animation that was created without this observer. |
+| `Refresh` | `refresh` | Re-reads positions. |
+| `Revert` | `revert` | Removes the observer. |
+| `Progress`, `IsInView`, `Repeat`, `Horizontal` | the same fields | Current values. |
+
+### Text
+
+`IText` binds `splitText` and `scrambleText`. A split returns element handles for `Targets`. Scramble is the function `InnerHtml` assigns to `innerHTML`. An omitted `Words` value still splits words. `Refresh` and `Revert` resolve when finished. `Refresh` replaces `Lines`, `Words`, and `Chars`. `DisposeAsync` reverts the split.
+
+#### Split
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Split` | `splitText` | Splits a selector or an element. |
+| `Lines`, `Words`, `Chars` | `lines`, `words`, `chars` | `true` or `false`, an HTML template, or class, wrap, and clone. |
+| `Class` | `class` | A class name. `false` adds none. |
+| `Wrap` | `wrap` | `true`, `false`, or `hidden`, `clip`, `visible`, `scroll`, `auto`. |
+| `Clone` | `clone` | `true`, `false`, or `top`, `right`, `bottom`, `left`, `center`. |
+| `IncludeSpaces` | `includeSpaces` | Keeps spaces as split elements. |
+| `Accessible` | `accessible` | Keeps the original text available to assistive tech. |
+| `Debug` | `debug` | Outlines the split elements. |
+
+#### Split result
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Lines`, `Words`, `Chars` | `lines`, `words`, `chars` | Handles. Pass them to `Targets`. |
+| `Refresh` | `refresh` | Splits again and replaces the handles. |
+| `Revert` | `revert` | Restores the original markup. |
+
+#### Scramble
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Scramble` | `scrambleText` | The function `InnerHtml` assigns to `innerHTML`. |
+| `Text` | `text` | The string being revealed. |
+| `Chars` | `chars` | The glyph set used while scrambling. |
+| `From` | `from` | `"left"`, `"center"`, `"right"`, `"random"`, `"auto"`, or an index. |
+| `Reversed` | `reversed` | Reveals from the other end. |
+| `Cursor` | `cursor` | `true`, a character, or a character code. |
+| `Perturbation` | `perturbation` | 0 to 1. |
+| `Seed` | `seed` | Stable scramble. |
+| `Override` | `override` | `true`, or a string that replaces the glyphs. |
+| `RevealRate`, `RevealDelay` | `revealRate`, `revealDelay` | Characters per second, and the wait before the first one. |
+| `SettleDuration`, `SettleRate` | `settleDuration`, `settleRate` | How each character settles. |
+| `Duration`, `Delay`, `Ease` | `duration`, `delay`, `ease` | Timing of the scramble. |
+| `OnChange` | `onChange` | The current string and the progress. |
+| `InnerHtml` | `innerHTML` | Puts the scramble function on a text property. |
+
+### WAAPI
+
+`IWaapi.Animate` is `waapi.animate`. The result runs on the browser timeline, at its own `playbackRate`. Pass `Handle` to `Timeline.Sync`. Playback methods resolve when the call is sent. `DisposeAsync` reverts the animation. `ConvertEase` is `waapi.convertEase` and returns a CSS `linear()` string.
+
+#### Settings
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Animate` | `waapi.animate` | A selector, a list, or an `ElementReference`. |
+| `Duration`, `Delay` | `duration`, `delay` | Milliseconds, or a per-target function. `Delay` also takes a `Stagger`. |
+| `Loop`, `Alternate`, `Reversed`, `AutoPlay` | `loop`, `alternate`, `reversed`, `autoplay` | Playback. `AutoPlay` also accepts a scroll-observer handle. |
+| `Persist` | `persist` | Keeps the final styles. |
+| `PlaybackRate` | `playbackRate` | Speed. `Speed` reads it back. |
+| `Composition` | `composition` | `replace`, `add`, or `accumulate`. Omitted stays `replace`. |
+| `Ease` | `ease` | An `Easing`, converted for the browser. |
+| `OnComplete` | `onComplete` | A `WaapiState` snapshot: time, progress, duration, and playback flags. |
+| `X`, `Y`, `Translate`, `TranslateX`, `TranslateY`, `Rotate`, `Scale`, `Opacity` | the same names | A number, a unit string, or a `WaapiTween`. |
+| `Property` | any CSS name | A value the typed methods do not cover. |
+| `To`, `From` | `to`, `from` | Ends and starts of one `WaapiTween`. |
+
+#### Instance
+
+| Member | anime.js | Role |
+|---|---|---|
+| `Handle` | the animation | The object `Timeline.Sync` accepts. |
+| `Play`, `Pause`, `Resume`, `Reverse`, `Alternate`, `Restart`, `Seek`, `Complete`, `Cancel`, `Revert`, `CommitStyles` | the same methods | Playback. `Seek` is milliseconds. |
+| `Finished` | `finished` | Completes when playback finishes. An infinite loop never completes. |
+| `Duration`, `CurrentTime`, `Progress`, `Speed`, `Paused`, `Completed`, `Reversed`, `Persist`, `Targets` | the same fields | Current values. |
+| `SetSpeed` | `playbackRate` | Changes the speed. |
 
 ## Samples
 
-Pushes to `master` publish both samples to [olaboutcode.github.io/blazor-anime](https://olaboutcode.github.io/blazor-anime/). In the repository settings, set GitHub Pages to deploy from GitHub Actions. `scripts/publish-pages.sh` builds that same site locally, and `scripts/publish-pages.bat` does it on Windows.
+| Demo | What it shows |
+|---|---|
+| [Examples](https://olaboutcode.github.io/blazor-anime/examples/) | The official anime.js documentation examples. [Source](https://github.com/olaboutcode/blazor-anime/tree/master/samples/Examples). |
+| [Fun examples](https://olaboutcode.github.io/blazor-anime/fun/) | Custom and fun examples. [Source](https://github.com/olaboutcode/blazor-anime/tree/master/samples/FunExamples). |
+| [Page transitions](https://olaboutcode.github.io/blazor-anime/travel/) | Full-page animations example. [Source](https://github.com/olaboutcode/blazor-anime/tree/master/samples/PageTransitions). |
 
-`samples/Examples` walks through the anime.js documentation demos for animation, timeline, Animatable, Draggable, Layout, Scope, Events, SVG, Text, utilities, easings, and WAAPI. The http profile listens on `http://localhost:5161`.
+## How to contribute
 
-```bash
-dotnet run --project samples/Examples
-```
-
-`samples/FunExamples` holds the longer demos: a wireframe sphere, Easter icons, a pedaling bicycle, and a 404 page. Routes are `/`, `/animated-sphere`, `/easter-icons`, `/pedaling-bicycle`, and `/error-404`. The http profile listens on `http://localhost:5181`.
-
-```bash
-dotnet run --project samples/FunExamples
-```
-
-`samples/PageTransitions` is a Blazor WebAssembly recreation of the CSS-Tricks travel-app page transitions. Routes are `/`, `/place`, and `/group`. The http profile listens on `http://localhost:5175`.
-
-```bash
-dotnet run --project samples/PageTransitions
-```
-
-## Building
-
-The solution file is `BlazorAnime.slnx`. Package versions are declared once in `Directory.Packages.props`.
+The solution is `BlazorAnime.slnx` and targets .NET 10 and later. Package versions live in `Directory.Packages.props`.
 
 ```bash
 dotnet build BlazorAnime.slnx
@@ -1044,4 +510,21 @@ node --test test/interop/*.cjs
 dotnet test test/BlazorAnime.UiTests/BlazorAnime.UiTests.csproj
 ```
 
-The browser tests need Playwright's Chromium driver, which the UI test project downloads on build.
+The browser tests need Playwright's Chromium driver. The UI test project downloads it on build.
+
+The engine is built under `src/BlazorAnime/anime`. npm stays in that folder.
+
+```bash
+npm ci --prefix src/BlazorAnime/anime
+npm run build --prefix src/BlazorAnime/anime
+```
+
+Run a sample with `dotnet run --project samples/Examples` (`http://localhost:5161`), `samples/FunExamples` (`http://localhost:5181`), or `samples/PageTransitions` (`http://localhost:5175`).
+
+`scripts/publish-pages.sh` builds the sample site locally. `scripts/publish-pages.bat` does the same on Windows. A push to `master` publishes that site.
+
+Open an issue or a pull request at [github.com/olaboutcode/blazor-anime](https://github.com/olaboutcode/blazor-anime).
+
+## License
+
+MIT
