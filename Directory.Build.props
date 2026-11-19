@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup Condition="$(MSBuildProjectName.StartsWith('BlazorAnime')) and !$(MSBuildProjectName.Contains('Tests'))">
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/olaboutcode/blazor-anime</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/olaboutcode/blazor-anime</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(MSBuildProjectName.StartsWith('BlazorAnime')) and !$(MSBuildProjectName.Contains('Tests'))">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
+    <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

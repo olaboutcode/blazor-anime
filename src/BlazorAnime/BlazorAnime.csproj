@@ -13,7 +13,13 @@
         <PackageReleaseNotes>First publish. Tracks anime.js 4.5.0.</PackageReleaseNotes>
         <AssemblyName>BlazorAnime</AssemblyName>
         <RootNamespace>BlazorAnime</RootNamespace>
+        <DefaultItemExcludes>$(DefaultItemExcludes);anime/**</DefaultItemExcludes>
     </PropertyGroup>
+
+    <ItemGroup>
+        <Content Remove="anime/**" />
+        <None Remove="anime/**" />
+    </ItemGroup>
 
     <ItemGroup>
         <SupportedPlatform Include="browser"/>
