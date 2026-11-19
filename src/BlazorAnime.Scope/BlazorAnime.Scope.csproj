@@ -5,12 +5,12 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <Authors>olaboutcode</Authors>
-        <Version>1.0.0</Version>
-        <PackageTags>blazor;anime.js;animation;scope</PackageTags>
+        <Version>1.0.0-alpha</Version>
+        <PackageTags>blazor;anime.js;animejs;animation;scope</PackageTags>
         <Description>Scope bindings for BlazorAnime. Shares the BlazorAnime anime.js engine.</Description>
         <PackageId>BlazorAnime.Scope</PackageId>
         <Copyright>olaboutcode</Copyright>
-        <PackageReleaseNotes>createScope for anime.js 4.5.0. Depends on BlazorAnime 1.0.0.</PackageReleaseNotes>
+        <PackageReleaseNotes>createScope for anime.js 4.5.0. Depends on BlazorAnime 1.0.0-alpha.</PackageReleaseNotes>
         <AssemblyName>BlazorAnime.Scope</AssemblyName>
         <RootNamespace>BlazorAnime</RootNamespace>
     </PropertyGroup>
